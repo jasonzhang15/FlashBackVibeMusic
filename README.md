@@ -2,9 +2,4 @@
 Flashback Music App
 
 ## Team Members:
-Jason Zhang
-Jocelyn Wei
-Venkatesh Kumar
-Natalie Popescu
-Valentina Dibs
-Zhikai Cui
+Jason Zhang, Jocelyn Wei, Venkatesh Kumar, Natalie Popescu, Valentina Dibs, Zhikai Cui
