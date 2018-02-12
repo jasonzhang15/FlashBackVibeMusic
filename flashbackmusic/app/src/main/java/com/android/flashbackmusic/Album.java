@@ -1,5 +1,5 @@
 package com.android.flashbackmusic;
-
+import java.util.*;
 /**
  * Stores information about a single album
  */
@@ -7,10 +7,10 @@ package com.android.flashbackmusic;
 class Album {
 
     String title;
-    Song[] songs;
+    ArrayList<Song> songs;
 
-    public Album(Song[] songs){
-        this.songs = songs;
+    public Album(String title){
+        this.title = title;
     }
 
     public String getTitle() {
@@ -19,6 +19,14 @@ class Album {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public ArrayList<Song> getSongs() {
+        return this.songs;
+    }
+
+    public void addSong(Song song) {
+        songs.add(song);
     }
 
     /*

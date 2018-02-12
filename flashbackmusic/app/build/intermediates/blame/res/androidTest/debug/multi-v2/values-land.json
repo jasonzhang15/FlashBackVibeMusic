@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/vrkumar/Dropbox/ProgrammingStuff/CSE110/cse-110-team-project-team-33/flashbackmusic/app/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values-land/values-land.xml",
+            "outputFile": "/Users/valentinadibs/Desktop/cse-110-team-project-team-33/flashbackmusic/app/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values-land/values-land.xml",
             "map": [
                 {
-                    "source": "/Users/vrkumar/.gradle/caches/transforms-1/files-1.1/design-26.1.0.aar/64800edf1455d93e510dbbf8168f6fa5/res/values-land/values-land.xml",
+                    "source": "/Users/valentinadibs/.gradle/caches/transforms-1/files-1.1/design-26.1.0.aar/021fad3aaba957b037e1a2424bf609c9/res/values-land/values-land.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "/Users/vrkumar/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/ef78113d6c07b0e716fbe47e434424cb/res/values-land/values-land.xml",
+                    "source": "/Users/valentinadibs/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/55873c28cd1b451abe670a9c05b85205/res/values-land/values-land.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

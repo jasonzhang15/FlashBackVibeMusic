@@ -48,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        SimpleSongImporter songImporter = new SimpleSongImporter();
+        songImporter.read();
+        System.out.println(songImporter.getAlbumList().size());
+        System.out.println(songImporter.getSongList().size());
     }
 
 

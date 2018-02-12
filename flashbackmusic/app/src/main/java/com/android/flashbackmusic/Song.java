@@ -16,7 +16,12 @@ class Song {
     private FileDescriptor filePath;
     private String title;
     private String artist;
+    private String genre;
+    private String year;
     private Album album;
+    private String album_art;
+    private String track_number;
+
     private boolean favorited;
     private boolean disliked;
     private ArrayList<LatLng> locations;
@@ -25,6 +30,23 @@ class Song {
     private boolean[] daysOfWeek;
 
     public Song(){
+        favorited = false;
+        disliked = false;
+        locations = new ArrayList<LatLng>();
+        timesOfDay = new boolean[3];
+        daysOfWeek = new boolean[7];
+    }
+
+    public Song(String title, String artist, Album album, String album_art, String track_number, String genre, String year) {
+
+        this.title = title;
+        this.artist = artist;
+        this.album= album;
+        this.album_art = album_art;
+        this.track_number = track_number;
+        this.genre = genre;
+        this.year = year;
+
         favorited = false;
         disliked = false;
         locations = new ArrayList<LatLng>();
@@ -47,6 +69,14 @@ class Song {
     public String getArtist() {
         return artist;
     }
+
+    public String getGenre() {return genre; }
+
+    public String getYear() { return year; }
+
+    public String getAlbum_art() { return album_art; }
+
+    public String getTrack_number() { return track_number; }
 
     public Album getAlbum() {
         return album;
