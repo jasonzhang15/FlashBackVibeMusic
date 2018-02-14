@@ -11,6 +11,7 @@ class Album {
 
     public Album(String title){
         this.title = title;
+        songs = new ArrayList<>();
     }
 
     public String getTitle() {

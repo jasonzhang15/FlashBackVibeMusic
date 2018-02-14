@@ -1,5 +1,7 @@
 package com.android.flashbackmusic;
 
+import android.media.MediaPlayer;
+
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -8,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +52,13 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        SimpleSongImporter songImporter = new SimpleSongImporter();
+        SimpleSongImporter songImporter = new SimpleSongImporter(this.getApplication());
         songImporter.read();
-        System.out.println(songImporter.getAlbumList().size());
-        System.out.println(songImporter.getSongList().size());
-    }
 
+        Log.v("LOOK", Integer.toString(songImporter.getAlbumList().size()));
+        Log.v("LOOK", Integer.toString(songImporter.getSongList().size()));
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

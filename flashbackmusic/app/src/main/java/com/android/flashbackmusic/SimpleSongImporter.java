@@ -1,8 +1,14 @@
 package com.android.flashbackmusic;
 
+import android.app.Application;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.util.Log;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -14,8 +20,10 @@ public class SimpleSongImporter implements SongImporter {
     // private File mainFolder;
     private ArrayList<Song> songs;
     private ArrayList<Album> albums;
+    private Application app;
 
-    public SimpleSongImporter(/*String mainFolderLocation*/){
+    public SimpleSongImporter(Application app){
+        this.app = app;
         // mainFolder = new File(mainFolderLocation);
         songs = new ArrayList<Song>();
         albums = new ArrayList<Album>();
@@ -28,33 +36,16 @@ public class SimpleSongImporter implements SongImporter {
      */
     public void read(){
 
-        // for each song in res/raw
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
 
-        System.out.println("Enter read");
-        File dir = new File("../../res/raw");
-        System.out.println("before song list");
-        File[] songPaths = dir.listFiles();
+        Field[] fields = R.raw.class.getFields();
+        Log.v("LOOK", Integer.toString(fields.length));
 
-        System.out.println("songs listed");
+        for (Field field : fields) {
+            String filePath = "android.resource://" + "com.android.flashbackmusic" + "/raw/" + field.getName();
+            //mmd.setDataSource(this.getApplicationContext(), Uri.parse(filePath), null);
+            mmr.setDataSource(app, Uri.parse(filePath));
 
-        if (songPaths == null) {
-            System.out.println("Donwnload some songs! You have none right now.");
-            return;
-        }
-
-        for (File songPath : songPaths) {
-
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-//            StringBuilder sb = new StringBuilder();
-//
-//            String[] vals = songPath.getAbsolutePath().split("-");
-//            for (String val : vals) {
-//                sb.append(val);
-//            }
-
-//            System.out.println("REACHED: " + sb.toString());
-
-            mmr.setDataSource(songPath.getAbsolutePath());
 
             String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             String artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
@@ -66,6 +57,7 @@ public class SimpleSongImporter implements SongImporter {
             String album_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
             String album_art= mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
 
+            Log.v("LOOK", title + " | " + artist + " | " + track_number + " | " + genre + " | " + year + " | " + album_name);
 
             Album album = null;
 
