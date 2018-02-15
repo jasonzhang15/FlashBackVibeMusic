@@ -1120,6 +1120,10 @@
         "source": "/Users/valentinadibs/Desktop/cse-110-team-project-team-33/flashbackmusic/app/src/main/res/mipmap-hdpi/ic_launcher.png"
     },
     {
+        "merged": "/Users/valentinadibs/Desktop/cse-110-team-project-team-33/flashbackmusic/app/build/intermediates/res/merged/debug/layout_song_block.xml.flat",
+        "source": "/Users/valentinadibs/Desktop/cse-110-team-project-team-33/flashbackmusic/app/src/main/res/layout/song_block.xml"
+    },
+    {
         "merged": "/Users/valentinadibs/Desktop/cse-110-team-project-team-33/flashbackmusic/app/build/intermediates/res/merged/debug/drawable-v21_abc_action_bar_item_background_material.xml.flat",
         "source": "/Users/valentinadibs/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/55873c28cd1b451abe670a9c05b85205/res/drawable-v21/abc_action_bar_item_background_material.xml"
     },

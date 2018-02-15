@@ -29,6 +29,8 @@ class Song {
     private boolean[] timesOfDay;
     private boolean[] daysOfWeek;
 
+    private int id;
+
     public Song(){
         favorited = false;
         disliked = false;
@@ -37,8 +39,8 @@ class Song {
         daysOfWeek = new boolean[7];
     }
 
-    public Song(String title, String artist, Album album, String album_art, String track_number, String genre, String year) {
-
+    public Song(int id, String title, String artist, Album album, String album_art, String track_number, String genre, String year) {
+        this.id = id;
         this.title = title;
         this.artist = artist;
         this.album= album;
@@ -62,6 +64,10 @@ class Song {
         return filePath;
     }
 
+    // Song Info
+
+    public int getId() { return id; }
+
     public String getTitle() {
         return title;
     }
@@ -81,6 +87,8 @@ class Song {
     public Album getAlbum() {
         return album;
     }
+
+    // User - Song Info
 
     public ArrayList<LatLng> getLocations() {
         return locations;

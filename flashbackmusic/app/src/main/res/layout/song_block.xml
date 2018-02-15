@@ -1,0 +1,30 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:id="@+id/song_title"
+        android:text="Sample song"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="10dp"
+        />
+
+    <TextView
+        android:id="@+id/song_artist_album"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:text="Sample Artist | Sample Album"
+        android:layout_marginLeft="10dp"/>
+
+    <ImageButton
+        android:id="@+id/song_favorite"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right"
+        android:layout_marginTop="-40dp"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+</merge>
+

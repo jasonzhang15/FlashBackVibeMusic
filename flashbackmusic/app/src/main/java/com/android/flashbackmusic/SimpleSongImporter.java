@@ -1,13 +1,9 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.util.Log;
-
-import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -17,16 +13,14 @@ import java.util.ArrayList;
 
 public class SimpleSongImporter implements SongImporter {
 
-    // private File mainFolder;
     private ArrayList<Song> songs;
     private ArrayList<Album> albums;
     private Application app;
 
     public SimpleSongImporter(Application app){
         this.app = app;
-        // mainFolder = new File(mainFolderLocation);
-        songs = new ArrayList<Song>();
-        albums = new ArrayList<Album>();
+        songs = new ArrayList<>();
+        albums = new ArrayList<>();
     }
 
     //TODO
@@ -42,8 +36,7 @@ public class SimpleSongImporter implements SongImporter {
         Log.v("LOOK", Integer.toString(fields.length));
 
         for (Field field : fields) {
-            String filePath = "android.resource://" + "com.android.flashbackmusic" + "/raw/" + field.getName();
-            //mmd.setDataSource(this.getApplicationContext(), Uri.parse(filePath), null);
+            String filePath = "android.resource://com.android.flashbackmusic/raw/" + field.getName();
             mmr.setDataSource(app, Uri.parse(filePath));
 
 
@@ -52,12 +45,12 @@ public class SimpleSongImporter implements SongImporter {
             String track_number = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER);
             String genre = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
             String year =  mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR);
-            // String comments =  mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_)
-
             String album_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
             String album_art= mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
 
-            Log.v("LOOK", title + " | " + artist + " | " + track_number + " | " + genre + " | " + year + " | " + album_name);
+            int id = app.getResources().getIdentifier(field.getName(), "raw", app.getPackageName());
+
+            // Log.v("LOOK", title + " | " + artist + " | " + track_number + " | " + genre + " | " + year + " | " + album_name);
 
             Album album = null;
 
@@ -73,11 +66,10 @@ public class SimpleSongImporter implements SongImporter {
                 albums.add(album);
             }
 
-            Song newSong = new Song(title, artist, album, album_art, track_number, genre, year);
+            Song newSong = new Song(id, title, artist, album, album_art, track_number, genre, year);
 
             album.addSong(newSong);
             songs.add(newSong);
-
         }
     }
 
