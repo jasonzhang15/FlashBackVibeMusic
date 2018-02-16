@@ -30,10 +30,19 @@ class Album {
         songs.add(song);
     }
 
-    /*
-     * TODO
-     * play(Player p) method
-     * That sequentially passes p each song, listens for callback and then passes in the next
-     */
+    public void play(final Player p) {
 
+        final Queue<Song> songQueue = new ArrayDeque<Song>(songs);
+
+        if (!p.isPlaying()) {
+            p.play(songQueue.poll());
+        }
+
+        p.addSongCompletionListener(new SongCompletionListener() {
+            @Override
+            public void onSongCompletion() {
+                p.play(songQueue.poll());
+            }
+        });
+    }
 }
