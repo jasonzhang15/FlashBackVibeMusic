@@ -5,6 +5,9 @@ import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Plays a specific song, and is responsible for displaying metadata as well
  */
@@ -13,6 +16,7 @@ public class Player {
 
     private MediaPlayer mediaPlayer;
     private Application app;
+    private List<SongCompletionListener> songCompletionListenerList = new ArrayList<SongCompletionListener>();
 
     //TODO: Setup media player
     public Player(Application app){
@@ -65,5 +69,19 @@ public class Player {
                 mediaPlayer.start();
             }
         });
+    }
+
+    public void addSongCompletionListener(SongCompletionListener s){
+        this.songCompletionListenerList.add(s);
+    }
+
+    public void songCompletionEvent(){
+        for (SongCompletionListener s : songCompletionListenerList){
+            s.onSongCompletion();
+        }
+    }
+
+    public boolean isPlaying(){
+        return this.mediaPlayer.isPlaying();
     }
 }
