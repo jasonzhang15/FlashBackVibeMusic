@@ -9,10 +9,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/**
- * Created by valentinadibs on 2/15/18.
- */
-
+// extends fragment, fragment ui at song_block
 public class SongBlock extends LinearLayout {
     private String titleText;
     private String artist;
