@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
        //mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = findViewById(R.id.container);
+        // mViewPager = findViewById(R.id.container);
        // mViewPager.setAdapter(mSectionsPagerAdapter);
 
         app = this.getApplication();
@@ -60,50 +60,32 @@ public class MainActivity extends AppCompatActivity {
 
         player = new Player(app);
         loadSongs();
-
-        LinearLayout linearLayout = findViewById(R.id.main_layout);
-        // linearLayout.addView();
-
-
-
-        Log.v("LOOK", Integer.toString(songImporter.getAlbumList().size()));
-        Log.v("LOOK", Integer.toString(songImporter.getSongList().size()));
     }
 
     public void loadSongs() {
-        ArrayList<Song> songList = songImporter.getSongList();
-        LinearLayout layout = findViewById(R.id.main_layout);
+        final ArrayList<Song> songList = songImporter.getSongList();
+        final LinearLayout layout = findViewById(R.id.main_layout);
 
         for (Song song : songList) {
-            final String name = song.getTitle();
             final Song songToPlay = song;
-            int id = song.getId();
-            // Attributes
-            TextView text = new TextView(this);
-            text.setText(name);
 
-            // Add SongBlockFragment to the Layout
-            //
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            // currently throws an error but shouldn't...
-            // Fragment fragment = new SongBlockFragment();
-            // fragmentTransaction.add(R.id.song_block_fragment, fragment, "song fragment");
-            fragmentTransaction.commit();
+            SongBlock songBlock = new SongBlock(getApplicationContext(), song);
+            songBlock.setText();
 
-            SongBlockFragment songBlockFragment = new SongBlockFragment();
-            songBlockFragment.setSong(song);
-
-
-            com.android.flashbackmusic.SongBlock songBlock = new SongBlock(getApplicationContext(), name, song.getArtist(), song.getAlbum().getTitle(), id);
-
-            text.setOnClickListener(new View.OnClickListener() {
+            songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    CurrentSongBlock csb = new CurrentSongBlock(getApplicationContext(), songToPlay);
+                    csb.setText();
+//                    csb.setHistory("You're listening from " + songToPlay.getLocations() + " on a "
+//                            + songToPlay.getDaysOfWeek() + " " + songToPlay.getTimesOfDay());
+                    csb.setHistory("You're listening from " + "San Diego" + " on a "
+                            + "Tuesday" + " " + "Morning");
+                    layout.addView(csb);
                     player.play(songToPlay);
                 }
             });
-            layout.addView(text);
+            layout.addView(songBlock);
 
         }
     }

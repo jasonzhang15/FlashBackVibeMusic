@@ -1,7 +1,8 @@
 package com.android.flashbackmusic;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ public class SongBlockFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.song_block, container, false);
 
+        Log.v("LOOK", "REACHED");
         /*
         TextView title = view.findViewById(R.id.song_title);
         title.setText(song.getTitle());
