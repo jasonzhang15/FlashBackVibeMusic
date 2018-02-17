@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
             SongBlock songBlock = new SongBlock(getApplicationContext(), song);
             songBlock.setText();
-
             songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
