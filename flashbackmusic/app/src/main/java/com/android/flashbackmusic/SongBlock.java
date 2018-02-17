@@ -6,14 +6,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/**
- * Created by valentinadibs on 2/15/18.
- */
-
 public class SongBlock extends LinearLayout {
+
+    private String album_art;
     private String titleText;
     private String artist;
     private String album;
@@ -28,14 +27,16 @@ public class SongBlock extends LinearLayout {
         initializeViews(context);
     }
 
-    public SongBlock(Context context, String titleText, String artist, String album, int id) {
+    public SongBlock(Context context, Song song) {
         super(context);
 
+        this.titleText = song.getTitle();
+        this.artist = song.getArtist();
+        this.album = song.getAlbum().getTitle();
+        this.id = song.getId();
         Log.v("LOOK", "REACHED song block class: " + titleText);
-        this.titleText = titleText;
-        this.artist = artist;
-        this.album = album;
-        this.id = id;
+
+        initializeViews(context);
     }
 
     private void initializeViews(Context context) {
@@ -43,20 +44,13 @@ public class SongBlock extends LinearLayout {
         inflater.inflate(R.layout.song_block, this);
     }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
+    public void setText() {
+        Log.v("LOOK", "REACHED setText");
 
         title = this.findViewById(R.id.song_title);
-        artistAlbum = this.findViewById(R.id.song_artist_album);
-
         title.setText(titleText);
-        artistAlbum.setText(artist + " | " + album);
-        /*
-        title = this.findViewById(R.id.song_title).setBackgroundResource();
-        artistAlbum = this.findViewById(R.id.song_artist_album).setBackgroundResource();
-        favorite = this.findViewById(R.id.song_favorite).setBackgroundResource();
-        */
-    }
 
+        artistAlbum = this.findViewById(R.id.song_artist_album);
+        artistAlbum.setText(artist + " | " + album);
+    }
 }
