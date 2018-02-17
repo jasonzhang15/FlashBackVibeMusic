@@ -45,9 +45,12 @@
         android:id="@+id/main_layout"
         >
 
-
-
-
     </LinearLayout>
+
+    <com.android.flashbackmusic.CurrentSongBlock
+        android:id="@+id/current_song_block_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
 </android.support.design.widget.CoordinatorLayout>
