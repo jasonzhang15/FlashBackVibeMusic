@@ -1,0 +1,13 @@
+package com.android.flashbackmusic;
+
+/**
+ * Created by nataliepopescu on 2/17/18.
+ */
+
+public interface LocationStrategy {
+
+    double getLatitude();
+
+    double getLongitude();
+
+}
