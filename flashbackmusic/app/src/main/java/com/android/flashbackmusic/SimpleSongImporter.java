@@ -39,7 +39,6 @@ public class SimpleSongImporter implements SongImporter {
             String filePath = "android.resource://com.android.flashbackmusic/raw/" + field.getName();
             mmr.setDataSource(app, Uri.parse(filePath));
 
-
             String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             String artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
             String track_number = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER);

@@ -4,16 +4,16 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/**
- * Created by valentinadibs on 2/15/18.
- */
-
 public class SongBlock extends LinearLayout {
+
+    private String album_art;
     private String titleText;
     private String artist;
     private String album;
@@ -22,20 +22,55 @@ public class SongBlock extends LinearLayout {
     private TextView title;
     private TextView artistAlbum;
     private ImageButton favorite;
+    private int status;
+    private Song song;
 
     public SongBlock(Context context) {
         super(context);
         initializeViews(context);
     }
 
-    public SongBlock(Context context, String titleText, String artist, String album, int id) {
+    public SongBlock(Context context, Song song) {
         super(context);
 
-        Log.v("LOOK", "REACHED song block class: " + titleText);
-        this.titleText = titleText;
-        this.artist = artist;
-        this.album = album;
-        this.id = id;
+        this.titleText = song.getTitle();
+        this.artist = song.getArtist();
+        this.album = song.getAlbum().getTitle();
+        this.id = song.getId();
+        this.song = song;
+
+        if (song.isFavorited()) {
+            status = 1;
+        } else if (song.isDisliked()) {
+            status = -1;
+        } else {
+            status = 0;
+        }
+
+        initializeViews(context);
+    }
+
+    public void LoadFavor() {
+        favorite = this.findViewById(R.id.song_favorite);
+        favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (status == 0) {
+                    favorite.setImageResource(android.R.drawable.checkbox_on_background);
+                    status = 1;
+                    song.setFavorited(true);
+                } else if (status == 1) {
+                    favorite.setImageResource(android.R.drawable.ic_delete);
+                    status = -1;
+                    song.setFavorited(false);
+                    song.setDisliked(true);
+                } else {
+                    favorite.setImageResource(android.R.drawable.ic_input_add);
+                    status = 0;
+                    song.setDisliked(false);
+                }
+            }
+        });
     }
 
     private void initializeViews(Context context) {
@@ -43,20 +78,18 @@ public class SongBlock extends LinearLayout {
         inflater.inflate(R.layout.song_block, this);
     }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
+    //set the title and artistAlbum
+    public void setText() {
+        //Log.v("LOOK", "REACHED setText");
 
         title = this.findViewById(R.id.song_title);
-        artistAlbum = this.findViewById(R.id.song_artist_album);
-
         title.setText(titleText);
+
+        artistAlbum = this.findViewById(R.id.song_artist_album);
         artistAlbum.setText(artist + " | " + album);
-        /*
-        title = this.findViewById(R.id.song_title).setBackgroundResource();
-        artistAlbum = this.findViewById(R.id.song_artist_album).setBackgroundResource();
-        favorite = this.findViewById(R.id.song_favorite).setBackgroundResource();
-        */
     }
 
+    public ImageButton getFavorite() {
+        return this.favorite;
+    }
 }

@@ -20,13 +20,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.time.DayOfWeek;
 import java.util.ArrayList;
+import com.android.flashbackmusic.CurrentSongBlock;
+import com.android.flashbackmusic.Player;
+import com.android.flashbackmusic.R;
+import com.android.flashbackmusic.SimpleSongImporter;
+import com.android.flashbackmusic.SongBlock;
+import android.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,11 +37,11 @@ public class MainActivity extends AppCompatActivity {
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
+     * loaded fragment in meory. If this becomes too memory intensive, it
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    //private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -61,19 +64,16 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        //mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
+        // mViewPager = findViewById(R.id.container);
+        // mViewPager.setAdapter(mSectionsPagerAdapter);
         app = this.getApplication();
         songImporter = new SimpleSongImporter(app);
         songImporter.read();
 
         player = new Player(app);
-        loadSongs();
-
         Log.v("LOOK", Integer.toString(songImporter.getAlbumList().size()));
         Log.v("LOOK", Integer.toString(songImporter.getSongList().size()));
 
@@ -90,30 +90,37 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         locationAdapter.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
+        csb.setPlayPause(player);
+
+        loadSongs();
     }
 
     public void loadSongs() {
-        ArrayList<Song> songList = songImporter.getSongList();
-        LinearLayout layout = findViewById(R.id.main_layout);
-
+        final ArrayList<Song> songList = songImporter.getSongList();
+        final LinearLayout layout = findViewById(R.id.main_layout);
         for (Song song : songList) {
-            final String name = song.getTitle();
             final Song songToPlay = song;
-            int id = song.getId();
-            // Attributes
-            TextView text = new TextView(this);
-            text.setText(name);
 
-            com.android.flashbackmusic.SongBlock songBlock = new SongBlock(getApplicationContext(), name, song.getArtist(), song.getAlbum().getTitle(), id);
-
-            text.setOnClickListener(new View.OnClickListener() {
+            final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
+            songBlock.setText();
+            songBlock.LoadFavor();
+            songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
+                    csb.display();
+                    csb.setText(songToPlay);
+    //                    csb.setHistory("You're listening from " + songToPlay.getLocations() + " on a "
+    //                            + songToPlay.getDaysOfWeek() + " " + songToPlay.getTimesOfDay());
+                    csb.setHistory("You're listening from " + "San Diego" + " on a "
+                            + "Tuesday" + " " + "Morning");
                     player.play(songToPlay);
+                    csb.togglePlayPause();
                 }
             });
-            layout.addView(text);
-
+            layout.addView(songBlock);
         }
     }
 
@@ -122,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
+        }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -133,68 +140,9 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+        return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-//            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-//            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
-        }
     }
 }
