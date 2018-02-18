@@ -1,6 +1,10 @@
 package com.android.flashbackmusic;
 
+import android.Manifest;
 import android.app.Application;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
@@ -16,6 +20,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
     private Player player;
     private SimpleSongImporter songImporter;
     private Application app;
+
+
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationAdapter locationAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +76,16 @@ public class MainActivity extends AppCompatActivity {
 
         Log.v("LOOK", Integer.toString(songImporter.getAlbumList().size()));
         Log.v("LOOK", Integer.toString(songImporter.getSongList().size()));
+
+        // Create the adapter to handle location tracking
+        locationAdapter = new LocationAdapter(LocationServices.getFusedLocationProviderClient(this));
+        locationAdapter.establishLocationPermission(this, this);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        locationAdapter.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public void loadSongs() {
