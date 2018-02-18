@@ -20,7 +20,9 @@ import com.android.flashbackmusic.SongBlock;
         import android.view.MenuItem;
         import android.view.View;
         import android.view.ViewGroup;
-        import android.widget.LinearLayout;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
         import android.widget.TextView;
         import java.util.ArrayList;
 
@@ -73,20 +75,21 @@ public class MainActivity extends AppCompatActivity {
     public void loadSongs() {
         final ArrayList<Song> songList = songImporter.getSongList();
         final LinearLayout layout = findViewById(R.id.main_layout);
-
         for (Song song : songList) {
             final Song songToPlay = song;
 
-            SongBlock songBlock = new SongBlock(getApplicationContext(), song);
+            final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
             songBlock.setText();
+            songBlock.LoadFavor();
             songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
                     csb.display();
                     csb.setText(songToPlay);
-//                    csb.setHistory("You're listening from " + songToPlay.getLocations() + " on a "
-//                            + songToPlay.getDaysOfWeek() + " " + songToPlay.getTimesOfDay());
+    //                    csb.setHistory("You're listening from " + songToPlay.getLocations() + " on a "
+    //                            + songToPlay.getDaysOfWeek() + " " + songToPlay.getTimesOfDay());
                     csb.setHistory("You're listening from " + "San Diego" + " on a "
                             + "Tuesday" + " " + "Morning");
                     player.play(songToPlay);

@@ -33,7 +33,7 @@ public class CurrentSongBlock extends LinearLayout {
         this.player = player;
 
         playPause = this.findViewById(R.id.song_playPause);
-        Log.v("LOOK", context.toString());
+        Log.v("zhikai", playPause.toString());
 
         playPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,6 +42,10 @@ public class CurrentSongBlock extends LinearLayout {
                 player.togglePausePlay();
             }
         });
+    }
+
+    public void LoadFavor (SongBlock songBlock){
+        favoriteBtn = songBlock.getFavorite();
     }
 
     public void togglePlayPause() {
@@ -79,6 +83,7 @@ public class CurrentSongBlock extends LinearLayout {
 
     public ImageButton getFavorite() {
         return this.findViewById(R.id.current_song_favorite);
+
     }
 
     public void setFavorite(String fav) {
