@@ -4,6 +4,8 @@ import java.io.FileDescriptor;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -26,17 +28,18 @@ class Song {
     private boolean disliked;
     private ArrayList<LatLng> locations;
     private Date lastPlayedTime;
-    private boolean[] timesOfDay;
-    private boolean[] daysOfWeek;
+    private Set<String> timesOfDay;
+    private Set<String> daysOfWeek;
+    private LatLng lastLocation;
 
     private int id;
 
     public Song(){
         favorited = false;
         disliked = false;
-        locations = new ArrayList<LatLng>();
-        timesOfDay = new boolean[3];
-        daysOfWeek = new boolean[7];
+        locations = new ArrayList<>();
+        timesOfDay = new HashSet<>();
+        daysOfWeek = new HashSet<>();
     }
 
     public Song(int id, String title, String artist, Album album, String album_art, String track_number, String genre, String year) {
@@ -51,9 +54,9 @@ class Song {
 
         favorited = false;
         disliked = false;
-        locations = new ArrayList<LatLng>();
-        timesOfDay = new boolean[3];
-        daysOfWeek = new boolean[7];
+        locations = new ArrayList<>();
+        timesOfDay = new HashSet<>();
+        daysOfWeek = new HashSet<>();
     }
 
     /* TODO
@@ -94,13 +97,19 @@ class Song {
         return locations;
     }
 
-    public boolean[] getTimesOfDay() {
+    public void setLocations(ArrayList<LatLng> locs) { this.locations = locs; }
+
+    public Set<String> getTimesOfDay() {
         return timesOfDay;
     }
 
-    public boolean[] getDaysOfWeek() {
+    public void setTimesOfDay(Set<String> times) { this.timesOfDay = times; }
+
+    public Set<String> getDaysOfWeek() {
         return daysOfWeek;
     }
+
+    public void setDaysOfWeek(Set<String> days) { this.daysOfWeek = days; }
 
     public boolean isFavorited() {
         return favorited;
@@ -125,4 +134,9 @@ class Song {
     public void setLastPlayedTime(Date lastPlayedTime) {
         this.lastPlayedTime = lastPlayedTime;
     }
+
+    public LatLng getLastLocation() { return lastLocation; }
+
+    public void setLastLocation(LatLng lastLocation) { this.lastLocation = lastLocation; }
+
 }
