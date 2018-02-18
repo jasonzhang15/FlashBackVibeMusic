@@ -5,26 +5,26 @@ import com.android.flashbackmusic.R;
 import com.android.flashbackmusic.SimpleSongImporter;
 import com.android.flashbackmusic.SongBlock;
 
-        import android.app.Application;
-        import android.app.FragmentTransaction;
-        import android.support.v7.app.AppCompatActivity;
-        import android.support.v7.widget.Toolbar;
-        import android.support.v4.app.Fragment;
-        import android.support.v4.app.FragmentManager;
-        import android.support.v4.app.FragmentPagerAdapter;
-        import android.support.v4.view.ViewPager;
-        import android.os.Bundle;
-        import android.util.Log;
-        import android.view.LayoutInflater;
-        import android.view.Menu;
-        import android.view.MenuItem;
-        import android.view.View;
-        import android.view.ViewGroup;
+import android.app.Application;
+import android.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-        import android.widget.TextView;
-        import java.util.ArrayList;
+import android.widget.TextView;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +44,10 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private Player player;
     private SimpleSongImporter songImporter;
+    private SharedPreferences prefs;
+    private SharedPrefsIO prefsIO;
     private Application app;
+    private ArrayList<Song> songList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,11 @@ public class MainActivity extends AppCompatActivity {
         app = this.getApplication();
         songImporter = new SimpleSongImporter(app);
         songImporter.read();
+        prefs = getSharedPreferences("info", MODE_PRIVATE);
+        prefsIO = new SharedPrefsIO(prefs);
+
+        songList = songImporter.getSongList();
+        populateSongInfo();
 
         player = new Player(app);
 
@@ -73,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadSongs() {
-        final ArrayList<Song> songList = songImporter.getSongList();
         final LinearLayout layout = findViewById(R.id.main_layout);
         for (Song song : songList) {
             final Song songToPlay = song;
@@ -100,15 +107,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-@Override
-public boolean onCreateOptionsMenu(Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
         }
 
-@Override
-public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -121,4 +128,23 @@ public boolean onOptionsItemSelected(MenuItem item) {
 
         return super.onOptionsItemSelected(item);
         }
+    @Overide
+    protected void onDestroy() {
+        storeSongInfo();
+        super.onDestroy();
+    }
+
+    private void populateSongInfo() {
+        for (Song song : songList) {
+            prefsIO.populateSongInfo(song);
         }
+    }
+
+    private void storeSongInfo() {
+        for (Song song : songList) {
+            prefsIO.storeSongInfo(song);
+        }
+    }
+}
+
+
