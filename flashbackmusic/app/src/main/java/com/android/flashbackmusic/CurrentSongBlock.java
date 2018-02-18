@@ -33,7 +33,7 @@ public class CurrentSongBlock extends LinearLayout {
         this.player = player;
 
         playPause = this.findViewById(R.id.song_playPause);
-        Log.v("LOOK", context.toString());
+        Log.v("zhikai", playPause.toString());
 
         playPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,6 +42,23 @@ public class CurrentSongBlock extends LinearLayout {
                 player.togglePausePlay();
             }
         });
+    }
+
+    public void LoadFavor (SongBlock songBlock){
+        favoriteBtn = songBlock.getFavorite();
+        //        String keyPrefix = s.getTitle() + s.getArtist() + s.getAlbum();
+
+        // waiting for SharedPrefsIO to update, currently no much getters from SharedPrefsIO
+
+//        boolean favorited = sp.getBoolean(keyPrefix + "favorited", false);
+//        boolean disLike = sp.getBoolean(keyPrefix + "disliked", false);
+//        if (favorited) {
+//            favoriteBtn.setImageResource(android.R.drawable.checkbox_on_background);
+//        } else if (disLike) {
+//            favoriteBtn.setImageResource(android.R.drawable.ic_delete);
+//        } else {
+//            favoriteBtn.setImageResource(android.R.drawable.ic_input_add);
+//        }
     }
 
     public void togglePlayPause() {
@@ -79,6 +96,7 @@ public class CurrentSongBlock extends LinearLayout {
 
     public ImageButton getFavorite() {
         return this.findViewById(R.id.current_song_favorite);
+
     }
 
     public void setFavorite(String fav) {
