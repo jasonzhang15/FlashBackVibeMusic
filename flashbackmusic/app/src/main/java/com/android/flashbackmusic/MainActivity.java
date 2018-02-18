@@ -1,29 +1,17 @@
 package com.android.flashbackmusic;
-import com.android.flashbackmusic.CurrentSongBlock;
-import com.android.flashbackmusic.Player;
-import com.android.flashbackmusic.R;
-import com.android.flashbackmusic.SimpleSongImporter;
-import com.android.flashbackmusic.SongBlock;
 
 import android.app.Application;
-import android.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -128,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
         }
-    @Overide
+
+    @Override
     protected void onDestroy() {
         storeSongInfo();
         super.onDestroy();
