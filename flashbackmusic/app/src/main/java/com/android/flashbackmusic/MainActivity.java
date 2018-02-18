@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
         //locationAdapter.getCurrentLocation();
 
+        CurrentParameters currentParameters = new CurrentParameters(locationAdapter);
+
     }
 
     @Override
