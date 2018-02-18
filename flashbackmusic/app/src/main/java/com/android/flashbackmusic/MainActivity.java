@@ -78,8 +78,10 @@ public class MainActivity extends AppCompatActivity {
         Log.v("LOOK", Integer.toString(songImporter.getSongList().size()));
 
         // Create the adapter to handle location tracking
-        locationAdapter = new LocationAdapter(LocationServices.getFusedLocationProviderClient(this));
+        locationAdapter = new LocationAdapter(); //LocationServices.getFusedLocationProviderClient(this));
         locationAdapter.establishLocationPermission(this, this);
+
+        //locationAdapter.getCurrentLocation();
 
     }
 
