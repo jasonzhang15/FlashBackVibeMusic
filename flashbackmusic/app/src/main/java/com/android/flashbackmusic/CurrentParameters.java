@@ -17,7 +17,9 @@ public class CurrentParameters {
     private String dayOfWeek;
     private String timeOfDay;
 
-    CurrentParameters(LocationInterface loc) {
+    public CurrentParameters() {}
+
+    public CurrentParameters(LocationInterface loc) {
         // Location
         locationHandler = loc;
         location = new LatLng(loc.getLatitude(), loc.getLongitude());
@@ -53,6 +55,9 @@ public class CurrentParameters {
     public String getTimeOfDay() { return timeOfDay; }
 
     public void setLocation(LocationInterface loc) { location = new LatLng(loc.getLatitude(), loc.getLongitude()); }
+
+    //For testing purposes
+    protected void setLatLng(LatLng latLng){location = latLng;}
 
     public void setDayOfWeek(String dow) { dayOfWeek = dow; }
 
