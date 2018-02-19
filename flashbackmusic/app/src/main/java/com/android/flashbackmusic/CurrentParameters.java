@@ -15,11 +15,7 @@ public class CurrentParameters {
     private LocationInterface locationHandler;
     private LatLng location;
     private String dayOfWeek;
-    private int timeOfDay;
-
-    private static final int MORNING = 0;
-    private static final int AFTERNOON = 1;
-    private static final int NIGHT = 2;
+    private String timeOfDay;
 
     CurrentParameters(LocationInterface loc) {
         // Location
@@ -44,9 +40,9 @@ public class CurrentParameters {
         // Time of Day
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
 
-        if (hour >= 5 && hour < 11) timeOfDay = MORNING;
-        else if (hour >= 11 && hour < 17) timeOfDay = AFTERNOON;
-        else timeOfDay = NIGHT;
+        if (hour >= 5 && hour < 11) timeOfDay = "MORNING";
+        else if (hour >= 11 && hour < 17) timeOfDay = "AFTERNOON";
+        else timeOfDay = "NIGHT";
 
     }
 
@@ -54,11 +50,11 @@ public class CurrentParameters {
 
     public String getDayOfWeek() { return dayOfWeek; }
 
-    public int getTimeOfDay() { return timeOfDay; }
+    public String getTimeOfDay() { return timeOfDay; }
 
     public void setLocation(LocationInterface loc) { location = new LatLng(loc.getLatitude(), loc.getLongitude()); }
 
     public void setDayOfWeek(String dow) { dayOfWeek = dow; }
 
-    public void setTimeOfDay(int tod) { timeOfDay = tod; }
+    public void setTimeOfDay(String tod) { timeOfDay = tod; }
 }

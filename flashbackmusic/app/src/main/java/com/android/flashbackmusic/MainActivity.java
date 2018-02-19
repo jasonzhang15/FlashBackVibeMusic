@@ -20,8 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import com.android.flashbackmusic.CurrentSongBlock;
@@ -50,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private Player player;
     private SimpleSongImporter songImporter;
     private Application app;
-
-
-    private FusedLocationProviderClient mFusedLocationClient;
     private LocationAdapter locationAdapter;
 
     @Override
@@ -80,11 +75,8 @@ public class MainActivity extends AppCompatActivity {
         // Create the adapter to handle location tracking
         locationAdapter = new LocationAdapter(); //LocationServices.getFusedLocationProviderClient(this));
         locationAdapter.establishLocationPermission(this, this);
-
         //locationAdapter.getCurrentLocation();
-
         CurrentParameters currentParameters = new CurrentParameters(locationAdapter);
-
     }
 
     @Override
