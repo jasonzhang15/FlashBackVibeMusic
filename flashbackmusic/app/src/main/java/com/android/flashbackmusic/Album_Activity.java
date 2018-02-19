@@ -41,6 +41,15 @@ public class Album_Activity extends AppCompatActivity {
         swc.display();
 
         loadAlbums();
+
+        Button getBackSongs = (Button) findViewById(R.id.Songs);
+
+        getBackSongs.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick (View view){
+                finish();
+            }
+        });
     }
 
     public void loadAlbums() {

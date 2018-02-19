@@ -37,6 +37,7 @@ class Album {
     }
 
     public void addSong(Song song) {
+        this.artist = song.getArtist();
         songs.add(song);
     }
 
