@@ -1,9 +1,12 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +19,12 @@ import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
+
+import java.util.ArrayList;
+import android.content.Intent;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,10 +76,33 @@ public class MainActivity extends AppCompatActivity {
         populateSongInfo();
         player = new Player(app);
 
+        // Create the adapter to handle location tracking
+        locationAdapter = new LocationAdapter(); //LocationServices.getFusedLocationProviderClient(this));
+        locationAdapter.establishLocationPermission(this, this);
+        CurrentParameters currentParameters = new CurrentParameters(locationAdapter);
+    }
+
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
 
+        SwitchActivity swc = findViewById(R.id.switch_between_main);
+        swc.display();
         loadSongs();
+
+
+        Button album = swc.getAlbum();
+        album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchAlbum();
+            }
+        });
+
+    }
+
+    public void launchAlbum() {
+        Intent intent = new Intent(this, Album_Activity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -155,5 +184,6 @@ public class MainActivity extends AppCompatActivity {
             prefsIO.storeSongInfo(song);
         }
     }
+
 }
 

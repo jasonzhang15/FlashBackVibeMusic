@@ -1,5 +1,7 @@
 package com.android.flashbackmusic;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
@@ -12,21 +14,35 @@ import java.util.TimeZone;
 
 public class CurrentParameters {
     private LocationInterface locationHandler;
+    private Calendar calendar;
     private LatLng location;
     private String dayOfWeek;
     private String timeOfDay;
     private Date lastPlayedTime;
+  
+    private TimeZone tz = TimeZone.getTimeZone("America/Los_Angeles");
 
-    CurrentParameters(LocationInterface loc) {
+    public CurrentParameters() {}
+
+    public CurrentParameters(LocationInterface loc) {
         // Location
         locationHandler = loc;
-        location = new LatLng(loc.getLatitude(), loc.getLongitude());
+        location = getLocation();
+        Log.d("cur location", "" + location);
 
-        TimeZone tz = TimeZone.getTimeZone("America/Los_Angeles");
-        Calendar calendar = Calendar.getInstance(tz);
+        calendar = Calendar.getInstance(tz);
+
+        dayOfWeek = getDayOfWeek();
+
+        timeOfDay = getTimeOfDay();
+      
         lastPlayedTime = calendar.getTime();
+    }
 
-        // Day of Week
+    public LatLng getLocation() { return locationHandler.getCurrentLocation(); }
+
+    public String getDayOfWeek() {
+        calendar = Calendar.getInstance(tz);
         int day = calendar.get(Calendar.DAY_OF_WEEK);
         switch (day) {
             case 1: dayOfWeek = "MONDAY";
@@ -37,25 +53,33 @@ public class CurrentParameters {
             case 6: dayOfWeek = "SATURDAY";
             case 7: dayOfWeek = "SUNDAY";
         }
+        return dayOfWeek;
+    }
 
-        // Time of Day
+    public String getTimeOfDay() {
+        calendar = Calendar.getInstance(tz);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
 
         if (hour >= 5 && hour < 11) timeOfDay = "MORNING";
         else if (hour >= 11 && hour < 17) timeOfDay = "AFTERNOON";
         else timeOfDay = "NIGHT";
-
+        return timeOfDay;
     }
 
-    public LatLng getLocation() { return location; }
+    public Date getLastPlayed() {
+        calendar = Calendar.getInstance();
+        return calendar.getTime();
+    }
 
-    public String getDayOfWeek() { return dayOfWeek; }
+    public void setLocation(LocationInterface loc) { location = loc.getCurrentLocation(); }
 
-    public String getTimeOfDay() { return timeOfDay; }
 
     public Date getLastPlayedTime() { return lastPlayedTime; }
 
     public void setLocation(LocationInterface loc) { location = new LatLng(loc.getLatitude(), loc.getLongitude()); }
+
+    //For testing purposes
+    protected void setLatLng(LatLng latLng){location = latLng;}
 
     public void setDayOfWeek(String dow) { dayOfWeek = dow; }
 

@@ -7,6 +7,7 @@ import java.util.*;
 public class Album {
 
     String title;
+    String artist;
     ArrayList<Song> songs;
 
     public Album(String title){
@@ -14,8 +15,17 @@ public class Album {
         songs = new ArrayList<>();
     }
 
+    public Album(String title, ArrayList<Song> songs){
+        this.title = title;
+        this.songs = songs;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public String getArtist() {
+        return artist;
     }
 
     public void setTitle(String title) {
@@ -27,6 +37,7 @@ public class Album {
     }
 
     public void addSong(Song song) {
+        this.artist = song.getArtist();
         songs.add(song);
     }
 
