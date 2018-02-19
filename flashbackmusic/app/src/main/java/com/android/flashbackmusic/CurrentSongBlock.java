@@ -102,7 +102,7 @@ public class CurrentSongBlock extends LinearLayout {
     public void togglePlayPause() {
         if (player.isPlaying()) {
             playPause.setImageResource(android.R.drawable.ic_media_play);
-        } else {
+        } else if (!player.isReset()){
             playPause.setImageResource(android.R.drawable.ic_media_pause);
         }
     }
