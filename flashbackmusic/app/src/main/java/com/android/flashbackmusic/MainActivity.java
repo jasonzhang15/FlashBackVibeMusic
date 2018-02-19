@@ -3,16 +3,19 @@ package com.android.flashbackmusic;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-
+import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -59,13 +64,19 @@ public class MainActivity extends AppCompatActivity {
 
         songList = songImporter.getSongList();
         populateSongInfo();
-
         player = new Player(app);
 
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
 
         loadSongs();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        storeSongInfo();
     }
 
     public void loadSongs() {
@@ -79,16 +90,20 @@ public class MainActivity extends AppCompatActivity {
             songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (!(songToPlay.isDisliked())) {
 
-                    CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
-                    csb.display();
-                    csb.setText(songToPlay);
-    //                    csb.setHistory("You're listening from " + songToPlay.getLocations() + " on a "
-    //                            + songToPlay.getDaysOfWeek() + " " + songToPlay.getTimesOfDay());
-                    csb.setHistory("You're listening from " + "San Diego" + " on a "
-                            + "Tuesday" + " " + "Morning");
-                    player.play(songToPlay);
-                    csb.togglePlayPause();
+                        CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
+                        csb.display();
+                        csb.setText(songToPlay);
+                        //                    csb.setHistory("You're listening from " + songToPlay.getLocations() + " on a "
+                        //                            + songToPlay.getDaysOfWeek() + " " + songToPlay.getTimesOfDay());
+                        csb.setHistory("You're listening from " + "San Diego" + " on a "
+                                + "Tuesday" + " " + "Morning");
+                        player.play(songToPlay);
+                        Date c = Calendar.getInstance().getTime();
+                        songToPlay.setLastPlayedTime(c);
+                        csb.togglePlayPause();
+                    }
                 }
             });
             layout.addView(songBlock);
@@ -117,23 +132,18 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
         }
 
-    @Override
-    protected void onDestroy() {
-        storeSongInfo();
-        super.onDestroy();
-    }
-
     private void populateSongInfo() {
         for (Song song : songList) {
+            Log.v("jocelyn", song.getTitle());
             prefsIO.populateSongInfo(song);
         }
     }
 
     private void storeSongInfo() {
         for (Song song : songList) {
+            Log.v("jocelyn", song.getTitle());
             prefsIO.storeSongInfo(song);
         }
     }
 }
-
 
