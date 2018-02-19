@@ -1,11 +1,15 @@
 package com.android.flashbackmusic;
 
 import android.content.SharedPreferences;
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 import static java.lang.Float.parseFloat;
 
 /**
@@ -25,31 +29,43 @@ public class SharedPrefsIO implements SongInfoIO {
     }
 
     public void populateSongInfo(Song s) {
-        String keyPrefix = s.getTitle() + s.getArtist() + s.getAlbum();
+        String keyPrefix = s.getTitle() + s.getArtist();
+        Log.v("print lat lng", s.getLastLocation().toString());
 
-        boolean favorited = prefs.getBoolean(keyPrefix + "favorited", false);
-        s.setFavorited(favorited);
+        Log.v("from_populateSongInfo", keyPrefix);
 
-        boolean disliked = prefs.getBoolean(keyPrefix + "disliked", false);
-        s.setDisliked(disliked);
-
-        Set<String> fetch = prefs.getStringSet(keyPrefix + "locs", null);
-        ArrayList<LatLng> locs = stringsToLatLng(fetch);
-        s.setLocations(locs);
-
-        long lastPlayedTime = prefs.getLong(keyPrefix + "lastplayedtime", 0);
-        Date lastPlayedDate = new Date(lastPlayedTime);
-        s.setLastPlayedTime(lastPlayedDate);
-
-        Set<String> timesOfDay = prefs.getStringSet(keyPrefix + "timesofday", null);
-        s.setTimesOfDay(timesOfDay);
-
-        Set<String> daysOfWeek = prefs.getStringSet(keyPrefix + "daysofweek", null);
-        s.setDaysOfWeek(daysOfWeek);
-
-        String strLastLoc = prefs.getString(keyPrefix + "lastloc", "");
-        LatLng lastloc = stringToLatLng(strLastLoc);
-        s.setLastLocation(lastloc);
+        if (prefs.contains(keyPrefix + "favorited")) {
+            boolean favorited = prefs.getBoolean(keyPrefix + "favorited", false);
+            s.setFavorited(favorited);
+        }
+        if (prefs.contains(keyPrefix + "disliked")) {
+            boolean disliked = prefs.getBoolean(keyPrefix + "disliked", false);
+            Log.v("disliked status", String.valueOf(disliked));
+            s.setDisliked(disliked);
+        }
+        if (prefs.contains(keyPrefix + "locs")) {
+            Set<String> fetch = prefs.getStringSet(keyPrefix + "locs", null);
+            ArrayList<LatLng> locs = stringsToLatLng(fetch);
+            s.setLocations(locs);
+        }
+        if (prefs.contains(keyPrefix + "lastplayedtime")) {
+            long lastPlayedTime = prefs.getLong(keyPrefix + "lastplayedtime", 0);
+            Date lastPlayedDate = new Date(lastPlayedTime);
+            s.setLastPlayedTime(lastPlayedDate);
+        }
+        if (prefs.contains(keyPrefix + "timesofday")) {
+            Set<String> timesOfDay = prefs.getStringSet(keyPrefix + "timesofday", null);
+            s.setTimesOfDay(timesOfDay);
+        }
+        if (prefs.contains(keyPrefix + "daysofweek")) {
+            Set<String> daysOfWeek = prefs.getStringSet(keyPrefix + "daysofweek", null);
+            s.setDaysOfWeek(daysOfWeek);
+        }
+        if (prefs.contains(keyPrefix + "lastloc")) {
+            String strLastLoc = prefs.getString(keyPrefix + "lastloc", "");
+            LatLng lastloc = stringToLatLng(strLastLoc);
+            s.setLastLocation(lastloc);
+        }
 
     }
 
@@ -59,15 +75,20 @@ public class SharedPrefsIO implements SongInfoIO {
         boolean disliked = s.isDisliked();
         ArrayList<LatLng> locations = s.getLocations();
         Set<String> locs = latLngsToString(locations);
-        long lastPlayedTime = s.getLastPlayedTime().getTime();
+        long lastPlayedTime = 0;
+        if (s.getLastPlayedTime() != null) {
+            lastPlayedTime = s.getLastPlayedTime().getTime();
+        }
         Set<String> timesOfDay = s.getTimesOfDay();
         Set<String> daysOfWeek = s.getDaysOfWeek();
         String strLastLoc = s.getLastLocation().toString();
-
+        Log.v("print lat lng", s.getLastLocation().toString());
+        Log.v("print dislike status", String.valueOf(s.isDisliked()));
         editor = prefs.edit();
 
-        String keyPrefix = s.getTitle() + s.getArtist() + s.getAlbum();
+        String keyPrefix = s.getTitle() + s.getArtist();
         // Store into shared preferences
+        Log.v("from_storeSongInfo", keyPrefix);
         editor.putBoolean(keyPrefix + "favorited", favorited);
         editor.putBoolean(keyPrefix + "disliked", disliked);
         editor.putStringSet(keyPrefix + "locs", locs);
@@ -100,9 +121,11 @@ public class SharedPrefsIO implements SongInfoIO {
     }
 
     private LatLng stringToLatLng(String string) {
+        int left = string.indexOf('(');
         int commaPos = string.indexOf(',');
-        float longitude = parseFloat(string.substring(0, commaPos));
-        float latitude = parseFloat(string.substring(commaPos + 1, string.length()));
+        int right = string.indexOf(')');
+        float longitude = parseFloat(string.substring(left + 1, commaPos));
+        float latitude = parseFloat(string.substring(commaPos + 1, right));
         return new LatLng(longitude, latitude);
     }
 

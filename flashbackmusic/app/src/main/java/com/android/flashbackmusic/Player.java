@@ -17,6 +17,8 @@ public class Player {
     private MediaPlayer mediaPlayer;
     private Application app;
     private List<SongCompletionListener> songCompletionListenerList = new ArrayList<SongCompletionListener>();
+    private Song song;
+    private boolean isReset;
 
     public Player(Application app){
         this.app = app;
@@ -24,10 +26,10 @@ public class Player {
     }
 
     public void play(Song s){
-
+        this.song = s;
         mediaPlayer.reset();
         loadMedia();
-
+        isReset = false;
         Log.v("LOOK", s.getTitle() + " should be played right now, id: " + s.getId());
 
         try {
@@ -47,7 +49,13 @@ public class Player {
         }
     }
 
+    public void reset() {
+        mediaPlayer.reset();
+        isReset = true;
+    }
+
     private void loadMedia() {
+
         if (mediaPlayer == null) {
             mediaPlayer = new MediaPlayer();
         }
@@ -79,5 +87,13 @@ public class Player {
 
     public boolean isPlaying(){
         return this.mediaPlayer.isPlaying();
+    }
+
+    public Song getSong() {
+        return this.song;
+    }
+
+    public Boolean isReset() {
+        return isReset;
     }
 }

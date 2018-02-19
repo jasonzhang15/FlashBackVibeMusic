@@ -1,13 +1,12 @@
 package com.android.flashbackmusic;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.FileDescriptor;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Stores information about a single song
@@ -40,9 +39,12 @@ class Song {
         locations = new ArrayList<>();
         timesOfDay = new HashSet<>();
         daysOfWeek = new HashSet<>();
+        lastPlayedTime = null;
+        lastLocation = new LatLng(0,0);
     }
 
     public Song(int id, String title, String artist, Album album, String album_art, String track_number, String genre, String year) {
+        this();
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -51,12 +53,6 @@ class Song {
         this.track_number = track_number;
         this.genre = genre;
         this.year = year;
-
-        favorited = false;
-        disliked = false;
-        locations = new ArrayList<>();
-        timesOfDay = new HashSet<>();
-        daysOfWeek = new HashSet<>();
     }
 
     /* TODO
