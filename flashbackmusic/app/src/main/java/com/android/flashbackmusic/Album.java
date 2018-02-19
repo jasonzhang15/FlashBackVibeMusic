@@ -4,7 +4,7 @@ import java.util.*;
  * Stores information about a single album
  */
 
-class Album {
+public class Album {
 
     String title;
     String artist;

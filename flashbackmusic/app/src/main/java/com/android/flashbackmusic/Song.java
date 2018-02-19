@@ -12,7 +12,7 @@ import java.util.Set;
  * Stores information about a single song
  */
 
-class Song {
+public class Song {
 
     private FileDescriptor filePath;
     private String title;

@@ -4,8 +4,6 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -20,6 +18,7 @@ public class CurrentParameters {
     private LatLng location;
     private String dayOfWeek;
     private String timeOfDay;
+    private Date lastPlayedTime;
   
     private TimeZone tz = TimeZone.getTimeZone("America/Los_Angeles");
 
@@ -36,6 +35,8 @@ public class CurrentParameters {
         dayOfWeek = getDayOfWeek();
 
         timeOfDay = getTimeOfDay();
+      
+        lastPlayedTime = calendar.getTime();
     }
 
     public LatLng getLocation() { return locationHandler.getCurrentLocation(); }
@@ -70,7 +71,9 @@ public class CurrentParameters {
         return calendar.getTime();
     }
 
-    public void setLocation(LocationInterface loc) { location = loc.getCurrentLocation(); }
+    public Date getLastPlayedTime() { return lastPlayedTime; }
+
+    public void setLocation(LocationInterface loc) { location = new LatLng(loc.getLatitude(), loc.getLongitude()); }
 
     //For testing purposes
     protected void setLatLng(LatLng latLng){location = latLng;}
