@@ -2,9 +2,8 @@ package com.android.flashbackmusic;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -16,6 +15,7 @@ public class CurrentParameters {
     private LatLng location;
     private String dayOfWeek;
     private String timeOfDay;
+    private Date lastPlayedTime;
 
     CurrentParameters(LocationInterface loc) {
         // Location
@@ -24,6 +24,7 @@ public class CurrentParameters {
 
         TimeZone tz = TimeZone.getTimeZone("America/Los_Angeles");
         Calendar calendar = Calendar.getInstance(tz);
+        lastPlayedTime = calendar.getTime();
 
         // Day of Week
         int day = calendar.get(Calendar.DAY_OF_WEEK);
@@ -51,6 +52,8 @@ public class CurrentParameters {
     public String getDayOfWeek() { return dayOfWeek; }
 
     public String getTimeOfDay() { return timeOfDay; }
+
+    public Date getLastPlayedTime() { return lastPlayedTime; }
 
     public void setLocation(LocationInterface loc) { location = new LatLng(loc.getLatitude(), loc.getLongitude()); }
 

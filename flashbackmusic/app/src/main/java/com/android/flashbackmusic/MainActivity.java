@@ -11,14 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import java.util.Date;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
@@ -102,21 +101,15 @@ public class MainActivity extends AppCompatActivity {
                         csb.setText(songToPlay);
                         LatLng loc = curr.getLocation();
                         String place = "San Diego";
-                        int timeOfDay = curr.getTimeOfDay();
-                        Date lastPlayedTime = curr.getLastPlayed();
-                        String timeString;
-                        switch(timeOfDay) {
-                            case 0: timeString = "Morning";
-                            case 1: timeString = "Afternoon";
-                            default: timeString = "Night";
-                        }
+                        String timeOfDay = curr.getTimeOfDay();
+                        Date lastPlayedTime = curr.getLastPlayedTime();
                         String day = curr.getDayOfWeek();
                         csb.setHistory("You're listening from " + place + " on a "
-                                + day + " " + timeString);
+                                + day + " " + timeOfDay);
                         player.play(songToPlay);
                         songToPlay.setLastLocation(loc);
                         Set<String> timesOfDay = songToPlay.getTimesOfDay();
-                        timesOfDay.add(timeString);
+                        timesOfDay.add(timeOfDay);
                         songToPlay.setTimesOfDay(timesOfDay);
                         songToPlay.setLastPlayedTime(lastPlayedTime);
                         csb.togglePlayPause();
