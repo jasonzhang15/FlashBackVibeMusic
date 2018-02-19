@@ -11,11 +11,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import java.util.Date;
 import android.view.View;
 import android.widget.LinearLayout;
-import java.util.Calendar;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.*;
+
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPrefsIO prefsIO;
     private Application app;
     private ArrayList<Song> songList;
+    private CurrentParameters curr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,13 +100,25 @@ public class MainActivity extends AppCompatActivity {
                         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
                         csb.display();
                         csb.setText(songToPlay);
-                        //                    csb.setHistory("You're listening from " + songToPlay.getLocations() + " on a "
-                        //                            + songToPlay.getDaysOfWeek() + " " + songToPlay.getTimesOfDay());
-                        csb.setHistory("You're listening from " + "San Diego" + " on a "
-                                + "Tuesday" + " " + "Morning");
+                        LatLng loc = curr.getLocation();
+                        String place = "San Diego";
+                        int timeOfDay = curr.getTimeOfDay();
+                        Date lastPlayedTime = curr.getLastPlayed();
+                        String timeString;
+                        switch(timeOfDay) {
+                            case 0: timeString = "Morning";
+                            case 1: timeString = "Afternoon";
+                            default: timeString = "Night";
+                        }
+                        String day = curr.getDayOfWeek();
+                        csb.setHistory("You're listening from " + place + " on a "
+                                + day + " " + timeString);
                         player.play(songToPlay);
-                        Date c = Calendar.getInstance().getTime();
-                        songToPlay.setLastPlayedTime(c);
+                        songToPlay.setLastLocation(loc);
+                        Set<String> timesOfDay = songToPlay.getTimesOfDay();
+                        timesOfDay.add(timeString);
+                        songToPlay.setTimesOfDay(timesOfDay);
+                        songToPlay.setLastPlayedTime(lastPlayedTime);
                         csb.togglePlayPause();
                     }
                 }
