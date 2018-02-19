@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
 
-        loadSongs();
+        loadSongs(csb);
     }
 
     @Override
@@ -79,14 +79,14 @@ public class MainActivity extends AppCompatActivity {
         storeSongInfo();
     }
 
-    public void loadSongs() {
+    public void loadSongs(CurrentSongBlock csb) {
         final LinearLayout layout = findViewById(R.id.main_layout);
         for (Song song : songList) {
             final Song songToPlay = song;
 
             final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
             songBlock.setText();
-            songBlock.LoadFavor();
+            songBlock.loadFavor(song, prefsIO);
             songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
                         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
                         csb.display();
+                        csb.loadFavor(songToPlay, prefsIO, songBlock);
                         csb.setText(songToPlay);
                         //                    csb.setHistory("You're listening from " + songToPlay.getLocations() + " on a "
                         //                            + songToPlay.getDaysOfWeek() + " " + songToPlay.getTimesOfDay());

@@ -17,14 +17,14 @@ public class Player {
     private MediaPlayer mediaPlayer;
     private Application app;
     private List<SongCompletionListener> songCompletionListenerList = new ArrayList<SongCompletionListener>();
-
+    private Song song;
     public Player(Application app){
         this.app = app;
         loadMedia();
     }
 
     public void play(Song s){
-
+        this.song = s;
         mediaPlayer.reset();
         loadMedia();
 
@@ -45,6 +45,10 @@ public class Player {
         } else {
             mediaPlayer.start();
         }
+    }
+
+    public void reset() {
+        mediaPlayer.reset();
     }
 
     private void loadMedia() {
@@ -79,5 +83,13 @@ public class Player {
 
     public boolean isPlaying(){
         return this.mediaPlayer.isPlaying();
+    }
+
+    public boolean isPausing() {
+        return !this.mediaPlayer.isPlaying() && mediaPlayer.getCurrentPosition() > 1;
+    }
+
+    public Song getSong() {
+        return this.song;
     }
 }
