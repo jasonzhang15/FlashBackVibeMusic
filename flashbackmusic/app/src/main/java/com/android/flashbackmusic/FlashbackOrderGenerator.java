@@ -4,10 +4,14 @@ import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.time.DayOfWeek;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Created by vrkumar on 2/18/18.
@@ -15,7 +19,6 @@ import java.util.List;
 
 public class FlashbackOrderGenerator {
     final static double MAX_DIST_METERS = 304.8;
-
 
     private CurrentParameters c;
     private List<Song> songList;
@@ -87,4 +90,32 @@ public class FlashbackOrderGenerator {
             }
         }
     };
+
+    public void play(final Player p) {
+        final Queue<Song> songQueue = new PriorityQueue<Song>(songComparator);
+        songQueue.addAll(songList);
+
+        final LatLng oldLoc = c.getLocation();
+        final String oldDay = c.getDayOfWeek();
+        final String oldTime = c.getTimeOfDay();
+
+        if (!p.isPlaying() && !(songQueue.isEmpty())) {
+            p.play(songQueue.poll());
+        }
+
+        p.addSongCompletionListener(new SongCompletionListener() {
+            @Override
+            public void onSongCompletion() {
+                if (!(oldLoc.equals(c.getLocation()) &&
+                        oldDay.equals(c.getDayOfWeek()) && oldTime.equals(c.getTimeOfDay()))){
+                    songQueue.clear();
+                    play(p);
+                }
+
+                if (!(songQueue.isEmpty())) {
+                    p.play(songQueue.poll());
+                }
+            }
+        });
+    }
 }
