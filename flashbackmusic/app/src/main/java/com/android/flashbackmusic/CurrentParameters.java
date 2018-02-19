@@ -71,9 +71,6 @@ public class CurrentParameters {
         return calendar.getTime();
     }
 
-    public void setLocation(LocationInterface loc) { location = loc.getCurrentLocation(); }
-
-
     public Date getLastPlayedTime() { return lastPlayedTime; }
 
     public void setLocation(LocationInterface loc) { location = new LatLng(loc.getLatitude(), loc.getLongitude()); }
