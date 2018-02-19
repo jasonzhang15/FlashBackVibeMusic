@@ -9,7 +9,9 @@ import com.google.android.gms.maps.model.LatLng;
 public interface LocationInterface {
 
     double getLatitude();
+    void setLatitude(double latitude);
     double getLongitude();
+    void setLongitude(double longitude);
     LatLng getCurrentLocation();
 
 }

@@ -37,9 +37,15 @@ public class LocationAdapter implements LocationInterface {
 
     public double getLatitude() { return location.getLatitude(); }
 
+    public void setLatitude(double latitude) { location.setLatitude(latitude); }
+
     public double getLongitude() { return location.getLongitude(); }
 
+    public void setLongitude(double longitude) { location.setLongitude(longitude); }
+
     public LatLng getCurrentLocation() {
+
+        if (context == null) return null;
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
