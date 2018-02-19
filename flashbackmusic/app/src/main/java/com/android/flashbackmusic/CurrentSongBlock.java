@@ -70,17 +70,17 @@ public class CurrentSongBlock extends LinearLayout {
                     song_f.setFavorited(false);
                     song_f.setDisliked(true);
                     if (player.getSong() == song_f) {
-                        togglePlayPauseEnability();
+                        playPause.setImageResource(android.R.drawable.presence_offline);
                         player.reset();
                     }
                 } else {
                     favoriteBtn.setImageResource(android.R.drawable.ic_input_add);
                     //status = 0;
                     song_f.setDisliked(false);
-                    togglePlayPauseEnability();
+                    playPause.setImageResource(android.R.drawable.ic_media_pause);
+                    player.play(song_f);
                 }
                 songBlock_f.loadFavor(song_f, sp_f);
-
                 sp_f.storeSongInfo(song_f);
             }
         });
@@ -97,16 +97,6 @@ public class CurrentSongBlock extends LinearLayout {
 //        } else {
 //            favoriteBtn.setImageResource(android.R.drawable.ic_input_add);
 //        }
-    }
-
-    public void togglePlayPauseEnability() {
-        if (player.isPlaying()) {
-            playPause.setImageResource(android.R.drawable.presence_offline);
-        } else if (player.isPausing()){
-            playPause.setImageResource(android.R.drawable.ic_media_play);
-        } else {
-            playPause.setImageResource(android.R.drawable.ic_media_pause);
-        }
     }
 
     public void togglePlayPause() {
