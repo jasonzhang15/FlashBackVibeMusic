@@ -1,32 +1,19 @@
 package com.android.flashbackmusic;
-import com.android.flashbackmusic.CurrentSongBlock;
-import com.android.flashbackmusic.Player;
-import com.android.flashbackmusic.R;
-import com.android.flashbackmusic.SimpleSongImporter;
-import com.android.flashbackmusic.SongBlock;
 
-        import android.app.Application;
-        import android.app.FragmentTransaction;
-import android.content.Intent;
+import android.app.Application;
 import android.support.v7.app.AppCompatActivity;
-        import android.support.v7.widget.Toolbar;
-        import android.support.v4.app.Fragment;
-        import android.support.v4.app.FragmentManager;
-        import android.support.v4.app.FragmentPagerAdapter;
-        import android.support.v4.view.ViewPager;
-        import android.os.Bundle;
-        import android.util.Log;
-        import android.view.LayoutInflater;
-        import android.view.Menu;
-        import android.view.MenuItem;
-        import android.view.View;
-        import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.support.v7.widget.Toolbar;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
-        import android.widget.TextView;
-        import java.util.ArrayList;
+import java.util.ArrayList;
+import android.content.Intent;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private Player player;
     private SimpleSongImporter songImporter;
     private Application app;
+    private LocationAdapter locationAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +55,19 @@ public class MainActivity extends AppCompatActivity {
         songImporter.read();
 
         player = new Player(app);
+        Log.v("LOOK", Integer.toString(songImporter.getAlbumList().size()));
+        Log.v("LOOK", Integer.toString(songImporter.getSongList().size()));
 
+        // Create the adapter to handle location tracking
+        locationAdapter = new LocationAdapter(); //LocationServices.getFusedLocationProviderClient(this));
+        locationAdapter.establishLocationPermission(this, this);
+        //locationAdapter.getCurrentLocation();
+        CurrentParameters currentParameters = new CurrentParameters(locationAdapter);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        locationAdapter.onRequestPermissionsResult(requestCode, permissions, grantResults);
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
 
@@ -119,15 +119,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-@Override
-public boolean onCreateOptionsMenu(Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
         }
 
-@Override
-public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -139,5 +139,6 @@ public boolean onOptionsItemSelected(MenuItem item) {
         }
 
         return super.onOptionsItemSelected(item);
-        }
+    }
+
 }
