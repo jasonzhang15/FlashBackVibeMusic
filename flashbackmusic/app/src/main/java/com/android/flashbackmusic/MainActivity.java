@@ -7,7 +7,8 @@ import com.android.flashbackmusic.SongBlock;
 
         import android.app.Application;
         import android.app.FragmentTransaction;
-        import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
         import android.support.v7.widget.Toolbar;
         import android.support.v4.app.Fragment;
         import android.support.v4.app.FragmentManager;
@@ -21,6 +22,7 @@ import com.android.flashbackmusic.SongBlock;
         import android.view.View;
         import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
         import android.widget.TextView;
@@ -69,7 +71,24 @@ public class MainActivity extends AppCompatActivity {
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
 
+        SwitchActivity swc = findViewById(R.id.switch_between_main);
+        swc.display();
         loadSongs();
+
+
+        Button album = swc.getAlbum();
+        album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchAlbum();
+            }
+        });
+
+    }
+
+    public void launchAlbum() {
+        Intent intent = new Intent(this, Album_Activity.class);
+        startActivity(intent);
     }
 
     public void loadSongs() {
@@ -121,4 +140,4 @@ public boolean onOptionsItemSelected(MenuItem item) {
 
         return super.onOptionsItemSelected(item);
         }
-        }
+}
