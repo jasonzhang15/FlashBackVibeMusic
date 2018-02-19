@@ -20,10 +20,12 @@ public class CurrentParameters {
     private LatLng location;
     private String dayOfWeek;
     private String timeOfDay;
-
+  
     private TimeZone tz = TimeZone.getTimeZone("America/Los_Angeles");
 
-    CurrentParameters(LocationInterface loc) {
+    public CurrentParameters() {}
+
+    public CurrentParameters(LocationInterface loc) {
         // Location
         locationHandler = loc;
         location = getLocation();
@@ -69,6 +71,9 @@ public class CurrentParameters {
     }
 
     public void setLocation(LocationInterface loc) { location = loc.getCurrentLocation(); }
+
+    //For testing purposes
+    protected void setLatLng(LatLng latLng){location = latLng;}
 
     public void setDayOfWeek(String dow) { dayOfWeek = dow; }
 

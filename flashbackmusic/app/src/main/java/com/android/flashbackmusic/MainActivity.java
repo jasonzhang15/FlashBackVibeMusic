@@ -1,33 +1,19 @@
 package com.android.flashbackmusic;
 
-import android.Manifest;
 import android.app.Application;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
-import com.android.flashbackmusic.CurrentSongBlock;
-import com.android.flashbackmusic.Player;
-import com.android.flashbackmusic.R;
-import com.android.flashbackmusic.SimpleSongImporter;
-import com.android.flashbackmusic.SongBlock;
-import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,7 +70,24 @@ public class MainActivity extends AppCompatActivity {
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
 
+        SwitchActivity swc = findViewById(R.id.switch_between_main);
+        swc.display();
         loadSongs();
+
+
+        Button album = swc.getAlbum();
+        album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchAlbum();
+            }
+        });
+
+    }
+
+    public void launchAlbum() {
+        Intent intent = new Intent(this, Album_Activity.class);
+        startActivity(intent);
     }
 
     public void loadSongs() {
@@ -136,4 +139,5 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
