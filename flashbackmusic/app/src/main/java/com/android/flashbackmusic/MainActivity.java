@@ -1,6 +1,7 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -13,12 +14,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-
 import com.google.android.gms.maps.model.LatLng;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
+import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.ArrayList;
+import android.content.Intent;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private SharedPrefsIO prefsIO;
     private Application app;
     private ArrayList<Song> songList;
-    private CurrentParameters curr;
+    private CurrentParameters currentParameters;
+    private LocationAdapter locationAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +75,42 @@ public class MainActivity extends AppCompatActivity {
         populateSongInfo();
         player = new Player(app);
 
+        // Create the adapter to handle location tracking
+        locationAdapter = new LocationAdapter(); //LocationServices.getFusedLocationProviderClient(this));
+        locationAdapter.establishLocationPermission(this, this);
+        currentParameters = new CurrentParameters(locationAdapter);
+    }
+
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
 
+
+        loadSongs(csb);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        storeSongInfo();
+        SwitchActivity swc = findViewById(R.id.switch_between_main);
+        swc.display();
         loadSongs();
+
+
+        Button album = swc.getAlbum();
+        album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchAlbum();
+            }
+        });
+
+    }
+
+    public void launchAlbum() {
+        Intent intent = new Intent(this, Album_Activity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -83,14 +120,14 @@ public class MainActivity extends AppCompatActivity {
         storeSongInfo();
     }
 
-    public void loadSongs() {
+    public void loadSongs(CurrentSongBlock csb) {
         final LinearLayout layout = findViewById(R.id.main_layout);
         for (Song song : songList) {
             final Song songToPlay = song;
 
             final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
             songBlock.setText();
-            songBlock.LoadFavor();
+            songBlock.loadFavor(song, prefsIO);
             songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -99,11 +136,11 @@ public class MainActivity extends AppCompatActivity {
                         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
                         csb.display();
                         csb.setText(songToPlay);
-                        LatLng loc = curr.getLocation();
+                        LatLng loc = currentParameters.getLocation();
                         String place = "San Diego";
-                        String timeOfDay = curr.getTimeOfDay();
-                        Date lastPlayedTime = curr.getLastPlayedTime();
-                        String day = curr.getDayOfWeek();
+                        String timeOfDay = currentParameters.getTimeOfDay();
+                        Date lastPlayedTime = currentParameters.getLastPlayedTime();
+                        String day = currentParameters.getDayOfWeek();
                         csb.setHistory("You're listening from " + place + " on a "
                                 + day + " " + timeOfDay);
                         player.play(songToPlay);
@@ -112,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
                         timesOfDay.add(timeOfDay);
                         songToPlay.setTimesOfDay(timesOfDay);
                         songToPlay.setLastPlayedTime(lastPlayedTime);
+                        csb.loadFavor(songToPlay, prefsIO, songBlock);
+                        csb.setText(songToPlay);
                         csb.togglePlayPause();
                     }
                 }
@@ -155,5 +194,6 @@ public class MainActivity extends AppCompatActivity {
             prefsIO.storeSongInfo(song);
         }
     }
+
 }
 
