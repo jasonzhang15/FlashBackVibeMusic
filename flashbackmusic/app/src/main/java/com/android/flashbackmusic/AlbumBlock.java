@@ -1,7 +1,10 @@
 package com.android.flashbackmusic;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,6 +17,9 @@ import java.util.ArrayList;
 public class AlbumBlock extends LinearLayout {
     private String albumName;
     private String artistName;
+
+    ImageButton playPause;
+    Player player;
 
     private TextView albumView;
     private TextView artistView;
@@ -42,6 +48,29 @@ public class AlbumBlock extends LinearLayout {
         albumView.setText(albumName);
         artistView = this.findViewById(R.id.artist_title);
         artistView.setText(artistName);
+    }
+
+    public void setPlayPause(final Player player) {
+        this.player = player;
+
+        playPause = this.findViewById(R.id.album_play);
+        Log.v("zhikai", playPause.toString());
+
+        playPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                togglePlayPause();
+                player.togglePausePlay();
+            }
+        });
+    }
+
+    public void togglePlayPause() {
+        if (player.isPlaying()) {
+            playPause.setImageResource(android.R.drawable.ic_media_play);
+        } else {
+            playPause.setImageResource(android.R.drawable.ic_media_pause);
+        }
     }
 
     public String getAlbumTitle(){

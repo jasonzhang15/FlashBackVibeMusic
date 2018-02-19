@@ -54,19 +54,22 @@ public class Album_Activity extends AppCompatActivity {
 
     public void loadAlbums() {
         final ArrayList<Song> songList = songImporter.getSongList();
-        ArrayList<Album> albumList = new ArrayList<>(100);
+        final ArrayList<Album> albumList = songImporter.getAlbumList();
         final LinearLayout layout = findViewById(R.id.main_layout);
 
 
-        for (Song song : songList) {
-            if(!albumList.contains(song.getAlbum())){
-                albumList.add(song.getAlbum());
-            }
-        }
-
         for (Album album : albumList) {
             final AlbumBlock albumBlock = new AlbumBlock(getApplicationContext(), album);
+            final Album albumtoPlay = album;
             albumBlock.setText();
+            albumBlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    albumBlock.setPlayPause(player);
+                    albumtoPlay.play(player);
+                    albumBlock.togglePlayPause();
+                }
+            });
             layout.addView(albumBlock);
         }
 
