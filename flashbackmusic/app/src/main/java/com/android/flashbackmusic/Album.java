@@ -34,14 +34,16 @@ public class Album {
 
         final Queue<Song> songQueue = new ArrayDeque<Song>(songs);
 
-        if (!p.isPlaying()) {
+        if (!p.isPlaying() && !(songQueue.isEmpty())) {
             p.play(songQueue.poll());
         }
 
         p.addSongCompletionListener(new SongCompletionListener() {
             @Override
             public void onSongCompletion() {
-                p.play(songQueue.poll());
+                if (!(songQueue.isEmpty())) {
+                    p.play(songQueue.poll());
+                }
             }
         });
     }
