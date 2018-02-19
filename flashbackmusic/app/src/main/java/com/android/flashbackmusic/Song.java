@@ -44,7 +44,6 @@ class Song {
     }
 
     public Song(int id, String title, String artist, Album album, String album_art, String track_number, String genre, String year) {
-        this();
         this.id = id;
         this.title = title;
         this.artist = artist;
