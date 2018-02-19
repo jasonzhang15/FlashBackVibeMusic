@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 public class SongBlock extends LinearLayout {
 
-    private String album_art;
     private String titleText;
     private String artist;
     private String album;
