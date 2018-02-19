@@ -106,11 +106,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-
+        CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         storeSongInfo();
         SwitchActivity swc = findViewById(R.id.switch_between_main);
         swc.display();
-        loadSongs();
+        loadSongs(csb);
 
 
         Button album = swc.getAlbum();
