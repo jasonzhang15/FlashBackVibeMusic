@@ -77,18 +77,10 @@ public class MainActivity extends AppCompatActivity {
         locationAdapter = new LocationAdapter(); //LocationServices.getFusedLocationProviderClient(this));
         locationAdapter.establishLocationPermission(this, this);
         currentParameters = new CurrentParameters(locationAdapter);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
-        storeSongInfo();
         SwitchActivity swc = findViewById(R.id.switch_between_main);
         swc.display();
         loadSongs(csb);
-
-
         Button album = swc.getAlbum();
         album.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +91,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        storeSongInfo();
+        /*CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
+        SwitchActivity swc = findViewById(R.id.switch_between_main);
+        swc.display();
+        loadSongs(csb);
+        Button album = swc.getAlbum();
+        album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchAlbum();
+            }
+        });*/
+    }
+
+    // TODO: Can we make this work better?
     public void launchAlbum() {
         Intent intent = new Intent(this, Album_Activity.class);
         startActivity(intent);
@@ -120,7 +130,10 @@ public class MainActivity extends AppCompatActivity {
                         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
                         csb.display();
                         csb.setText(songToPlay);
-                        LatLng loc = currentParameters.getLocation();
+                        csb.setPlayPause(player);
+                        // TODO: Figure out why this gets a nullreferenceexception
+                        // why is locationAdapter null?
+                        //LatLng loc = currentParameters.getLocation();
                         String place = "San Diego";
                         String timeOfDay = currentParameters.getTimeOfDay();
                         Date lastPlayedTime = currentParameters.getLastPlayedTime();
@@ -128,7 +141,8 @@ public class MainActivity extends AppCompatActivity {
                         csb.setHistory("You're listening from " + place + " on a "
                                 + day + " " + timeOfDay);
                         player.play(songToPlay);
-                        songToPlay.setLastLocation(loc);
+                        // TODO: once the null pointer reference is fixed, uncomment this line too
+                        //songToPlay.setLastLocation(loc);
                         Set<String> timesOfDay = songToPlay.getTimesOfDay();
                         timesOfDay.add(timeOfDay);
                         songToPlay.setTimesOfDay(timesOfDay);
@@ -159,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
                         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
                         csb.display();
                         csb.setText(songToPlay);
+                        csb.setPlayPause(player);
                         LatLng loc = currentParameters.getLocation();
                         String place = "San Diego";
                         String timeOfDay = currentParameters.getTimeOfDay();

@@ -7,7 +7,7 @@
     android:layout_marginTop="415dp"
     android:layout_marginBottom="50dp"
     android:id="@+id/current_song_block"
-    android:gravity="bottom"
+    android:gravity="center_vertical"
     android:background="#ffcecece"
     android:translationZ="0.0dp">
 
