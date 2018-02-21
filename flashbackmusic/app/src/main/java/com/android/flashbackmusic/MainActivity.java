@@ -111,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
     // TODO: Can we make this work better?
     public void launchAlbum() {
         Intent intent = new Intent(this, Album_Activity.class);
-        intent.putExtra("playerObject", player);
         startActivity(intent);
     }
 

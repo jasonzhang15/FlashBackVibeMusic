@@ -1,7 +1,6 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -29,9 +28,7 @@ public class Album_Activity extends AppCompatActivity {
         songImporter = new SimpleSongImporter(app);
         songImporter.read();
 
-        Intent intent = getIntent();
-        Player mainPlayer = (Player) intent.getSerializableExtra("playerObject");
-        player = mainPlayer;
+        player = new Player(app);
 
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
