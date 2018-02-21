@@ -30,7 +30,7 @@ public class LocationAdapter implements LocationInterface {
     private Location location;
     private Context context;
 
-    LocationAdapter() { //FusedLocationProviderClient client) {
+    public LocationAdapter() { //FusedLocationProviderClient client) {
         locationProvider = LocationManager.GPS_PROVIDER;
         location = new Location(locationProvider);
     }
@@ -58,7 +58,7 @@ public class LocationAdapter implements LocationInterface {
 
     }
 
-    void establishLocationPermission(Context context, Activity activity) {
+    public void establishLocationPermission(Context context, Activity activity) {
 
         if (context == null || activity == null) return;
         this.context = context;
