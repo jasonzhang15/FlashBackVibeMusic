@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: Can we make this work better?
     public void launchAlbum() {
+        storeSongInfo();
         Intent intent = new Intent(this, Album_Activity.class);
         startActivity(intent);
     }
