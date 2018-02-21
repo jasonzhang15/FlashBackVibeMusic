@@ -88,7 +88,23 @@ public class MainActivity extends AppCompatActivity {
                 launchAlbum();
             }
         });
+        Button flashback = swc.getFlashback();
+        flashback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchFlashback();
+            }
+        });
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        locationAdapter.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public void launchFlashback(){
+        Intent intent = new Intent(this, FlashbackActivity.class);
+        startActivity(intent);
     }
 
     @Override
