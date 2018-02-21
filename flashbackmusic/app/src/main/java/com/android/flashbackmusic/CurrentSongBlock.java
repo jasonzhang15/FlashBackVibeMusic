@@ -16,6 +16,7 @@ public class CurrentSongBlock extends LinearLayout {
     ImageButton favoriteBtn;
     Player player;
     Context context;
+    Song song;
 
     public CurrentSongBlock(Context context, AttributeSet attr) {
         super(context, attr);
@@ -44,8 +45,45 @@ public class CurrentSongBlock extends LinearLayout {
         });
     }
 
-    public void LoadFavor (SongBlock songBlock){
-        favoriteBtn = songBlock.getFavorite();
+    public void loadFavor (Song song, SharedPrefsIO sp, SongBlock songBlock){
+        final Song song_f = song;
+        final SharedPrefsIO sp_f = sp;
+        final SongBlock songBlock_f = songBlock;
+        favoriteBtn = this.findViewById(R.id.current_song_favorite);
+        if (song_f.isFavorited()) {
+            favoriteBtn.setImageResource(android.R.drawable.checkbox_on_background);
+        } else if (song_f.isDisliked()) {
+            favoriteBtn.setImageResource(android.R.drawable.ic_delete);
+        } else{
+            favoriteBtn.setImageResource(android.R.drawable.ic_input_add);
+        }
+        favoriteBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!song_f.isFavorited() && !song_f.isDisliked()) {
+                    favoriteBtn.setImageResource(android.R.drawable.checkbox_on_background);
+                    //status = 1;
+                    song_f.setFavorited(true);
+                } else if (song_f.isFavorited()) {
+                    favoriteBtn.setImageResource(android.R.drawable.ic_delete);
+                    //status = -1;
+                    song_f.setFavorited(false);
+                    song_f.setDisliked(true);
+                    if (player.getSong() == song_f) {
+                        playPause.setImageResource(android.R.drawable.presence_offline);
+                        player.reset();
+                    }
+                } else {
+                    favoriteBtn.setImageResource(android.R.drawable.ic_input_add);
+                    //status = 0;
+                    song_f.setDisliked(false);
+                    playPause.setImageResource(android.R.drawable.ic_media_pause);
+                    player.play(song_f);
+                }
+                songBlock_f.loadFavor(song_f, sp_f);
+                sp_f.storeSongInfo(song_f);
+            }
+        });
         //        String keyPrefix = s.getTitle() + s.getArtist() + s.getAlbum();
 
         // waiting for SharedPrefsIO to update, currently no much getters from SharedPrefsIO
@@ -64,7 +102,7 @@ public class CurrentSongBlock extends LinearLayout {
     public void togglePlayPause() {
         if (player.isPlaying()) {
             playPause.setImageResource(android.R.drawable.ic_media_play);
-        } else {
+        } else if (!player.isReset()){
             playPause.setImageResource(android.R.drawable.ic_media_pause);
         }
     }
@@ -79,6 +117,7 @@ public class CurrentSongBlock extends LinearLayout {
 
 
     public void setText(Song song) {
+        this.song = song;
         TextView title = this.findViewById(R.id.current_song_title);
         title.setText(song.getTitle());
 

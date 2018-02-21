@@ -21,7 +21,6 @@ public class SongBlock extends LinearLayout {
     private TextView title;
     private TextView artistAlbum;
     private ImageButton favorite;
-    private int status;
     private Song song;
 
     public SongBlock(Context context) {
@@ -38,39 +37,44 @@ public class SongBlock extends LinearLayout {
         this.id = song.getId();
         this.song = song;
 
-        if (song.isFavorited()) {
-            status = 1;
-        } else if (song.isDisliked()) {
-            status = -1;
-        } else {
-            status = 0;
-        }
-
         initializeViews(context);
     }
 
-    public void LoadFavor() {
+    public void loadFavor(Song song, SharedPrefsIO sp) {
+        final Song song_f = song;
+        final SharedPrefsIO sp_f = sp;
         favorite = this.findViewById(R.id.song_favorite);
+        if (song_f.isFavorited()) {
+            favorite.setImageResource(android.R.drawable.checkbox_on_background);
+        } else if (song_f.isDisliked()) {
+            favorite.setImageResource(android.R.drawable.ic_delete);
+        } else{
+            favorite.setImageResource(android.R.drawable.ic_input_add);
+        }
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (status == 0) {
+                if (!song_f.isFavorited() && !song_f.isDisliked()) {
                     favorite.setImageResource(android.R.drawable.checkbox_on_background);
-                    status = 1;
-                    song.setFavorited(true);
-                } else if (status == 1) {
+                    //status = 1;
+                    song_f.setFavorited(true);
+
+                } else if (song_f.isFavorited()) {
                     favorite.setImageResource(android.R.drawable.ic_delete);
-                    status = -1;
-                    song.setFavorited(false);
-                    song.setDisliked(true);
+                    //status = -1;
+                    song_f.setFavorited(false);
+                    song_f.setDisliked(true);
                 } else {
                     favorite.setImageResource(android.R.drawable.ic_input_add);
-                    status = 0;
-                    song.setDisliked(false);
+                    //status = 0;
+                    song_f.setDisliked(false);
                 }
+
+                sp_f.storeSongInfo(song_f);
             }
         });
     }
+
 
     private void initializeViews(Context context) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -79,7 +83,6 @@ public class SongBlock extends LinearLayout {
 
     //set the title and artistAlbum
     public void setText() {
-        //Log.v("LOOK", "REACHED setText");
 
         title = this.findViewById(R.id.song_title);
         title.setText(titleText);

@@ -4,8 +4,6 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -20,7 +18,7 @@ public class CurrentParameters {
     private LatLng location;
     private String dayOfWeek;
     private String timeOfDay;
-
+    private Date lastPlayedTime;
     private TimeZone tz = TimeZone.getTimeZone("America/Los_Angeles");
 
     private double latDefault = 37;
@@ -28,10 +26,14 @@ public class CurrentParameters {
 
     public CurrentParameters() {}
 
+    public LatLng getLocation() {
+        if (locationHandler == null) return new LatLng(latDefault, lngDefault);
+        else return locationHandler.getCurrentLocation();
+    }
+
     public CurrentParameters(LocationInterface loc) {
         // Location
         locationHandler = loc;
-        //locationHandler.establishLocationPermission();
         location = getLocation();
         Log.d("cur location", "" + location);
 
@@ -40,12 +42,11 @@ public class CurrentParameters {
         dayOfWeek = getDayOfWeek();
 
         timeOfDay = getTimeOfDay();
+      
+        lastPlayedTime = calendar.getTime();
     }
 
-    public LatLng getLocation() {
-        if (locationHandler == null) return new LatLng(latDefault, lngDefault);
-        else return locationHandler.getCurrentLocation();
-    }
+    public LatLng getLocation() { return locationHandler.getCurrentLocation(); }
 
     public String getDayOfWeek() {
         calendar = Calendar.getInstance(tz);
@@ -78,6 +79,11 @@ public class CurrentParameters {
     }
 
     public void setLocation(LocationInterface loc) { location = loc.getCurrentLocation(); }
+
+    // public Date getLastPlayedTime() { return lastPlayedTime; }
+
+    //For testing purposes
+    protected void setLatLng(LatLng latLng){location = latLng;}
 
     //For testing purposes
     protected void setLatLng(LatLng latLng){location = latLng;}

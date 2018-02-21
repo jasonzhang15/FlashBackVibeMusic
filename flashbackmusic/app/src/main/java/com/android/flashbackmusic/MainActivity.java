@@ -1,19 +1,26 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
-import java.util.ArrayList;
-import android.content.Intent;
 import android.widget.Button;
+import android.widget.LinearLayout;
+
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,11 +40,18 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private Player player;
     private SimpleSongImporter songImporter;
+    private SharedPreferences prefs;
+    private SharedPrefsIO prefsIO;
     private Application app;
     private LocationInterface locationAdapter;
+    private ArrayList<Song> songList;
+    private CurrentParameters currentParameters;
+    private LocationAdapter locationAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -53,10 +67,12 @@ public class MainActivity extends AppCompatActivity {
         app = this.getApplication();
         songImporter = new SimpleSongImporter(app);
         songImporter.read();
+        prefs = getSharedPreferences("info", MODE_PRIVATE);
+        prefsIO = new SharedPrefsIO(prefs);
 
+        songList = songImporter.getSongList();
+        populateSongInfo();
         player = new Player(app);
-        Log.v("LOOK", Integer.toString(songImporter.getAlbumList().size()));
-        Log.v("LOOK", Integer.toString(songImporter.getSongList().size()));
 
         // Create the adapter to handle location tracking
         locationAdapter = new LocationAdapter();
@@ -64,14 +80,11 @@ public class MainActivity extends AppCompatActivity {
         //locationAdapter.getCurrentLocation();
         //CurrentParameters currentParameters = new CurrentParameters(locationAdapter);
 
+        currentParameters = new CurrentParameters(locationAdapter);
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
-        csb.setPlayPause(player);
-
         SwitchActivity swc = findViewById(R.id.switch_between_main);
         swc.display();
-        loadSongs();
-
-
+        loadSongs(csb);
         Button album = swc.getAlbum();
         album.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,38 +113,113 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        storeSongInfo();
+        /*CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
+        SwitchActivity swc = findViewById(R.id.switch_between_main);
+        swc.display();
+        loadSongs(csb);
+        Button album = swc.getAlbum();
+        album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchAlbum();
+            }
+        });*/
+    }
+
+    // TODO: Can we make this work better?
     public void launchAlbum() {
         Intent intent = new Intent(this, Album_Activity.class);
+        intent.putExtra("playerObject", player);
         startActivity(intent);
     }
 
-    public void loadSongs() {
-        final ArrayList<Song> songList = songImporter.getSongList();
+    public void loadSongs(CurrentSongBlock csb) {
         final LinearLayout layout = findViewById(R.id.main_layout);
         for (Song song : songList) {
             final Song songToPlay = song;
 
             final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
             songBlock.setText();
-            songBlock.LoadFavor();
+            songBlock.loadFavor(song, prefsIO);
             songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (!(songToPlay.isDisliked())) {
 
-                    CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
-                    csb.display();
-                    csb.setText(songToPlay);
-    //                    csb.setHistory("You're listening from " + songToPlay.getLocations() + " on a "
-    //                            + songToPlay.getDaysOfWeek() + " " + songToPlay.getTimesOfDay());
-                    csb.setHistory("You're listening from " + "San Diego" + " on a "
-                            + "Tuesday" + " " + "Morning");
-                    player.play(songToPlay);
-                    csb.togglePlayPause();
+                        CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
+                        csb.display();
+                        csb.setText(songToPlay);
+                        csb.setPlayPause(player);
+                        // TODO: Figure out why this gets a nullreferenceexception
+                        // why is locationAdapter null?
+                        //LatLng loc = currentParameters.getLocation();
+                        String place = "San Diego";
+                        String timeOfDay = currentParameters.getTimeOfDay();
+                        Date lastPlayedTime = currentParameters.getLastPlayedTime();
+                        String day = currentParameters.getDayOfWeek();
+                        csb.setHistory("You're listening from " + place + " on a "
+                                + day + " " + timeOfDay);
+                        player.play(songToPlay);
+                        // TODO: once the null pointer reference is fixed, uncomment this line too
+                        //songToPlay.setLastLocation(loc);
+                        Set<String> timesOfDay = songToPlay.getTimesOfDay();
+                        timesOfDay.add(timeOfDay);
+                        songToPlay.setTimesOfDay(timesOfDay);
+                        songToPlay.setLastPlayedTime(lastPlayedTime);
+                        csb.loadFavor(songToPlay, prefsIO, songBlock);
+                        csb.setText(songToPlay);
+                        csb.togglePlayPause();
+                    }
                 }
             });
             layout.addView(songBlock);
         }
     }
+
+    public void loadSongs() {
+        final LinearLayout layout = findViewById(R.id.main_layout);
+        for (Song song : songList) {
+            final Song songToPlay = song;
+
+            final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
+            songBlock.setText();
+            songBlock.loadFavor(song, prefsIO);
+            songBlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!(songToPlay.isDisliked())) {
+
+                        CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
+                        csb.display();
+                        csb.setText(songToPlay);
+                        csb.setPlayPause(player);
+                        LatLng loc = currentParameters.getLocation();
+                        String place = "San Diego";
+                        String timeOfDay = currentParameters.getTimeOfDay();
+                        Date lastPlayedTime = currentParameters.getLastPlayedTime();
+                        String day = currentParameters.getDayOfWeek();
+                        csb.setHistory("You're listening from " + place + " on a "
+                                + day + " " + timeOfDay);
+                        player.play(songToPlay);
+                        songToPlay.setLastLocation(loc);
+                        Set<String> timesOfDay = songToPlay.getTimesOfDay();
+                        timesOfDay.add(timeOfDay);
+                        songToPlay.setTimesOfDay(timesOfDay);
+                        songToPlay.setLastPlayedTime(lastPlayedTime);
+                        csb.loadFavor(songToPlay, prefsIO, songBlock);
+                        csb.setText(songToPlay);
+                        csb.togglePlayPause();
+                    }
+                }
+            });
+            layout.addView(songBlock);
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -153,6 +241,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+        }
+
+    private void populateSongInfo() {
+        for (Song song : songList) {
+            Log.v("jocelyn", song.getTitle());
+            prefsIO.populateSongInfo(song);
+        }
+    }
+
+    private void storeSongInfo() {
+        for (Song song : songList) {
+            Log.v("jocelyn", song.getTitle());
+            prefsIO.storeSongInfo(song);
+        }
     }
 
 }
+
