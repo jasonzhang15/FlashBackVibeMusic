@@ -1,5 +1,9 @@
 package com.android.flashbackmusic;
 import java.util.*;
+
+import android.util.Log;
+
+
 /**
  * Stores information about a single album
  */
@@ -53,6 +57,7 @@ public class Album {
             @Override
             public void onSongCompletion() {
                 if (!(songQueue.isEmpty())) {
+                    Log.v("Currently playing " , songQueue.peek().getTitle());
                     p.play(songQueue.poll());
                 }
             }
