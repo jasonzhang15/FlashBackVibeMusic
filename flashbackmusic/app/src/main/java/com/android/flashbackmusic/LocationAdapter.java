@@ -12,6 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 
 /**
  * Created by nataliepopescu on 2/17/18.
@@ -20,38 +22,39 @@ import android.widget.Toast;
 public class LocationAdapter implements LocationInterface {
 
     // The entry point to the Fused Location Provider.
-    //private FusedLocationProviderClient mFusedLocationClient;
-    //private LocationRequest mLocationRequest;
-    //private LocationCallback mLocationCallback;
+
     private String locationProvider;
     private LocationManager locationManager;
 
     // Compose Location
     private Location location;
     private Context context;
-    //private Activity activity;
-    //private Task<Location> task;
 
     LocationAdapter() { //FusedLocationProviderClient client) {
-        //mFusedLocationClient = client;
-        //mLocationRequest = LocationRequest.create();
         locationProvider = LocationManager.GPS_PROVIDER;
         location = new Location(locationProvider);
     }
 
     public double getLatitude() { return location.getLatitude(); }
 
+    public void setLatitude(double latitude) { location.setLatitude(latitude); }
+
     public double getLongitude() { return location.getLongitude(); }
 
-    void getCurrentLocation() {
+    public void setLongitude(double longitude) { location.setLongitude(longitude); }
+
+    public LatLng getCurrentLocation() {
+
+        if (context == null) return null;
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+            return null;
         }
 
         location = locationManager.getLastKnownLocation(locationProvider);
         Log.v("CURLOC: ", "" + location);
+        return new LatLng(location.getLatitude(), location.getLongitude());
 
     }
 
@@ -117,17 +120,6 @@ public class LocationAdapter implements LocationInterface {
 
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
-
-        /*LocationCallback mLocationCallback = new LocationCallback() {
-            public void onLocationChanged(Location curLocation) {
-                location = curLocation;
-                Log.d("new location is: ", "" + location);
-            }
-        };
-
-        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                mLocationCallback,
-                null);*/
     }
 
 }

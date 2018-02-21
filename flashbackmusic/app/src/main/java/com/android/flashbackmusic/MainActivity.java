@@ -63,11 +63,7 @@ public class MainActivity extends AppCompatActivity {
         locationAdapter.establishLocationPermission(this, this);
         //locationAdapter.getCurrentLocation();
         CurrentParameters currentParameters = new CurrentParameters(locationAdapter);
-    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        locationAdapter.onRequestPermissionsResult(requestCode, permissions, grantResults);
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
 
@@ -84,6 +80,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button flashback = swc.getFlashback();
+        flashback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchFlashback();
+            }
+        });
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        locationAdapter.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public void launchFlashback(){
+        Intent intent = new Intent(this, FlashbackActivity.class);
+        startActivity(intent);
     }
 
     public void launchAlbum() {
