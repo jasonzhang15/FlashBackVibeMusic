@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences prefs;
     private SharedPrefsIO prefsIO;
     private Application app;
+    private LocationInterface locationAdapter;
     private ArrayList<Song> songList;
     private CurrentParameters currentParameters;
     private LocationAdapter locationAdapter;
@@ -74,8 +75,11 @@ public class MainActivity extends AppCompatActivity {
         player = new Player(app);
 
         // Create the adapter to handle location tracking
-        locationAdapter = new LocationAdapter(); //LocationServices.getFusedLocationProviderClient(this));
+        locationAdapter = new LocationAdapter();
         locationAdapter.establishLocationPermission(this, this);
+        //locationAdapter.getCurrentLocation();
+        //CurrentParameters currentParameters = new CurrentParameters(locationAdapter);
+
         currentParameters = new CurrentParameters(locationAdapter);
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         SwitchActivity swc = findViewById(R.id.switch_between_main);
@@ -89,6 +93,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button flashback = swc.getFlashback();
+        flashback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchFlashback();
+            }
+        });
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        locationAdapter.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public void launchFlashback(){
+        Intent intent = new Intent(this, FlashbackActivity.class);
+        startActivity(intent);
     }
 
     @Override

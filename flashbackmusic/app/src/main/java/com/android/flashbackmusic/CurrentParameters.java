@@ -19,10 +19,17 @@ public class CurrentParameters {
     private String dayOfWeek;
     private String timeOfDay;
     private Date lastPlayedTime;
-  
     private TimeZone tz = TimeZone.getTimeZone("America/Los_Angeles");
 
+    private double latDefault = 37;
+    private double lngDefault = 151;
+
     public CurrentParameters() {}
+
+    public LatLng getLocation() {
+        if (locationHandler == null) return new LatLng(latDefault, lngDefault);
+        else return locationHandler.getCurrentLocation();
+    }
 
     public CurrentParameters(LocationInterface loc) {
         // Location
@@ -71,9 +78,12 @@ public class CurrentParameters {
         return calendar.getTime();
     }
 
-    public Date getLastPlayedTime() { return lastPlayedTime; }
+    public void setLocation(LocationInterface loc) { location = loc.getCurrentLocation(); }
 
-    public void setLocation(LocationInterface loc) { location = new LatLng(loc.getLatitude(), loc.getLongitude()); }
+    // public Date getLastPlayedTime() { return lastPlayedTime; }
+
+    //For testing purposes
+    protected void setLatLng(LatLng latLng){location = latLng;}
 
     //For testing purposes
     protected void setLatLng(LatLng latLng){location = latLng;}
