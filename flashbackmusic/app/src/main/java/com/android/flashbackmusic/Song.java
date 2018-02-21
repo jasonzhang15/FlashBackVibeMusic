@@ -51,6 +51,7 @@ class Song {
         this.track_number = track_number;
         this.genre = genre;
         this.year = year;
+        this.lastPlayedTime = new Date(100000000);
 
         favorited = false;
         disliked = false;

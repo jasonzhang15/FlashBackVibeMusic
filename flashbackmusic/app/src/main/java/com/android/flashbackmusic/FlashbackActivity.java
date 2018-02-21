@@ -31,7 +31,7 @@ public class FlashbackActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.flashback_mode);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
 
         app = this.getApplication();
         songImporter = new SimpleSongImporter(app);
@@ -60,10 +60,13 @@ public class FlashbackActivity extends AppCompatActivity {
     private void loadFlashback() {
         final ArrayList<Song> songList = songImporter.getSongList();
         final ArrayList<Album> albumList = songImporter.getAlbumList();
+        setContentView(R.layout.activity_main);
         final LinearLayout layout = findViewById(R.id.main_layout);
 
+        LocationInterface locationAdapter = new LocationAdapter();
+        locationAdapter.establishLocationPermission(this, this);
 
-        FlashbackOrderGenerator fog = new FlashbackOrderGenerator(new CurrentParameters(), songList);
+        FlashbackOrderGenerator fog = new FlashbackOrderGenerator(new CurrentParameters(locationAdapter), songList);
         this.songs = fog.getSongList();
 
         fog.play(player);

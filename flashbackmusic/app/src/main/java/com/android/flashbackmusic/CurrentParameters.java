@@ -23,11 +23,15 @@ public class CurrentParameters {
 
     private TimeZone tz = TimeZone.getTimeZone("America/Los_Angeles");
 
+    private double latDefault = 37;
+    private double lngDefault = 151;
+
     public CurrentParameters() {}
 
     public CurrentParameters(LocationInterface loc) {
         // Location
         locationHandler = loc;
+        //locationHandler.establishLocationPermission();
         location = getLocation();
         Log.d("cur location", "" + location);
 
@@ -38,7 +42,10 @@ public class CurrentParameters {
         timeOfDay = getTimeOfDay();
     }
 
-    public LatLng getLocation() { return locationHandler.getCurrentLocation(); }
+    public LatLng getLocation() {
+        if (locationHandler == null) return new LatLng(latDefault, lngDefault);
+        else return locationHandler.getCurrentLocation();
+    }
 
     public String getDayOfWeek() {
         calendar = Calendar.getInstance(tz);

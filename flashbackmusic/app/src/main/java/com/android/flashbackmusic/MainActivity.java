@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private Player player;
     private SimpleSongImporter songImporter;
     private Application app;
-    private LocationAdapter locationAdapter;
+    private LocationInterface locationAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +59,10 @@ public class MainActivity extends AppCompatActivity {
         Log.v("LOOK", Integer.toString(songImporter.getSongList().size()));
 
         // Create the adapter to handle location tracking
-        locationAdapter = new LocationAdapter(); //LocationServices.getFusedLocationProviderClient(this));
+        locationAdapter = new LocationAdapter();
         locationAdapter.establishLocationPermission(this, this);
         //locationAdapter.getCurrentLocation();
-        CurrentParameters currentParameters = new CurrentParameters(locationAdapter);
+        //CurrentParameters currentParameters = new CurrentParameters(locationAdapter);
 
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
