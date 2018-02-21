@@ -49,7 +49,7 @@ public class SimpleSongImporter implements SongImporter {
 
             int id = app.getResources().getIdentifier(field.getName(), "raw", app.getPackageName());
 
-            // Log.v("LOOK", title + " | " + artist + " | " + track_number + " | " + genre + " | " + year + " | " + album_name);
+            Log.v("LOOK", title + " | " + artist + " | " + track_number + " | " + genre + " | " + year + " | " + album_name);
 
             Album album = null;
 
