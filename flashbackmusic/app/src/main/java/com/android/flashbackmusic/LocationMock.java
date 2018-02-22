@@ -1,5 +1,8 @@
 package com.android.flashbackmusic;
 
+import android.app.Activity;
+import android.content.Context;
+
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -24,4 +27,8 @@ public class LocationMock implements LocationInterface {
 
     public void setLongitude(double longitude) { locationAdapter.setLongitude(longitude); }
 
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) { ; }
+
+    @Override
+    public void establishLocationPermission(Context context, Activity activity) { ; }
 }

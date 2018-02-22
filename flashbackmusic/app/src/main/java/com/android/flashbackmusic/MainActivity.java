@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         locationAdapter = new LocationAdapter(); //LocationServices.getFusedLocationProviderClient(this));
         locationAdapter.establishLocationPermission(this, this);
         currentParameters = new CurrentParameters(locationAdapter);
+        locationAdapter.getCurrentLocation();
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         SwitchActivity swc = findViewById(R.id.switch_between_main);
         swc.display();
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 launchAlbum();
             }
         });
+
         Button flashback = swc.getFlashback();
         flashback.setOnClickListener(new View.OnClickListener() {
             @Override
