@@ -57,7 +57,7 @@ public class FlashbackActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         final LinearLayout layout = findViewById(R.id.main_layout);
 
-        LocationAdapter locationAdapter = new LocationAdapter();
+        LocationInterface locationAdapter = new LocationAdapter();
         locationAdapter.establishLocationPermission(this, this);
 
         FlashbackOrderGenerator fog = new FlashbackOrderGenerator(new CurrentParameters(locationAdapter), songList);
