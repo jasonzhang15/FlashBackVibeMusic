@@ -29,15 +29,16 @@ public class Album_Activity extends AppCompatActivity {
         songImporter = new SimpleSongImporter(app);
         songImporter.read();
 
+//        Bundle bundle = new Bundle();
+//        player = (Player) bundle.getSerializable("player");
+
         Intent intent = getIntent();
-        Player mainPlayer = (Player) intent.getSerializableExtra("playerObject");
-        player = mainPlayer;
+        player = (Player) intent.getSerializableExtra("player");
 
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
 
         SwitchActivity swc = findViewById(R.id.switch_between_main);
-        swc.display();
 
         loadAlbums();
 

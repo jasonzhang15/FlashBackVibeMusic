@@ -23,10 +23,7 @@
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="@string/app_name">
-
-        </android.support.v7.widget.Toolbar>
-
+            app:title="@string/app_name" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -42,18 +39,24 @@
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <com.android.flashbackmusic.SongMode
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical"
             android:layout_marginTop="70dp"
-            android:id="@+id/main_layout"
-            >
+            android:id="@+id/song_main" />
 
-        </LinearLayout>
     </ScrollView>
 
+    <com.android.flashbackmusic.AlbumMode
+        android:id="@+id/album_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
+    <com.android.flashbackmusic.FlashbackMode
+        android:id="@+id/flashback_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <com.android.flashbackmusic.CurrentSongBlock
         android:id="@+id/current_song_block_main"
@@ -64,10 +67,5 @@
         android:id="@+id/switch_between_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-
-
-
-
 
 </android.support.design.widget.CoordinatorLayout>

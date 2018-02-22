@@ -46,8 +46,6 @@ public class CurrentParameters {
         lastPlayedTime = calendar.getTime();
     }
 
-    public LatLng getLocation() { return locationHandler.getCurrentLocation(); }
-
     public String getDayOfWeek() {
         calendar = Calendar.getInstance(tz);
         int day = calendar.get(Calendar.DAY_OF_WEEK);
@@ -80,10 +78,7 @@ public class CurrentParameters {
 
     public void setLocation(LocationInterface loc) { location = loc.getCurrentLocation(); }
 
-    // public Date getLastPlayedTime() { return lastPlayedTime; }
-
-    //For testing purposes
-    protected void setLatLng(LatLng latLng){location = latLng;}
+    public Date getLastPlayedTime() { return lastPlayedTime; }
 
     //For testing purposes
     protected void setLatLng(LatLng latLng){location = latLng;}

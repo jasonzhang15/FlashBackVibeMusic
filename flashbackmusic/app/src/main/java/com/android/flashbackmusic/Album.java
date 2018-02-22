@@ -1,7 +1,9 @@
 package com.android.flashbackmusic;
 import java.util.*;
 
+import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 
 
 /**

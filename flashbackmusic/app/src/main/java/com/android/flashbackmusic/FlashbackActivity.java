@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlashbackActivity extends AppCompatActivity {
-    private ViewPager mViewPager;
     private Player player;
     private SimpleSongImporter songImporter;
     private Application app;
@@ -30,20 +29,22 @@ public class FlashbackActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.flashback_mode);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
 
         app = this.getApplication();
-        songImporter = new SimpleSongImporter(app);
-        songImporter.read();
+//        songImporter = new SimpleSongImporter(app);
+//        songImporter.read();
 
-        player = new Player(app);
+        Bundle bundle = new Bundle();
+        songs = (List<Song>) bundle.getSerializable("songs");
+
+        player = (Player) bundle.getSerializable("player");
+
+        //player = new Player(app);
 
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         csb.setPlayPause(player);
 
         SwitchActivity swc = findViewById(R.id.switch_between_main);
-        swc.display();
 
         loadFlashback();
 
@@ -59,7 +60,6 @@ public class FlashbackActivity extends AppCompatActivity {
 
     private void loadFlashback() {
         final ArrayList<Song> songList = songImporter.getSongList();
-        final ArrayList<Album> albumList = songImporter.getAlbumList();
         setContentView(R.layout.activity_main);
         final LinearLayout layout = findViewById(R.id.main_layout);
 
@@ -75,6 +75,7 @@ public class FlashbackActivity extends AppCompatActivity {
         flashback.setHistory("You're listening from " + "San Diego" + " on a "
                 + "Tuesday" + " " + "Morning");
         layout.addView(flashback);
+        flashback.display(true);
     }
 
 }

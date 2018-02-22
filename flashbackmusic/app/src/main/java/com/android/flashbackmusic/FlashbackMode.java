@@ -1,8 +1,6 @@
 package com.android.flashbackmusic;
 
-/**
- * Created by mac on 20/02/2018.
- */
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -14,13 +12,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
-public class FlashbackMode extends LinearLayout implements SongView {
+public class FlashbackMode extends LinearLayout{
 
     ImageButton playPause;
     ImageButton favoriteBtn;
     Player player;
     Context context;
-    Button disableFlashback;
+    boolean display;
 
     public FlashbackMode(Context context, AttributeSet attr) {
         super(context, attr);
@@ -31,7 +29,15 @@ public class FlashbackMode extends LinearLayout implements SongView {
     private void initializeViews(Context context) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.flashback_mode, this);
-        //this.hide();
+        this.display(false);
+    }
+
+    public void display(boolean display) {
+        if (display)  {
+            this.setVisibility(LinearLayout.VISIBLE);
+        } else {
+            this.setVisibility(LinearLayout.INVISIBLE);
+        }
     }
 
     public void setPlayPause(final Player player) {
@@ -55,14 +61,6 @@ public class FlashbackMode extends LinearLayout implements SongView {
         } else {
             playPause.setImageResource(android.R.drawable.ic_media_pause);
         }
-    }
-
-    public void hide() {
-        this.setVisibility(LinearLayout.INVISIBLE);
-    }
-
-    public void display() {
-        this.setVisibility(LinearLayout.VISIBLE);
     }
 
     public void setText(Song song) {

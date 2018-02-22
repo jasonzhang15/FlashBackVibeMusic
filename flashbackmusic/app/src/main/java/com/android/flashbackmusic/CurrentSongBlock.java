@@ -27,7 +27,7 @@ public class CurrentSongBlock extends LinearLayout {
     private void initializeViews(Context context) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.current_song_block, this);
-        this.hide();
+        this.display(false);
     }
 
     public void setPlayPause(final Player player) {
@@ -107,14 +107,13 @@ public class CurrentSongBlock extends LinearLayout {
         }
     }
 
-    public void display() {
-        this.setVisibility(LinearLayout.VISIBLE);
+    public void display(boolean display) {
+        if (display)  {
+            this.setVisibility(LinearLayout.VISIBLE);
+        } else {
+            this.setVisibility(LinearLayout.INVISIBLE);
+        }
     }
-
-    public void hide() {
-        this.setVisibility(LinearLayout.INVISIBLE);
-    }
-
 
     public void setText(Song song) {
         this.song = song;
@@ -137,19 +136,4 @@ public class CurrentSongBlock extends LinearLayout {
         return this.findViewById(R.id.current_song_favorite);
 
     }
-
-    public void setFavorite(String fav) {
-        favoriteBtn = this.findViewById(R.id.current_song_favorite);
-
-        /*
-        if (fav.equals("neutral")) {
-            favoriteBtn.setImageResource(R.drawable.);
-        } else if (fav.equals("favorite")) {
-            favoriteBtn.setImageResource(R.drawable.);
-        } else {
-            favoriteBtn.setImageResource();
-        }
-        */
-    }
-
 }

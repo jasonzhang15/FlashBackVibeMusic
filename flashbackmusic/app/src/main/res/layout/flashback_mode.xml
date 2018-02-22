@@ -10,19 +10,15 @@
         android:id="@+id/flashback_disable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Turn Flashback Mode Off"
+        android:text="Leave Flashback Mode"
         android:layout_margin="6dp"/>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_gravity="center"
         android:gravity="center"
-        android:paddingBottom="20dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp">
+        android:padding="10dp" >
 
         <ImageButton
             android:id="@+id/flashback_playPause"
@@ -83,16 +79,5 @@
             android:textStyle="italic"/>
 
     </LinearLayout>
-
-    <com.android.flashbackmusic.CurrentSongBlock
-        android:id="@+id/current_song_block_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <com.android.flashbackmusic.SwitchActivity
-        android:id="@+id/switch_between_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
 
 </LinearLayout>

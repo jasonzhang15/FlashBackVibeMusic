@@ -46,6 +46,7 @@ public class AlbumBlock extends LinearLayout {
     public void setText() {
         albumView = this.findViewById(R.id.album_title);
         albumView.setText(albumName);
+
         artistView = this.findViewById(R.id.artist_title);
         artistView.setText(artistName);
     }
@@ -54,7 +55,7 @@ public class AlbumBlock extends LinearLayout {
         this.player = player;
 
         playPause = this.findViewById(R.id.album_play);
-        Log.v("zhikai", playPause.toString());
+        Log.v("LOOK", playPause.toString());
 
         playPause.setOnClickListener(new View.OnClickListener() {
             @Override
