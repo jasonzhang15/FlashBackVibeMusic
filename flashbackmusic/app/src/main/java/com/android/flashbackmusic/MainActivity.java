@@ -105,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launchFlashback(){
+        storeSongInfo();
+        Log.v("flashbackmode", "called");
         Intent intent = new Intent(this, FlashbackActivity.class);
         startActivity(intent);
     }

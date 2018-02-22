@@ -4,18 +4,12 @@ import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.time.DayOfWeek;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-/**
- * Created by vrkumar on 2/18/18.
- */
 
 public class FlashbackOrderGenerator {
     final static double MAX_DIST_METERS = 304.8;

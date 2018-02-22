@@ -37,6 +37,10 @@
             android:name=".Album_Activity"
             android:label="@string/title_activity_album_"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".FlashbackActivity"
+            android:label="@string/title_activity_flashback_"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

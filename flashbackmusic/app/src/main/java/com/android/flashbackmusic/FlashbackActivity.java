@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -26,7 +27,7 @@ public class FlashbackActivity extends AppCompatActivity {
         setContentView(R.layout.flashback_mode);
         Toolbar toolbar = findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
-
+        Log.v("flashbackmode", "oncreate");
         app = this.getApplication();
         songImporter = new SimpleSongImporter(app);
         songImporter.read();

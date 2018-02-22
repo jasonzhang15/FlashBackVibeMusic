@@ -12,7 +12,7 @@ import java.util.Set;
  * Stores information about a single song
  */
 
-public class Song {
+class Song {
 
     private FileDescriptor filePath;
     private String title;
@@ -34,13 +34,13 @@ public class Song {
     private int id;
 
     public Song(){
-        favorited = false;
-        disliked = false;
-        locations = new ArrayList<>();
-        timesOfDay = new HashSet<>();
-        daysOfWeek = new HashSet<>();
-        lastPlayedTime = null;
-        lastLocation = new LatLng(0,0);
+        this.favorited = false;
+        this.disliked = false;
+        this.locations = new ArrayList<>();
+        this.timesOfDay = new HashSet<>();
+        this.daysOfWeek = new HashSet<>();
+        this.lastPlayedTime = new Date(100000000);
+        this.lastLocation = new LatLng(37,45);
     }
 
     public Song(int id, String title, String artist, Album album, String album_art, String track_number, String genre, String year) {
@@ -53,6 +53,7 @@ public class Song {
         this.track_number = track_number;
         this.genre = genre;
         this.year = year;
+
     }
 
     /* TODO
