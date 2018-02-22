@@ -2,7 +2,6 @@ package com.android.flashbackmusic;
 
 import android.app.Activity;
 import android.content.Context;
-
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -18,4 +17,5 @@ public interface LocationInterface {
     LatLng getCurrentLocation();
     void establishLocationPermission(Context context, Activity activity);
     void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults);
+
 }

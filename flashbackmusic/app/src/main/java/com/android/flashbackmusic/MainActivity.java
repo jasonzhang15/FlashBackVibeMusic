@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences prefs;
     private SharedPrefsIO prefsIO;
     private Application app;
+    private LocationInterface locationAdapter;
     private ArrayList<Song> songList;
     private CurrentParameters currentParameters;
     private LocationAdapter locationAdapter;
@@ -74,8 +75,11 @@ public class MainActivity extends AppCompatActivity {
         player = new Player(app);
 
         // Create the adapter to handle location tracking
-        locationAdapter = new LocationAdapter(); //LocationServices.getFusedLocationProviderClient(this));
+        locationAdapter = new LocationAdapter();
         locationAdapter.establishLocationPermission(this, this);
+        //locationAdapter.getCurrentLocation();
+        //CurrentParameters currentParameters = new CurrentParameters(locationAdapter);
+
         currentParameters = new CurrentParameters(locationAdapter);
         locationAdapter.getCurrentLocation();
         CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
