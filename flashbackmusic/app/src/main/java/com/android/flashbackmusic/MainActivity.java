@@ -1,12 +1,10 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,9 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -105,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 sm.display(false);
                 fm.display(false);
+                Log.v("album button pressed", "album");
                 //csb.display(false);
                 am.display(true);
             }
@@ -115,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 sm.display(false);
-                am.display(false);
+                //am.display(false);
                 fm.display(true);
 
                 // disable songs and album tabs?
@@ -152,13 +148,13 @@ public class MainActivity extends AppCompatActivity {
         for (Album album : albumList) {
             final AlbumBlock albumBlock = new AlbumBlock(this, album);
             final Album albumtoPlay = album;
+            Log.v("albums", "in loadAlbums " + album.getTitle());
             albumBlock.setText();
             albumBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    albumBlock.setPlayPause(player);
                     albumtoPlay.play(player);
-                    //albumBlock.togglePlayPause();
+                    albumBlock.setPlayPause(player);
                 }
             });
             am.addView(albumBlock);

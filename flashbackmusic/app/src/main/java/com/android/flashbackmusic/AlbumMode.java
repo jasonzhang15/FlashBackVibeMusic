@@ -4,11 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 
 public class AlbumMode extends LinearLayout {
@@ -33,8 +31,10 @@ public class AlbumMode extends LinearLayout {
 
     public void display(boolean display) {
         if (display)  {
+            Log.v("AM", "display is true");
             this.setVisibility(LinearLayout.VISIBLE);
         } else {
+            Log.v("AM", "display false");
             this.setVisibility(LinearLayout.INVISIBLE);
         }
     }
