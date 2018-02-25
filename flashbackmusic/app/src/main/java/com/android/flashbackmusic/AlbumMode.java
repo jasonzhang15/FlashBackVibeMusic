@@ -32,13 +32,16 @@ public class AlbumMode extends LinearLayout {
     public void display(boolean display) {
         if (display)  {
             Log.v("AM", "display is true");
-            this.setVisibility(LinearLayout.VISIBLE);
+            //this.setVisibility(View.VISIBLE);
+            //this.bringToFront();
+            display();
         } else {
             Log.v("AM", "display false");
-            this.setVisibility(LinearLayout.INVISIBLE);
+            hide();
+            //this.setVisibility(View.GONE);
         }
-    }
 
+    }
 
     public void togglePlayPause() {
         if (player.isPlaying()) {
@@ -47,4 +50,13 @@ public class AlbumMode extends LinearLayout {
             playPause.setImageResource(android.R.drawable.ic_media_pause);
         }
     }
+
+    public void hide() {
+        this.setVisibility(LinearLayout.GONE);
+    }
+
+    public void display() {
+        this.setVisibility(LinearLayout.VISIBLE);
+    }
+
 }

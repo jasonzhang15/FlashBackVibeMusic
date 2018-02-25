@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
         currentParameters = new CurrentParameters(locationAdapter);
 
-        sm = findViewById(R.id.song_main);
         am = findViewById(R.id.album_main);
+        sm = findViewById(R.id.song_main);
         fm = findViewById(R.id.flashback_main);
         csb = findViewById(R.id.current_song_block_main);
 
@@ -89,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
                 fm.display(false);
                 am.display(false);
                 sm.display(true);
+                //setContentView(R.layout.song_mode);
+
 
                 // if music is playing, show csb
             }
@@ -103,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.v("album button pressed", "album");
                 //csb.display(false);
                 am.display(true);
+                //setContentView(R.layout.album_mode);
+
             }
         });
 
@@ -111,8 +115,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 sm.display(false);
-                //am.display(false);
+                am.display(false);
                 fm.display(true);
+                //setContentView(R.layout.flashback_mode);
+
 
                 // disable songs and album tabs?
 
@@ -143,21 +149,21 @@ public class MainActivity extends AppCompatActivity {
         });*/
     }
 
-
     private void loadAlbums() {
         for (Album album : albumList) {
-            final AlbumBlock albumBlock = new AlbumBlock(this, album);
+            final AlbumBlock albumBlock = new AlbumBlock(getApplicationContext(), album);
             final Album albumtoPlay = album;
-            Log.v("albums", "in loadAlbums " + album.getTitle());
             albumBlock.setText();
+            Log.v("albums", "in loadAlbums " + album.getTitle());
             albumBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    albumtoPlay.play(player);
                     albumBlock.setPlayPause(player);
+                    albumtoPlay.play(player);
                 }
             });
             am.addView(albumBlock);
+
         }
     }
 

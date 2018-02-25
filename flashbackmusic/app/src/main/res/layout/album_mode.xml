@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:id="@+id/album_mode"
     android:orientation="vertical"
-    android:layout_marginTop="70dp"
-    >
+    android:visibility="gone">
 
 </LinearLayout>
