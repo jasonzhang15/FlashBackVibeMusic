@@ -29,10 +29,15 @@ public class LocationAdapter implements LocationInterface {
     // Compose Location
     private Location location;
     private Context context;
+  
+    //private double latDefault = 37;
+    //private double lngDefault = 151;
 
     LocationAdapter() { //FusedLocationProviderClient client) {
         locationProvider = LocationManager.GPS_PROVIDER;
         location = new Location(locationProvider);
+        //location.setLatitude(latDefault);
+        //location.setLongitude(lngDefault);
     }
 
     public double getLatitude() { return location.getLatitude(); }
@@ -52,13 +57,16 @@ public class LocationAdapter implements LocationInterface {
             return null;
         }
 
-        location = locationManager.getLastKnownLocation(locationProvider);
+        Location tempLoc = locationManager.getLastKnownLocation(locationProvider);
+        if (tempLoc != null) {
+            location = tempLoc;
+        }
         Log.v("CURLOC: ", "" + location);
         return new LatLng(location.getLatitude(), location.getLongitude());
 
     }
 
-    void establishLocationPermission(Context context, Activity activity) {
+    public void establishLocationPermission(Context context, Activity activity) {
 
         if (context == null || activity == null) return;
         this.context = context;
@@ -75,7 +83,7 @@ public class LocationAdapter implements LocationInterface {
         }
     }
 
-    void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 100: {
                 // If request is cancelled, the result arrays are empty.

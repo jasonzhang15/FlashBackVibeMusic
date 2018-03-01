@@ -5,14 +5,15 @@ import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Plays a specific song, and is responsible for displaying metadata as well
  */
-
-public class Player {
+@SuppressWarnings("serial") //With this annotation we are going to hide compiler warnings
+public class Player implements Serializable {
 
     private MediaPlayer mediaPlayer;
     private Application app;

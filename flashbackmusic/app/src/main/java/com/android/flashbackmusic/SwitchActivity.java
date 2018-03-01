@@ -20,16 +20,13 @@ public class SwitchActivity extends LinearLayout{
     public SwitchActivity(Context context, AttributeSet attr) {
         super(context, attr);
         this.context = context;
+
         initializeViews(context);
     }
 
     private void initializeViews(Context context) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.switch_between, this);
-    }
-
-    public void display() {
-        this.setVisibility(LinearLayout.VISIBLE);
     }
 
     public Button getAlbum() {

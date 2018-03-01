@@ -13,9 +13,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-/**
- * Created by vrkumar on 2/18/18.
- */
 
 public class FlashbackOrderGenerator {
     final static double MAX_DIST_METERS = 304.8;

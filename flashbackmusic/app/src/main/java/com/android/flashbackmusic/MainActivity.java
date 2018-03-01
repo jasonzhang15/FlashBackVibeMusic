@@ -1,35 +1,22 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.os.Bundle;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
-
-import java.util.Calendar;
-import java.util.ArrayList;
-import java.util.Date;
-
-import java.util.ArrayList;
-import android.content.Intent;
 import android.widget.Button;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,22 +28,21 @@ public class MainActivity extends AppCompatActivity {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    //private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
     private Player player;
     private SimpleSongImporter songImporter;
     private SharedPreferences prefs;
     private SharedPrefsIO prefsIO;
     private Application app;
-
     private ArrayList<Song> songList;
-
+    private ArrayList<Album> albumList;
+    private CurrentParameters currentParameters;
     private LocationAdapter locationAdapter;
 
+    private SongMode sm;
+    private AlbumMode am;
+    private FlashbackMode fm;
+    private CurrentSongBlock csb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        //mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
-        // mViewPager = findViewById(R.id.container);
-        // mViewPager.setAdapter(mSectionsPagerAdapter);
         app = this.getApplication();
         songImporter = new SimpleSongImporter(app);
         songImporter.read();
@@ -81,54 +61,139 @@ public class MainActivity extends AppCompatActivity {
         prefsIO = new SharedPrefsIO(prefs);
 
         songList = songImporter.getSongList();
+        albumList = songImporter.getAlbumList();
         populateSongInfo();
         player = new Player(app);
-        Log.v("LOOK", Integer.toString(songImporter.getAlbumList().size()));
-        Log.v("LOOK", Integer.toString(songImporter.getSongList().size()));
 
         // Create the adapter to handle location tracking
-        locationAdapter = new LocationAdapter(); //LocationServices.getFusedLocationProviderClient(this));
+        locationAdapter = new LocationAdapter();
         locationAdapter.establishLocationPermission(this, this);
-        CurrentParameters currentParameters = new CurrentParameters(locationAdapter);
+        //locationAdapter.getCurrentLocation();
+
+        currentParameters = new CurrentParameters(locationAdapter);
+
+        am = findViewById(R.id.album_main);
+        sm = findViewById(R.id.song_main);
+        fm = findViewById(R.id.flashback_main);
+        csb = findViewById(R.id.current_song_block_main);
+
+        loadSongs();
+        loadAlbums();
+
+        SwitchActivity swc = findViewById(R.id.switch_between_main);
+
+        Button songsTab = swc.getSongs();
+        songsTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fm.display(false);
+                am.display(false);
+                sm.display(true);
+                //setContentView(R.layout.song_mode);
+
+
+                // if music is playing, show csb
+            }
+        });
+
+        Button album = swc.getAlbum();
+        album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sm.display(false);
+                fm.display(false);
+                Log.v("album button pressed", "album");
+                //csb.display(false);
+                am.display(true);
+                //setContentView(R.layout.album_mode);
+
+            }
+        });
+
+        Button flashback = swc.getFlashback();
+        flashback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sm.display(false);
+                am.display(false);
+                fm.display(true);
+                //setContentView(R.layout.flashback_mode);
+
+
+                // disable songs and album tabs?
+
+                loadFlashback();
+            }
+        });
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         locationAdapter.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
-        csb.setPlayPause(player);
-
-
-        loadSongs(csb);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         storeSongInfo();
+        /*CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
         SwitchActivity swc = findViewById(R.id.switch_between_main);
         swc.display();
         loadSongs(csb);
-
-
         Button album = swc.getAlbum();
         album.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launchAlbum();
             }
+        });*/
+    }
+
+    private void loadAlbums() {
+        for (Album album : albumList) {
+            final AlbumBlock albumBlock = new AlbumBlock(getApplicationContext(), album);
+            final Album albumtoPlay = album;
+            albumBlock.setText();
+            Log.v("albums", "in loadAlbums " + album.getTitle());
+            albumBlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    albumBlock.setPlayPause(player);
+                    albumtoPlay.play(player);
+                }
+            });
+            am.addView(albumBlock);
+
+        }
+    }
+
+    public void loadFlashback() {
+        FlashbackOrderGenerator fog = new FlashbackOrderGenerator(new CurrentParameters(locationAdapter), songList);
+        List<Song> flashbackSongs= fog.getSongList();
+
+        csb.display(false);
+
+        player.reset();
+        fog.play(player);
+
+        fm.setPlayPause(player);
+        fm.setText(flashbackSongs.get(0));
+        fm.setHistory("You're listening from " + "San Diego" + " on a "
+                + "Tuesday" + " " + "Morning");
+
+        Button disableFlashback = findViewById(R.id.flashback_disable);
+        disableFlashback.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                player.reset();
+                fm.display(false);
+                sm.display(true);
+            }
         });
-
     }
 
-    public void launchAlbum() {
-        Intent intent = new Intent(this, Album_Activity.class);
-        startActivity(intent);
-    }
-
-    public void loadSongs(CurrentSongBlock csb) {
-        final LinearLayout layout = findViewById(R.id.main_layout);
+    public void loadSongs() {
         for (Song song : songList) {
             final Song songToPlay = song;
 
@@ -140,22 +205,34 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     if (!(songToPlay.isDisliked())) {
 
-                        CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
-                        csb.display();
+                        csb.display(true);
+                        csb.setText(songToPlay);
+                        csb.setPlayPause(player);
+
+                        // TODO: Figure out why this gets a nullreferenceexception
+                        // why is locationAdapter null?
+                        //LatLng loc = currentParameters.getLocation();
+                        String place = "San Diego";
+                        String timeOfDay = currentParameters.getTimeOfDay();
+                        Date lastPlayedTime = currentParameters.getLastPlayedTime();
+                        String day = currentParameters.getDayOfWeek();
+                        csb.setHistory("You're listening from " + place + " on a "
+                                + day + " " + timeOfDay);
+                        player.play(songToPlay);
+
+                        // TODO: once the null pointer reference is fixed, uncomment this line too
+                        //songToPlay.setLastLocation(loc);
+                        Set<String> timesOfDay = songToPlay.getTimesOfDay();
+                        timesOfDay.add(timeOfDay);
+                        songToPlay.setTimesOfDay(timesOfDay);
+                        songToPlay.setLastPlayedTime(lastPlayedTime);
                         csb.loadFavor(songToPlay, prefsIO, songBlock);
                         csb.setText(songToPlay);
-                        //                    csb.setHistory("You're listening from " + songToPlay.getLocations() + " on a "
-                        //                            + songToPlay.getDaysOfWeek() + " " + songToPlay.getTimesOfDay());
-                        csb.setHistory("You're listening from " + "San Diego" + " on a "
-                                + "Tuesday" + " " + "Morning");
-                        player.play(songToPlay);
-                        Date c = Calendar.getInstance().getTime();
-                        songToPlay.setLastPlayedTime(c);
                         csb.togglePlayPause();
                     }
                 }
             });
-            layout.addView(songBlock);
+            sm.addView(songBlock);
         }
     }
 
@@ -164,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -179,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-        }
+    }
 
     private void populateSongInfo() {
         for (Song song : songList) {
@@ -196,3 +273,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
+
