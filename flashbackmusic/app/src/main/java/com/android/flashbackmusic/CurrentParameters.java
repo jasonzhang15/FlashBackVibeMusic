@@ -38,7 +38,7 @@ public class CurrentParameters {
         Log.d("cur location", "" + location);
 
         calendar = Calendar.getInstance(tz);
-
+      
         dayOfWeek = getDayOfWeek();
 
         timeOfDay = getTimeOfDay();
