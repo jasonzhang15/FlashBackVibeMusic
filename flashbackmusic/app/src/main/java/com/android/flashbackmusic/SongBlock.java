@@ -83,7 +83,6 @@ public class SongBlock extends LinearLayout {
 
     //set the title and artistAlbum
     public void setText() {
-        //Log.v("LOOK", "REACHED setText");
 
         title = this.findViewById(R.id.song_title);
         title.setText(titleText);

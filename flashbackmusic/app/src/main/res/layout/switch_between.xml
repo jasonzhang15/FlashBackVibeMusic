@@ -4,11 +4,11 @@
     android:layout_height="fill_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:layout_marginTop="515dp"
+    android:layout_marginTop="560dp"
     android:id="@+id/switch_between"
     android:gravity="bottom"
     android:background="#ffcecece"
-    android:translationZ="0.0dp">
+    android:translationZ="0.01dp">
 
     <Button
         android:id="@+id/Songs"
@@ -16,21 +16,24 @@
         android:layout_weight="1"
         android:text="Songs"
         android:textSize="15dp"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:clickable="true"/>
     <Button
         android:id="@+id/Album"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:text="AlBUMs"
         android:textSize="15dp"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:clickable="true"/>
 
     <Button
         android:id="@+id/Flashback"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:text="FlashBack"
+        android:text="Flashback"
         android:textSize="15dp"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:clickable="true"/>
 
 </LinearLayout>

@@ -23,7 +23,7 @@ public class SimpleSongImporter implements SongImporter {
         albums = new ArrayList<>();
     }
 
-    //TODO
+
     /**
      * Populate list of songs and albums
      * Try using MediaMetadataRetriever class

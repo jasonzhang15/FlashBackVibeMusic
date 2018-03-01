@@ -12,7 +12,7 @@ import java.util.Set;
  * Stores information about a single song
  */
 
-class Song {
+public class Song {
 
     private FileDescriptor filePath;
     private String title;
@@ -53,6 +53,7 @@ class Song {
         this.track_number = track_number;
         this.genre = genre;
         this.year = year;
+        this.lastPlayedTime = new Date(100000000);
     }
 
     /* TODO
