@@ -1,7 +1,11 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -44,12 +48,18 @@ public class MainActivity extends AppCompatActivity {
     private FlashbackMode fm;
     private CurrentSongBlock csb;
 
+    private Context maContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        maContext = this;
+        AsyncTaskRunner runner = new AsyncTaskRunner();
+        runner.execute();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -125,6 +135,23 @@ public class MainActivity extends AppCompatActivity {
                 loadFlashback();
             }
         });
+    }
+
+    private class AsyncTaskRunner extends AsyncTask<String, String, String> {
+        private String ret = "";
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.d("in ATR", "test");
+            try {
+                Intent intent = new Intent(maContext, SignInActivity.class);
+                startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                ret = e.getMessage();
+            }
+            return ret;
+        }
     }
 
     @Override
