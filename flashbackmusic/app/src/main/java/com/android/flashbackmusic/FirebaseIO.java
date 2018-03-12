@@ -1,10 +1,26 @@
 package com.android.flashbackmusic;
 
-import SongInfoIO;
-
-/**
- * Created by vrkumar on 3/1/18.
- */
+//import SongInfoIO;
 
 public class FirebaseIO implements SongInfoIO {
-}
+    @Override
+    public void setup() {
+
+    }
+
+    @Override
+    public void populateSongInfo(Song s) {
+
+    }
+
+    @Override
+    public void storeSongInfo(Song s) {
+
+    }
+
+    @Override
+    public void teardown() {
+
+    }
+};
+
