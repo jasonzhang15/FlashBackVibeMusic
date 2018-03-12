@@ -57,11 +57,16 @@ public class MainActivity extends AppCompatActivity {
         app = this.getApplication();
         songImporter = new SimpleSongImporter(app);
         songImporter.read();
+        long downloadResult = songImporter.downloadSong("http://www.purevolume.com/download.php?id=3463253");
+        Log.v("LOOK", "returned: " + String.valueOf(downloadResult));
         prefs = getSharedPreferences("info", MODE_PRIVATE);
         prefsIO = new SharedPrefsIO(prefs);
 
         songList = songImporter.getSongList();
         albumList = songImporter.getAlbumList();
+        for (int i = 0; i < songList.size(); i++) {
+            Log.v("LOOK", "songs: " + songList.get(i).getTitle());
+        }
         populateSongInfo();
         player = new Player(app);
 
