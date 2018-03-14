@@ -1,6 +1,8 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
+import android.app.DownloadManager;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Album> albumList;
     private CurrentParameters currentParameters;
     private LocationAdapter locationAdapter;
+    private SimpleDownloader downloader;
 
     private SongMode sm;
     private AlbumMode am;
@@ -55,10 +58,21 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         app = this.getApplication();
+
+        downloader = new SimpleDownloader(app);
+
+        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        registerReceiver(downloader.downloadReceiver, filter);
+
+        long downloadResult = downloader.downloadSong("http://www.purevolume.com/download.php?id=3463253");
+        long downloadResult2 = downloader.downloadSong("http://www.purevolume.com/download.php?id=3369016");
+        long downloadResult3 = downloader.downloadSong("http://www.purevolume.com/download.php?id=2598686");
+
+
+
         songImporter = new SimpleSongImporter(app);
         songImporter.read();
-        long downloadResult = songImporter.downloadSong("http://www.purevolume.com/download.php?id=3463253");
-        Log.v("LOOK", "returned: " + String.valueOf(downloadResult));
+
         prefs = getSharedPreferences("info", MODE_PRIVATE);
         prefsIO = new SharedPrefsIO(prefs);
 
@@ -96,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
                 sm.display(true);
                 //setContentView(R.layout.song_mode);
 
-
                 // if music is playing, show csb
             }
         });
@@ -111,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 //csb.display(false);
                 am.display(true);
                 //setContentView(R.layout.album_mode);
-
             }
         });
 
@@ -124,12 +136,14 @@ public class MainActivity extends AppCompatActivity {
                 fm.display(true);
                 //setContentView(R.layout.flashback_mode);
 
-
                 // disable songs and album tabs?
-
                 loadFlashback();
             }
         });
+
+        downloader.Check_Music_Status(downloadResult);
+        downloader.Check_Music_Status(downloadResult2);
+        downloader.Check_Music_Status(downloadResult3);
     }
 
     @Override
@@ -163,12 +177,11 @@ public class MainActivity extends AppCompatActivity {
             albumBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    albumBlock.setPlayPause(player);
-                    albumtoPlay.play(player);
+                albumBlock.setPlayPause(player);
+                albumtoPlay.play(player);
                 }
             });
             am.addView(albumBlock);
-
         }
     }
 
@@ -184,16 +197,16 @@ public class MainActivity extends AppCompatActivity {
         fm.setPlayPause(player);
         fm.setText(flashbackSongs.get(0));
         fm.setHistory("You're listening from " + "San Diego" + " on a "
-                + "Tuesday" + " " + "Morning");
+            + "Tuesday" + " " + "Morning");
 
         Button disableFlashback = findViewById(R.id.flashback_disable);
         disableFlashback.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
-                player.reset();
-                fm.display(false);
-                sm.display(true);
+            player.reset();
+            fm.display(false);
+            sm.display(true);
             }
         });
     }
@@ -208,33 +221,33 @@ public class MainActivity extends AppCompatActivity {
             songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!(songToPlay.isDisliked())) {
+                if (!(songToPlay.isDisliked())) {
 
-                        csb.display(true);
-                        csb.setText(songToPlay);
-                        csb.setPlayPause(player);
+                    csb.display(true);
+                    csb.setText(songToPlay);
+                    csb.setPlayPause(player);
 
-                        // TODO: Figure out why this gets a nullreferenceexception
-                        // why is locationAdapter null?
-                        //LatLng loc = currentParameters.getLocation();
-                        String place = "San Diego";
-                        String timeOfDay = currentParameters.getTimeOfDay();
-                        Date lastPlayedTime = currentParameters.getLastPlayedTime();
-                        String day = currentParameters.getDayOfWeek();
-                        csb.setHistory("You're listening from " + place + " on a "
-                                + day + " " + timeOfDay);
-                        player.play(songToPlay);
+                    // TODO: Figure out why this gets a nullreferenceexception
+                    // why is locationAdapter null?
+                    //LatLng loc = currentParameters.getLocation();
+                    String place = "San Diego";
+                    String timeOfDay = currentParameters.getTimeOfDay();
+                    Date lastPlayedTime = currentParameters.getLastPlayedTime();
+                    String day = currentParameters.getDayOfWeek();
+                    csb.setHistory("You're listening from " + place + " on a "
+                            + day + " " + timeOfDay);
+                    player.play(songToPlay);
 
-                        // TODO: once the null pointer reference is fixed, uncomment this line too
-                        //songToPlay.setLastLocation(loc);
-                        Set<String> timesOfDay = songToPlay.getTimesOfDay();
-                        timesOfDay.add(timeOfDay);
-                        songToPlay.setTimesOfDay(timesOfDay);
-                        songToPlay.setLastPlayedTime(lastPlayedTime);
-                        csb.loadFavor(songToPlay, prefsIO, songBlock);
-                        csb.setText(songToPlay);
-                        csb.togglePlayPause();
-                    }
+                    // TODO: once the null pointer reference is fixed, uncomment this line too
+                    //songToPlay.setLastLocation(loc);
+                    Set<String> timesOfDay = songToPlay.getTimesOfDay();
+                    timesOfDay.add(timeOfDay);
+                    songToPlay.setTimesOfDay(timesOfDay);
+                    songToPlay.setLastPlayedTime(lastPlayedTime);
+                    csb.loadFavor(songToPlay, prefsIO, songBlock);
+                    csb.setText(songToPlay);
+                    csb.togglePlayPause();
+                }
                 }
             });
             sm.addView(songBlock);

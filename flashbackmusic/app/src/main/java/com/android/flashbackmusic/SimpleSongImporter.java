@@ -6,10 +6,17 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+
+import java.io.File;
 import java.lang.reflect.Field;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 /**
  * Reads song data and metadata from simple local files
@@ -20,14 +27,12 @@ public class SimpleSongImporter implements SongImporter {
     private ArrayList<Song> songs;
     private ArrayList<Album> albums;
     private Application app;
-    private DownloadManager downloadManager;
 
     public SimpleSongImporter(Application app){
         this.app = app;
         songs = new ArrayList<>();
         albums = new ArrayList<>();
     }
-
 
     /**
      * Populate list of songs and albums
@@ -36,11 +41,52 @@ public class SimpleSongImporter implements SongImporter {
     public void  read(){
 
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-
         Field[] fields = R.raw.class.getFields();
-        Log.v("LOOK", Integer.toString(fields.length));
 
+        //File downloadDir = app.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+/*
+        if (downloadDir.exists()) {
+            Log.v("LOOK", "FILE EXISTS");
+
+            if(downloadDir.listFiles().length > 0){
+
+                Log.v("LOOK", "DIR IS NOT EMPTY: " + (downloadDir.list().length));
+
+            }
+        }
+
+        File[] listAllFiles = downloadDir.listFiles();
+
+        if (listAllFiles != null && listAllFiles.length > 0) {
+            for (File currentFile : listAllFiles) {
+                //if (currentFile.getName().endsWith("")) {
+                    // File absolute path
+                    Log.v("LOOK", currentFile.getAbsolutePath());
+                    // File Name
+                    Log.v("LOOK", currentFile.getName());
+
+                //}
+            }
+        }
+*/
+/*
+        //File path = app.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        String filename = downloadDir + "/" + "3463253" + ".mp3";
+        Log.v("LOOK", filename);
+        mmr.setDataSource(filename);
+
+        String title1 = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+        String artist1 = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+        String albumName1 = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+        int id1 = 20;
+
+        Album album1 = addAlbum(albumName1);
+
+        addSong(id1, title1, artist1, album1, "");
+*/
         for (Field field : fields) {
+
             String filePath = "android.resource://com.android.flashbackmusic/raw/" + field.getName();
             mmr.setDataSource(app, Uri.parse(filePath));
 
@@ -51,38 +97,12 @@ public class SimpleSongImporter implements SongImporter {
 
             Album album = addAlbum(albumName);
 
-            addSong(id, title, artist, album);
+            addSong(id, title, artist, album, "");
         }
     }
 
-    public long downloadSong(String url) {
-
-        Uri uri = Uri.parse(url);
-
-        // Create request for android download manager
-        downloadManager = (DownloadManager) app.getSystemService(DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(uri);
-
-        //Setting title of request
-        request.setTitle("Data Download");
-
-        //Setting description of request
-        request.setDescription("Android Data download using DownloadManager.");
-
-        //Set the local destination for the downloaded file to a path within the application's external files directory
-        request.setDestinationInExternalFilesDir(app, Environment.DIRECTORY_DOWNLOADS,"test.mp3");
-
-        //Enqueue download and save into referenceId
-
-        long downloadReference = downloadManager.enqueue(request);
-
-
-
-        return downloadReference;
-    }
-
-    private void addSong(int id, String title, String artist, Album album) {
-        Song newSong = new Song(id, title, artist, album);
+    private void addSong(int id, String title, String artist, Album album, String url) {
+        Song newSong = new Song(id, title, artist, album, url);
 
         album.addSong(newSong);
         songs.add(newSong);
