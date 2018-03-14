@@ -23,6 +23,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.people.v1.PeopleService;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -90,7 +91,6 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //TODO why need this?
         Log.d("in onStart()", "");
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         updateUI(account);
