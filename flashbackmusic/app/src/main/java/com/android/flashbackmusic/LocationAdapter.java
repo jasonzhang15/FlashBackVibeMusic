@@ -29,7 +29,7 @@ public class LocationAdapter implements LocationInterface {
     // Compose Location
     private Location location;
     private Context context;
-
+  
     //private double latDefault = 37;
     //private double lngDefault = 151;
 

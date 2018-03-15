@@ -3,7 +3,10 @@ package com.android.flashbackmusic;
 import android.app.Application;
 import android.app.DownloadManager;
 import android.content.IntentFilter;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -47,12 +50,150 @@ public class MainActivity extends AppCompatActivity {
     private FlashbackMode fm;
     private CurrentSongBlock csb;
 
+    private Context maContext;
+    /*
+    private GoogleApiClient google_api_client;
+    private void buildNewGoogleApiClient() {
+        google_api_client = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks((GoogleApiClient.ConnectionCallbacks) this)
+                .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener) this)
+                .addApi(Plus.API, Plus.PlusOptions.builder().build())
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .build();
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Initiate connection for Google+ API
+        google_api_client.connect();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        if (google_api_client.isConnected()) {
+            google_api_client.disconnect();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (google_api_client.isConnected()) {
+            google_api_client.connect();
+        }
+    }
+
+    @Override
+    public void onConnected(Bundle arg0) {
+        is_signInBtn_clicked = false;
+        getProfileInfo();
+        changeUI(true);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result){
+        if (!result.hasResolution()) {
+            google_api_availability.getErrorDialog(this, result.getErrorCode(), request_code).show();
+            return;
+        }
+        if (!is_intent_inprogress) {
+            connection_result = result;
+            if (is_signInBtn_clicked) {
+                resolveSignInError();
+            }
+        }
+    }
+
+    private void gPlusSignIn() {
+        if (!google_api_client.isConnecting()) {
+            Log.d("user connected", "connected");
+            is_signInBtn_clicked = true;
+            progress_dialog.show();
+            resolveSignInError();
+        }
+    }
+
+    private void resolveSignInError() {
+        if (connection_result.hasResolution()) {
+            try {
+                is_intent_inprogress = true;
+                connection_result.startResolutionForResult(this, SIGN_IN_CODE);
+                Log.d("resolve error", "sign in error resolved");
+            } catch (IntentSender.SendIntentException e) {
+                is_intent_inprogress = false;
+                google_api_client.connect();
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int arg0) {
+        google_api_client.connect();
+        changeUI(false);
+    }
+
+    private void gPlusSignOut() {
+        if (google_api_client.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(google_api_client);
+            google_api_client.disconnect();
+            google_api_client.connect();
+            changeUI(false);
+        }
+    }
+
+    private void gPlusRevokeAcces() {
+        if (google_api_client.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(google_api_client);
+            Plus.AccountApi.revokeAccessAndDisconnect(google_api_client)
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(@NonNull Status status) {
+                            Log.d("MainActivity", "User access revoked!");
+                            buildNewGoogleApiClient();
+                            google_api_client.connect();
+                            changeUI(false);
+                        }
+                    });
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.sign_in_button:
+                Toast.makeText(this, "start sign process", Toast.LENGTH_SHORT).show();
+                gPlusSignIn();
+                break;
+            case R.id.sign_out_button:
+                Toast.makeText(this, "sign out from G+", Toast.LENGTH_LONG).show();
+                gPlusSignOut();
+                break;
+            case R.id.disconnect_button:
+                Toast.makeText(this, "Revoke access from G+", Toast.LENGTH_LONG).show();
+                gPlusRevokeAcces();
+                break;
+        }
+    }
+    private void changeUI(boolean signedIn) {
+        if (signedIn) {
+            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
+        }
+    }
+    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        maContext = this;
+        AsyncTaskRunner runner = new AsyncTaskRunner();
+        runner.execute();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -138,6 +279,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private class AsyncTaskRunner extends AsyncTask<String, String, String> {
+        private String ret = "";
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.d("in ATR", "test");
+            try {
+                Intent intent = new Intent(maContext, SignInActivity.class);
+                startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                ret = e.getMessage();
+            }
+            return ret;
+        }
     }
 
     @Override
