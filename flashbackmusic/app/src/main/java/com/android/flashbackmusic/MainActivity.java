@@ -58,19 +58,16 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         app = this.getApplication();
-
-        downloader = new SimpleDownloader(app);
+        songImporter = new SimpleSongImporter(app);
+        downloader = new SimpleDownloader(app, songImporter);
 
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         registerReceiver(downloader.downloadReceiver, filter);
 
-        long downloadResult = downloader.downloadSong("http://www.purevolume.com/download.php?id=3463253");
-        long downloadResult2 = downloader.downloadSong("http://www.purevolume.com/download.php?id=3369016");
-        long downloadResult3 = downloader.downloadSong("http://www.purevolume.com/download.php?id=2598686");
+        downloader.downloadSong("http://www.purevolume.com/download.php?id=3463253");
+        downloader.downloadSong("http://www.purevolume.com/download.php?id=3061040");
+        downloader.downloadSong("http://www.purevolume.com/download.php?id=3061067");
 
-
-
-        songImporter = new SimpleSongImporter(app);
         songImporter.read();
 
         prefs = getSharedPreferences("info", MODE_PRIVATE);
@@ -141,9 +138,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        downloader.Check_Music_Status(downloadResult);
-        downloader.Check_Music_Status(downloadResult2);
-        downloader.Check_Music_Status(downloadResult3);
     }
 
     @Override
@@ -240,9 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // TODO: once the null pointer reference is fixed, uncomment this line too
                     //songToPlay.setLastLocation(loc);
-                    Set<String> timesOfDay = songToPlay.getTimesOfDay();
-                    timesOfDay.add(timeOfDay);
-                    songToPlay.setTimesOfDay(timesOfDay);
+                    songToPlay.addTimeOfDay(timeOfDay);
                     songToPlay.setLastPlayedTime(lastPlayedTime);
                     csb.loadFavor(songToPlay, prefsIO, songBlock);
                     csb.setText(songToPlay);
@@ -250,6 +242,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 }
             });
+
             sm.addView(songBlock);
         }
     }

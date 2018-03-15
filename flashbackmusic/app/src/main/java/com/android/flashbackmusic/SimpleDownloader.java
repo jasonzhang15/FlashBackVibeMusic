@@ -5,6 +5,7 @@ import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -12,24 +13,35 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import java.io.File;
+
 import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class SimpleDownloader {
 
     private Application app;
     private DownloadManager downloadManager;
+    private File downloadDir;
+    private SimpleSongImporter songImporter;
 
-    public SimpleDownloader(Application app) {
+    public SimpleDownloader(Application app, SimpleSongImporter songImporter) {
         this.app = app;
+        this.songImporter = songImporter;
+        downloadManager = (DownloadManager) app.getSystemService(DOWNLOAD_SERVICE);
+        downloadDir = app.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+
+        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        app.getApplicationContext().registerReceiver(downloadReceiver, filter);
     }
 
 
     public long downloadSong(String url) {
 
+        //SKIP if song is already downloaded
+
         Uri uri = Uri.parse(url);
 
         // Create request for android download manager
-        downloadManager = (DownloadManager) app.getSystemService(DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(uri);
 
         //Setting title of request
@@ -39,8 +51,20 @@ public class SimpleDownloader {
         request.setDescription("Android Data download using DownloadManager.");
 
         //Set the local destination for the downloaded file to a path within the application's external files directory
-        Log.v("LOOK", "set with: " + (url.split("id="))[1]);
-        request.setDestinationInExternalFilesDir(app, Environment.DIRECTORY_DOWNLOADS, (url.split("id="))[1] + ".mp3");
+        Log.v("LOOK", "Download song : " + (url.split("id="))[1]);
+
+        String downloadId = (url.split("id="))[1];
+        if (downloadDir.listFiles() != null) {
+            String downloadPath = downloadDir.toString() + "/" + downloadId + ".mp3";
+            for (File file : downloadDir.listFiles()) {
+                if (file.toString().equals(downloadPath)) {
+                    Log.v("LOOK", "SKIP DOWNLOAD: file already exists: " + downloadId);
+                    return -1;
+                }
+            }
+        }
+
+        request.setDestinationInExternalFilesDir(app, Environment.DIRECTORY_DOWNLOADS, downloadId + ".mp3");
 
         //Enqueue download and save into referenceId
 
@@ -48,6 +72,26 @@ public class SimpleDownloader {
 
         return downloadReference;
     }
+
+    public BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            //check if the broadcast message is for our Enqueued download
+            long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+
+            Toast toast = Toast.makeText(app,
+                    "Music Download Complete", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.TOP, 25, 400);
+            toast.show();
+
+            if (downloadDir.listFiles() == null) {
+                Log.v("LOOK", "REACHEDDDD");
+                songImporter.read();
+            }
+        }
+    };
 
     public void Check_Music_Status(long downloadId) {
 
@@ -104,20 +148,4 @@ public class SimpleDownloader {
         toast.setGravity(Gravity.TOP, 25, 400);
         toast.show();
     }
-
-    public BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            //check if the broadcast message is for our Enqueued download
-            long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-
-
-            Toast toast = Toast.makeText(app,
-                    "Music Download Complete", Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.TOP, 25, 400);
-            toast.show();
-        }
-    };
 }

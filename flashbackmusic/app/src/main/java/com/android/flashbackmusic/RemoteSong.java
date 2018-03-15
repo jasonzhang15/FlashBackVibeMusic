@@ -1,7 +1,6 @@
 package com.android.flashbackmusic;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class RemoteSong {
 
@@ -10,10 +9,10 @@ public class RemoteSong {
     private Album album;
     private String URL;
     private ArrayList<SongPlay> plays;
-    private int id;
+    //private int id;
 
-    public RemoteSong(int id, String title, String artist, Album album, String url) {
-        this.id = id;
+    public RemoteSong(/*id,*/ String title, String artist, Album album, String url) {
+        //this.id = id;
         this.title = title;
         this.artist = artist;
         this.album = album;
@@ -21,7 +20,7 @@ public class RemoteSong {
         plays = new ArrayList<>();
     }
 
-    public int getId() { return id; }
+    //public int getId() { return id; }
     public String getTitle() {
         return title;
     }

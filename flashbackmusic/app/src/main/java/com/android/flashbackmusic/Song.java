@@ -22,6 +22,7 @@ public class Song {
     private Set<String> daysOfWeek;
     private LatLng lastLocation;
     private boolean local;
+    String path;
 
     private RemoteSong remoteSong;
 
@@ -36,14 +37,14 @@ public class Song {
         local = false;
     }
 
-    public Song(int id, String title, String artist, Album album, String url) {
+    public Song(/*id,*/ String title, String artist, Album album, String url, String path) {
         this();
-        remoteSong = new RemoteSong(id, title, artist, album, url);
+        this.path = path;
+        remoteSong = new RemoteSong(/*id,*/ title, artist, album, url);
     }
-
     // Song Info
 
-    public int getId() { return remoteSong.getId(); }
+    //public int getId() { return remoteSong.getId(); }
     public String getTitle() {
         return remoteSong.getTitle();
     }
@@ -65,6 +66,7 @@ public class Song {
         return timesOfDay;
     }
     public void setTimesOfDay(Set<String> times) { this.timesOfDay = times; }
+    public void addTimeOfDay(String timeOfDay) { this.timesOfDay.add(timeOfDay); }
 
     public Set<String> getDaysOfWeek() {
         return daysOfWeek;
@@ -105,4 +107,7 @@ public class Song {
 
     public boolean getLocal() { return local; }
     public void setLocal(boolean local) { this.local = local; }
+
+    public String getPath() { return path; }
+    public void setPath(String path) { this.path = path; }
 }

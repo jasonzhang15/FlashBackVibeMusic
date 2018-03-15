@@ -27,11 +27,13 @@ public class SimpleSongImporter implements SongImporter {
     private ArrayList<Song> songs;
     private ArrayList<Album> albums;
     private Application app;
+    private File downloadDir;
 
     public SimpleSongImporter(Application app){
         this.app = app;
         songs = new ArrayList<>();
         albums = new ArrayList<>();
+        downloadDir = app.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
     }
 
     /**
@@ -41,68 +43,49 @@ public class SimpleSongImporter implements SongImporter {
     public void  read(){
 
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-        Field[] fields = R.raw.class.getFields();
 
-        //File downloadDir = app.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-        File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-/*
-        if (downloadDir.exists()) {
-            Log.v("LOOK", "FILE EXISTS");
-
-            if(downloadDir.listFiles().length > 0){
-
-                Log.v("LOOK", "DIR IS NOT EMPTY: " + (downloadDir.list().length));
-
-            }
-        }
-
+        if (downloadDir.exists()) Log.v("LOOK", "DIR EXISTS: " + downloadDir.toString() );
         File[] listAllFiles = downloadDir.listFiles();
+        if(listAllFiles == null) Log.v("LOOK", "DIR IS EMPTY");
 
+
+        String title;
+        String artist;
+        String albumName;
+        Album album;
+
+        //int id = 0;
         if (listAllFiles != null && listAllFiles.length > 0) {
             for (File currentFile : listAllFiles) {
-                //if (currentFile.getName().endsWith("")) {
-                    // File absolute path
-                    Log.v("LOOK", currentFile.getAbsolutePath());
-                    // File Name
-                    Log.v("LOOK", currentFile.getName());
+                mmr.setDataSource(currentFile.toString());
 
-                //}
+                title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+
+
+                Log.v("LOOK", currentFile.getAbsolutePath());
+                Log.v("LOOK", currentFile.getName());
+                Log.v("LOOK","title: " + title);
+                Log.v("LOOK","artist: " + artist );
+                Log.v("LOOK","albumName: " + albumName);
+
+                if (title == null || artist == null | albumName == null) continue;
+
+                album = addAlbum(albumName);
+
+                Log.v("LOOK","ADDED");
+
+
+                addSong(/*id,*/ title, artist, album, "", currentFile.toString());
+
+                //id++;
             }
-        }
-*/
-/*
-        //File path = app.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-        String filename = downloadDir + "/" + "3463253" + ".mp3";
-        Log.v("LOOK", filename);
-        mmr.setDataSource(filename);
-
-        String title1 = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-        String artist1 = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-        String albumName1 = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-        int id1 = 20;
-
-        Album album1 = addAlbum(albumName1);
-
-        addSong(id1, title1, artist1, album1, "");
-*/
-        for (Field field : fields) {
-
-            String filePath = "android.resource://com.android.flashbackmusic/raw/" + field.getName();
-            mmr.setDataSource(app, Uri.parse(filePath));
-
-            String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-            String artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-            String albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-            int id = app.getResources().getIdentifier(field.getName(), "raw", app.getPackageName());
-
-            Album album = addAlbum(albumName);
-
-            addSong(id, title, artist, album, "");
         }
     }
 
-    private void addSong(int id, String title, String artist, Album album, String url) {
-        Song newSong = new Song(id, title, artist, album, url);
+    private void addSong(/*id,*/ String title, String artist, Album album, String url, String path) {
+        Song newSong = new Song(/*id,*/ title, artist, album, url, path);
 
         album.addSong(newSong);
         songs.add(newSong);
