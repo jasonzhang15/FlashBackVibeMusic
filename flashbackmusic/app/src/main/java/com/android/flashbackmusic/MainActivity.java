@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,7 +79,65 @@ public class MainActivity extends AppCompatActivity {
         fm = findViewById(R.id.flashback_main);
         csb = findViewById(R.id.current_song_block_main);
 
+        final Button buttonTitle = findViewById(R.id.buttonTitle);
+        final Button buttonArtist = findViewById(R.id.buttonArtist);
+        final Button buttonAlbum = findViewById(R.id.buttonAlbum);
+        final Button buttonFavorite = findViewById(R.id.buttonFavorite);
+        buttonTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Collections.sort(songList, new TitleComparator());
+                for (Song s :songList) {
+                    Log.v("zhikai", s.getTitle());
+                }
+                loadSongs();
+            }
+        });
+        buttonArtist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Collections.sort(songList, new ArtistComparator());
+                for (Song s :songList) {
+                    Log.v("zhikai", s.getTitle());
+                    Log.v("zhikai", s.getArtist() == null ? "No artist!!!!" : s.getArtist());
+                }
+                loadSongs();
+            }
+        });
+        buttonAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Collections.sort(songList, new AlbumComparator());
+                for (Song s :songList) {
+                    Log.v("zhikai", s.getTitle());
+                    Log.v("zhikai", s.getAlbum().getTitle());
+                    Log.v("zhikai", "=======");
+
+                }
+                loadSongs();
+            }
+        });
+        buttonFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Collections.sort(songList, new FavoriteComparator());
+                for (Song s :songList) {
+                    Log.v("zhikai", s.getTitle());
+                    Log.v("zhikai", String.valueOf(s.isFavorited()));
+                    Log.v("zhikai", "=======");
+                }
+                loadSongs();
+            }
+        });
         loadSongs();
+        for (Song s :songList) {
+            Log.v("init_czk", s.getTitle());
+            if (s.getArtist() == null) {
+                Log.v("init_czk", "what? No Artist Assigned???");
+            } else {
+                Log.v("init_czk", s.getArtist());
+            }
+        }
         //loadAlbums();
 
         SwitchActivity swc = findViewById(R.id.switch_between_main);
@@ -279,6 +338,59 @@ public class MainActivity extends AppCompatActivity {
             prefsIO.storeSongInfo(song);
         }
     }
+    class TitleComparator implements Comparator<Song> {
+        @Override
+        public int compare(Song s1, Song s2){
+            return s1.getTitle().compareTo(s2.getTitle());
+        }
+    }
+    class ArtistComparator implements Comparator<Song> {
+        @Override
+        public int compare(Song s1, Song s2){
+            if (s1.getArtist() == null && s2.getArtist()== null) {
+                return s1.getTitle().compareTo(s2.getTitle());
+            }
+            if (s1.getArtist() == null) {
+                return 1;
+            }
+            if (s2.getArtist() == null) {
+                return -1;
+            }
+            if (s1.getArtist().equals(s2.getArtist())) {
+                return s1.getTitle().compareTo(s2.getTitle());
+            }
+            return s1.getArtist().compareTo(s2.getArtist());
+        }
+    }
 
+    class AlbumComparator implements Comparator<Song> {
+        @Override
+        public int compare(Song s1, Song s2) {
+            if (s1.getAlbum().title.equals(s2.getAlbum().title)) {
+                return s1.getTitle().compareTo(s2.getTitle());
+            } else {
+                return s1.getAlbum().title.compareTo(s2.getAlbum().title);
+            }
+        }
+    }
+
+    class FavoriteComparator implements Comparator<Song> {
+        @Override
+        public int compare(Song s1, Song s2) {
+            if (s1.isFavorited() && s2.isFavorited()) {
+                return s1.getTitle().compareTo(s2.getTitle());
+            }
+            if (s1.isFavorited()) {
+                return -1;
+            }
+            if (!s1.isFavorited() && !s2.isFavorited()) {
+                return s1.getTitle().compareTo(s2.getTitle());
+            }
+            if (!s1.isFavorited()) {
+                return 1;
+            }
+            return 0; // this will never run
+        }
+    }
 }
 
