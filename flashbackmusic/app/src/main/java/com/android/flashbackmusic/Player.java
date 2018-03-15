@@ -31,11 +31,11 @@ public class Player implements Serializable {
         mediaPlayer.reset();
         loadMedia();
         isReset = false;
-        Log.v("LOOK", s.getTitle() + " should be played right now, id: " + s.getId());
+        Log.v("LOOK", s.getTitle() + " should be played right now " + s.getPath());
 
         try {
-            AssetFileDescriptor afd = app.getResources().openRawResourceFd(s.getId());
-            mediaPlayer.setDataSource(afd);
+            //AssetFileDescriptor afd = app.getResources().openRawResourceFd(s.getPath());
+            mediaPlayer.setDataSource(s.getPath());
             mediaPlayer.prepareAsync();
         } catch(Exception e) {
             Log.v("LOOK", e.toString());
