@@ -1,6 +1,7 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         csb = findViewById(R.id.current_song_block_main);
 
         loadSongs();
-        loadAlbums();
+        //loadAlbums();
 
         SwitchActivity swc = findViewById(R.id.switch_between_main);
 
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.v("album button pressed", "album");
                 //csb.display(false);
                 am.display(true);
+                launchAlbum();
                 //setContentView(R.layout.album_mode);
 
             }
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         });*/
     }
 
-    private void loadAlbums() {
+    /*private void loadAlbums() {
         for (Album album : albumList) {
             final AlbumBlock albumBlock = new AlbumBlock(getApplicationContext(), album);
             final Album albumtoPlay = album;
@@ -165,6 +167,12 @@ public class MainActivity extends AppCompatActivity {
             am.addView(albumBlock);
 
         }
+    }*/
+
+    public void launchAlbum() {
+        storeSongInfo();
+        Intent intent = new Intent(this, Album_Activity.class);
+        startActivity(intent);
     }
 
     public void loadFlashback() {

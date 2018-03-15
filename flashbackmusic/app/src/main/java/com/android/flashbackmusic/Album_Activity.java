@@ -34,11 +34,16 @@ public class Album_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album);
+        app = this.getApplication();
+        songImporter = new SimpleSongImporter(app);
+        songImporter.read();
+        Bundle bundle = new Bundle();
+        Intent intent = getIntent();
+        player = (Player) intent.getSerializableExtra("player");
         /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         app = this.getApplication();
-        songImporter = new SimpleSongImporter(app);
         songImporter.read();
 
 //        Bundle bundle = new Bundle();
@@ -52,7 +57,7 @@ public class Album_Activity extends AppCompatActivity {
 
         SwitchActivity swc = findViewById(R.id.switch_between_main);
 
-        loadAlbums();
+        //loadAlbums();
 
         Button getBackSongs = (Button) findViewById(R.id.Songs);
 
@@ -96,11 +101,14 @@ public class Album_Activity extends AppCompatActivity {
 
     }*/
     private void prepareListData() {
+        final ArrayList<Album> albumList = songImporter.getAlbumList();
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
+        //for (Album album : albumList) {
+         for(int i = 0; i<3;i++){
+            //listDataHeader.add(album.getTitle()+"|"+album.getArtist());
+             listDataHeader.add(albumList.get(i).getTitle());
+        }
 
         // Adding child data
         List<String> top250 = new ArrayList<String>();
@@ -126,6 +134,8 @@ public class Album_Activity extends AppCompatActivity {
         comingSoon.add("The Spectacular Now");
         comingSoon.add("The Canyons");
         comingSoon.add("Europa Report");
+
+
 
         listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
         listDataChild.put(listDataHeader.get(1), nowShowing);
