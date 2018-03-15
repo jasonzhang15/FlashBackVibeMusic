@@ -49,7 +49,7 @@ public class SharedPrefsIOUnitTests {
         prefsIO = new SharedPrefsIO(prefs);
 
         album = new Album("Album_1");
-        song = new Song(0, "Title_1", "Artist_1", album, "Album_art_1", "0", "Genre_1", "2018");
+        song = new Song("Title_1", "Artist_1", album, "url", "path");
 
         song.setDisliked(true);
         song.setFavorited(false);
@@ -82,7 +82,7 @@ public class SharedPrefsIOUnitTests {
 
     @Test
     public void testpopulateSongInfo() {
-        Song s = new Song(0, "Title_1", "Artist_1", album, "Album_art_1", "0", "Genre_1", "2018");
+        Song s = new Song("Title_1", "Artist_1", album, "url", "path");
 
         prefsIO.populateSongInfo(s);
 
