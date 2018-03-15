@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private Application app;
     private ArrayList<Song> songList;
     private ArrayList<Album> albumList;
+    private ArrayList<RemoteSong> remoteSongList;
     private CurrentParameters currentParameters;
     private LocationAdapter locationAdapter;
     private SimpleDownloader downloader;
@@ -216,6 +217,8 @@ public class MainActivity extends AppCompatActivity {
 
         songList = songImporter.getSongList();
         albumList = songImporter.getAlbumList();
+        remoteSongList = songImporter.getRemoteSongList();
+
         for (int i = 0; i < songList.size(); i++) {
             Log.v("LOOK", "songs: " + songList.get(i).getTitle());
         }

@@ -26,6 +26,7 @@ public class SimpleSongImporter implements SongImporter {
 
     private ArrayList<Song> songs;
     private ArrayList<Album> albums;
+    private ArrayList<RemoteSong> remoteSongs;
     private Application app;
     private File downloadDir;
 
@@ -33,6 +34,7 @@ public class SimpleSongImporter implements SongImporter {
         this.app = app;
         songs = new ArrayList<>();
         albums = new ArrayList<>();
+        remoteSongs = new ArrayList<>();
         downloadDir = app.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
     }
 
@@ -88,6 +90,7 @@ public class SimpleSongImporter implements SongImporter {
         Song newSong = new Song(/*id,*/ title, artist, album, url, path);
 
         album.addSong(newSong);
+        remoteSongs.add(newSong.getRemoteSong());
         songs.add(newSong);
     }
 
@@ -115,5 +118,10 @@ public class SimpleSongImporter implements SongImporter {
     public ArrayList<Album> getAlbumList() {
         return albums;
     }
+
+    public ArrayList<RemoteSong> getRemoteSongList() {
+        return remoteSongs;
+    }
+
 
 }
