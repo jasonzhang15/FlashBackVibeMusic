@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
             final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
             songBlock.setText();
             songBlock.loadFavor(song, prefsIO);
-
+            songBlock.setTime();
             songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
