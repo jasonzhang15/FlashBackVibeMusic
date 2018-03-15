@@ -14,12 +14,6 @@ import java.util.Set;
 
 public class Song {
 
-    private String title;
-    private String artist;
-    private Album album;
-    private String URL;
-    private ArrayList<SongPlay> plays;
-
     private boolean favorited;
     private boolean disliked;
     private ArrayList<LatLng> locations;
@@ -27,8 +21,10 @@ public class Song {
     private Set<String> timesOfDay;
     private Set<String> daysOfWeek;
     private LatLng lastLocation;
+    private boolean local;
+    String path;
 
-    private int id;
+    private RemoteSong remoteSong;
 
     public Song(){
         favorited = false;
@@ -38,29 +34,25 @@ public class Song {
         daysOfWeek = new HashSet<>();
         lastPlayedTime = null;
         lastLocation = new LatLng(0,0);
+        local = false;
     }
 
-    public Song(int id, String title, String artist, Album album) {
+    public Song(/*id,*/ String title, String artist, Album album, String url, String path) {
         this();
-        this.id = id;
-        this.title = title;
-        this.artist = artist;
-        this.album= album;
-        this.lastPlayedTime = new Date(100000000);
-        plays = new ArrayList<>();
+        this.path = path;
+        remoteSong = new RemoteSong(/*id,*/ title, artist, album, url);
     }
-
     // Song Info
 
-    public int getId() { return id; }
+    //public int getId() { return remoteSong.getId(); }
     public String getTitle() {
-        return title;
+        return remoteSong.getTitle();
     }
     public String getArtist() {
-        return artist;
+        return remoteSong.getArtist();
     }
     public Album getAlbum() {
-        return album;
+        return remoteSong.getAlbum();
     }
 
     // User - Song Info
@@ -74,6 +66,7 @@ public class Song {
         return timesOfDay;
     }
     public void setTimesOfDay(Set<String> times) { this.timesOfDay = times; }
+    public void addTimeOfDay(String timeOfDay) { this.timesOfDay.add(timeOfDay); }
 
     public Set<String> getDaysOfWeek() {
         return daysOfWeek;
@@ -104,10 +97,17 @@ public class Song {
     public LatLng getLastLocation() { return lastLocation; }
     public void setLastLocation(LatLng lastLocation) { this.lastLocation = lastLocation; }
 
-    public String getURL() { return URL; }
-    public void setURL(String url) { URL = url; }
 
-    public ArrayList<SongPlay> getPlays() { return plays; }
-    public SongPlay getMostRecentPlay() { return plays.get(plays.size() - 1); }
-    public void addPlay(SongPlay newPlay) { plays.add(newPlay); }
+    public String getURL() { return remoteSong.getURL(); }
+    public void setURL(String url) { remoteSong.setURL(url); }
+
+    public ArrayList<SongPlay> getPlays() { return remoteSong.getPlays(); }
+    public SongPlay getMostRecentPlay() { return remoteSong.getMostRecentPlay(); }
+    public void addPlay(SongPlay newPlay) {remoteSong.addPlay(newPlay); }
+
+    public boolean getLocal() { return local; }
+    public void setLocal(boolean local) { this.local = local; }
+
+    public String getPath() { return path; }
+    public void setPath(String path) { this.path = path; }
 }

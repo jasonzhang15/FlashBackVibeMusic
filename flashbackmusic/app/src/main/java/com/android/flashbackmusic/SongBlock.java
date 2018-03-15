@@ -16,7 +16,7 @@ public class SongBlock extends LinearLayout {
     private String titleText;
     private String artist;
     private String album;
-    private int id;
+    private String path;
 
     private TextView title;
     private TextView artistAlbum;
@@ -34,7 +34,7 @@ public class SongBlock extends LinearLayout {
         this.titleText = song.getTitle();
         this.artist = song.getArtist();
         this.album = song.getAlbum().getTitle();
-        this.id = song.getId();
+        this.path = song.getPath();
         this.song = song;
 
         initializeViews(context);
@@ -83,7 +83,6 @@ public class SongBlock extends LinearLayout {
 
     //set the title and artistAlbum
     public void setText() {
-
         title = this.findViewById(R.id.song_title);
         title.setText(titleText);
 

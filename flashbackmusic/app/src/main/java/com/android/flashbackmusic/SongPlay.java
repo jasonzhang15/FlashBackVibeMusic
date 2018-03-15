@@ -2,10 +2,6 @@ package com.android.flashbackmusic;
 
 import java.util.Date;
 
-/**
- * Created by valentinadibs on 3/9/18.
- */
-
 public class SongPlay {
 
     String songname;

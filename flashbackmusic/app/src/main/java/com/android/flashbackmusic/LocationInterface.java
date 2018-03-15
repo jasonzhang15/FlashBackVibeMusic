@@ -17,5 +17,5 @@ public interface LocationInterface {
     LatLng getCurrentLocation();
     void establishLocationPermission(Context context, Activity activity);
     void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults);
-
+  
 }
