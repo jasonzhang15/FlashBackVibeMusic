@@ -1,13 +1,9 @@
 package com.android.flashbackmusic;
 
 import android.content.Context;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,6 +17,7 @@ public class SongBlock extends LinearLayout {
     private TextView title;
     private TextView artistAlbum;
     private ImageButton favorite;
+    private ImageButton setTime;
     private Song song;
 
     public SongBlock(Context context) {
@@ -75,6 +72,28 @@ public class SongBlock extends LinearLayout {
         });
     }
 
+    public void setTime(Song song, SharedPrefsIO sp) {
+        final Song song_f = song;
+        //final SharedPrefsIO sp_f = sp;
+        setTime = this.findViewById(R.id.song_favorite);
+
+        setTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (true /**/) {
+                    setTime.setImageResource(android.R.drawable.checkbox_on_background);
+                    //status = 1;
+                    song_f.setFavorited(true);
+                } else {
+                    setTime.setImageResource(android.R.drawable.ic_input_add);
+                    //status = 0;
+                    song_f.setDisliked(false);
+                }
+
+                //sp_f.storeSongInfo(song_f);
+            }
+        });
+    }
 
     private void initializeViews(Context context) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
