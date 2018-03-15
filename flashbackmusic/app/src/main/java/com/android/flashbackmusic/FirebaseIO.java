@@ -9,13 +9,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by vrkumar on 3/1/18.
  */
 
-public class FirebaseIO {
+public class FirebaseIO extends Observable{
 
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -33,6 +36,7 @@ public class FirebaseIO {
                 GenericTypeIndicator<List<Song>> t = new GenericTypeIndicator<List<Song>>() {};
                 List<Song> newSongs = dataSnapshot.getValue(t);
                 songList.addAll(newSongs);
+                notifyObservers();
             }
 
             @Override
