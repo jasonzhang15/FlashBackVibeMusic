@@ -2,9 +2,9 @@ package com.android.flashbackmusic;
 
 import android.app.Application;
 import android.app.DownloadManager;
-import android.content.IntentFilter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,9 +19,7 @@ import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -385,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
                     //LatLng loc = currentParameters.getLocation();
                     String place = "San Diego";
                     String timeOfDay = currentParameters.getTimeOfDay();
-                    Date lastPlayedTime = currentParameters.getLastPlayedTime();
+                    Time lastPlayedTime = currentParameters.getLastPlayedTime();
                     String day = currentParameters.getDayOfWeek();
                     csb.setHistory("You're listening from " + place + " on a "
                             + day + " " + timeOfDay);

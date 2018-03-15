@@ -104,7 +104,8 @@ public class SongBlock extends LinearLayout implements DatePickerDialog.OnDateSe
                         e.printStackTrace();
                     }
                     time = new Time(true, d);
-                    Log.v("new time", String.valueOf(time.getCurrentTime()));
+                    Log.v("new time", String.valueOf(time.getDate()));
+                    song.setLastPlayedTime(time);
                 }
                 return false;
             }

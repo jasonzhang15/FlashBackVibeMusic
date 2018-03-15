@@ -2,6 +2,8 @@ package com.android.flashbackmusic;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Created by raindrop on 3/14/18.
  */
@@ -9,27 +11,35 @@ import java.util.Date;
 public class Time {
 
     private boolean mocking = false;
-    private Date mockTime;
+    private Date mockableDate;
+    private Calendar calendar;
+    private TimeZone tz = TimeZone.getTimeZone("America/Los_Angeles");
 
     public Time() {
-        this.mocking = false;
+        // not mocking
+        // use current time
+        mocking = false;
+        calendar = Calendar.getInstance(tz);
+        setMockableDate(calendar.getTime());
     }
 
-    public Time(boolean mockTime, Date theMockTime) {
-        this.mockTime = theMockTime;
-        this.mocking = mockTime;
+    public Time(boolean mocking, Date time) {
+        setMockableDate(time);
+        this.mocking = mocking;
+        this.calendar = Calendar.getInstance(tz);
+        this.calendar.setTime(time);
     }
 
-    public Date getCurrentTime() {
-        if (mocking) {
-            return mockTime;
-        } else {
-            return Calendar.getInstance().getTime();
-        }
+    public Date getDate() {
+        return mockableDate;
     }
 
-    public void setCurrentTime(Date time) {
-        this.mockTime = time;
+    public Calendar getCalendar() {
+        return this.calendar;
+    }
+
+    public void setMockableDate(Date time) {
+        this.mockableDate = time;
     }
 
 }
