@@ -392,7 +392,9 @@ public class MainActivity extends AppCompatActivity {
                     // TODO: once the null pointer reference is fixed, uncomment this line too
                     //songToPlay.setLastLocation(loc);
                     songToPlay.addTimeOfDay(timeOfDay);
-                    songToPlay.setLastPlayedTime(lastPlayedTime);
+                    if (!songToPlay.getLastPlayedTime().isMocking()) {
+                        songToPlay.setLastPlayedTime(lastPlayedTime);
+                    }
                     csb.loadFavor(songToPlay, prefsIO, songBlock);
                     csb.setText(songToPlay);
                     csb.togglePlayPause();

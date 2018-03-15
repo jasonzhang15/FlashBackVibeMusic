@@ -42,4 +42,8 @@ public class Time {
         this.mockableDate = time;
     }
 
+    public boolean isMocking() {
+        return mocking;
+    }
+
 }
