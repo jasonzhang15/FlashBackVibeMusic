@@ -1,16 +1,14 @@
 package com.android.flashbackmusic;
 
-import java.util.Date;
-
 public class SongPlay {
 
     String songname;
     String username;
     String location;
     String time;
-    Date date;
+    Time date;
 
-    public SongPlay(String songname, String username, String location, String time, Date date) {
+    public SongPlay(String songname, String username, String location, String time, Time date) {
         this.songname = songname;
         this.username = username;
         this.location = location;
