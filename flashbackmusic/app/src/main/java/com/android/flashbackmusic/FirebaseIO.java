@@ -9,30 +9,50 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by vrkumar on 3/1/18.
  */
 
-public class FirebaseIO {
+public class FirebaseIO extends Observable{
 
     FirebaseDatabase database;
     DatabaseReference myRef;
+    List<RemoteSong> remoteSongList;
+    List<Song> songList;
 
-    public void setup(final List<Song> songList) {
+    public FirebaseIO(final List<RemoteSong> remoteSongList, final List<Song> songList){
+        this.remoteSongList = remoteSongList;
+        this.songList = songList;
+        setup();
+    }
+
+    public void setup() {
         database = database.getInstance();
         myRef = database.getReference();
 
-        myRef.setValue(songList);
+        myRef.setValue(remoteSongList);
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                songList.clear();
-                GenericTypeIndicator<List<Song>> t = new GenericTypeIndicator<List<Song>>() {};
-                List<Song> newSongs = dataSnapshot.getValue(t);
-                songList.addAll(newSongs);
+                remoteSongList.clear();
+                GenericTypeIndicator<List<RemoteSong>> t = new GenericTypeIndicator<List<RemoteSong>>() {};
+                List<RemoteSong> newSongs = dataSnapshot.getValue(t);
+                remoteSongList.addAll(newSongs);
+                for (RemoteSong r : remoteSongList){
+                    for (Song s : songList){
+                        if (r.getId().equals(s.getId())){
+                            r.setSong(s);
+                            s.setRemoteSong(r);
+                        }
+                    }
+                }
+                notifyObservers();
             }
 
             @Override
@@ -40,6 +60,9 @@ public class FirebaseIO {
                 Log.v("Database:", "Database unexpectedly closed");
             }
         });
+    }
 
+    public void update(){
+        myRef.setValue(remoteSongList);
     }
 }

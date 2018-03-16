@@ -28,8 +28,9 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Observer;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SongCompletionListener, LocationChangeListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private Application app;
     private ArrayList<Song> songList;
     private ArrayList<Album> albumList;
+    private ArrayList<RemoteSong> remoteSongList;
     private CurrentParameters currentParameters;
     //private LocationAdapter locationAdapter;
     private LocationMock locationAdapter;
@@ -125,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
 
         songList = songImporter.getSongList();
         albumList = songImporter.getAlbumList();
+        remoteSongList = songImporter.getRemoteSongList();
+
         for (int i = 0; i < songList.size(); i++) {
             Log.v("LOOK", "songs: " + songList.get(i).getTitle());
         }
@@ -134,7 +138,8 @@ public class MainActivity extends AppCompatActivity {
         // Create the adapter to handle location tracking
         locationAdapter = new LocationMock();
         locationAdapter.establishLocationPermission(this, this);
-        //locationAdapter.getCurrentLocation();
+        locationAdapter.addLocationChangeListener(this);
+        //locationAdapter.getCurrentLocation();s
 
         currentParameters = new CurrentParameters(locationAdapter);
 
@@ -297,8 +302,24 @@ public class MainActivity extends AppCompatActivity {
         return strAdd;
     }
 
+    public void updateSong(Song s){
+        String timeOfDay = currentParameters.getTimeOfDay();
+        Time lastPlayedTime = currentParameters.getLastPlayedTime();
+        s.addTimeOfDay(timeOfDay);
+        s.setLastPlayedTime(lastPlayedTime);
+        s.addPlay(new SongPlay( "bob", currentParameters.getLocation(), currentParameters.getTimeOfDay(), currentParameters.getLastPlayedTime().getDate()));
+    }
+
+    public void onSongCompletion(){
+        updateSong(player.getLastSong());
+    }
+
+    public void onLocationChange(LatLng location){
+        startIntentService(location);
+    }
+
     public void loadSongs() {
-        for (Song song : songList) {
+        for (final Song song : songList) {
             final Song songToPlay = song;
 
             final SongBlock songBlock = new SongBlock(getApplicationContext(), song);

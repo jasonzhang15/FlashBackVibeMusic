@@ -9,18 +9,22 @@ public class RemoteSong {
     private Album album;
     private String URL;
     private ArrayList<SongPlay> plays;
-    //private int id;
+    private Song song;
+    private String id;
 
-    public RemoteSong(/*id,*/ String title, String artist, Album album, String url) {
+
+    //Every song and remotesong has an ID - it is used to tie them to each other
+    public RemoteSong(/*id,*/ String title, String artist, Album album, String url, String id) {
         //this.id = id;
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.URL = url;
+        this.id = id;
         plays = new ArrayList<>();
     }
 
-    //public int getId() { return id; }
+    public String getId() { return id; }
     public String getTitle() {
         return title;
     }
@@ -33,6 +37,9 @@ public class RemoteSong {
 
     public String getURL() { return URL; }
     public void setURL(String url) { URL = url; }
+
+    public Song getSong(){ return song; }
+    public void setSong(Song s){ this.song = s;}
 
     public ArrayList<SongPlay> getPlays() { return plays; }
     public SongPlay getMostRecentPlay() { return plays.get(plays.size() - 1); }

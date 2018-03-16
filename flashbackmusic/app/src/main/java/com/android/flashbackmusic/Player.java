@@ -19,6 +19,7 @@ public class Player implements Serializable {
     private Application app;
     private List<SongCompletionListener> songCompletionListenerList = new ArrayList<SongCompletionListener>();
     private Song song;
+    private Song lastSong;
     private boolean isReset;
 
     public Player(Application app){
@@ -81,6 +82,7 @@ public class Player implements Serializable {
     }
 
     public void songCompletionEvent(){
+        lastSong = song;
         for (SongCompletionListener s : songCompletionListenerList){
             s.onSongCompletion();
         }
@@ -93,6 +95,8 @@ public class Player implements Serializable {
     public Song getSong() {
         return this.song;
     }
+
+    public Song getLastSong() { return this.lastSong; }
 
     public Boolean isReset() {
         return isReset;

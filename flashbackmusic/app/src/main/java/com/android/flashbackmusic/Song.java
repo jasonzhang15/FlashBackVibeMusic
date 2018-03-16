@@ -20,6 +20,9 @@ public class Song {
     private Set<String> daysOfWeek;
     private LatLng lastLocation;
     private boolean local;
+
+    //Every song and remotesong has an ID - it is used to tie them to each other
+    private String id;
     String path;
 
     private RemoteSong remoteSong;
@@ -38,11 +41,19 @@ public class Song {
     public Song(/*id,*/ String title, String artist, Album album, String url, String path) {
         this();
         this.path = path;
-        remoteSong = new RemoteSong(/*id,*/ title, artist, album, url);
+        this.id = title + artist;
+        remoteSong = new RemoteSong(title, artist, album, url, id);
+        remoteSong.setSong(this);
     }
     // Song Info
 
     //public int getId() { return remoteSong.getId(); }
+    public RemoteSong getRemoteSong(){
+        return remoteSong;
+    }
+    public void setRemoteSong(RemoteSong r){
+        this.remoteSong = r;
+    }
     public String getTitle() {
         return remoteSong.getTitle();
     }
@@ -108,4 +119,6 @@ public class Song {
 
     public String getPath() { return path; }
     public void setPath(String path) { this.path = path; }
+
+    public String getId() { return id; }
 }

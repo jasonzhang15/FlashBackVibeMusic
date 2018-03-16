@@ -1,15 +1,16 @@
 package com.android.flashbackmusic;
 
+import com.google.android.gms.maps.model.LatLng;
+import java.util.Date;
+
 public class SongPlay {
 
-    String songname;
     String username;
-    String location;
+    LatLng location;
     String time;
-    Time date;
+    Date date;
 
-    public SongPlay(String songname, String username, String location, String time, Time date) {
-        this.songname = songname;
+    public SongPlay(String username, LatLng location, String time, Date date) {
         this.username = username;
         this.location = location;
         this.time = time;
