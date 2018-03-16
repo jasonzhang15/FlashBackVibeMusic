@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SongCompletionListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -366,8 +366,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void updateSong(Song s){
+        String timeOfDay = currentParameters.getTimeOfDay();
+        Date lastPlayedTime = currentParameters.getLastPlayedTime();
+        s.addTimeOfDay(timeOfDay);
+        s.setLastPlayedTime(lastPlayedTime);
+        s.addPlay(new SongPlay( "bob", currentParameters.getLocation(), currentParameters.getTimeOfDay(), currentParameters.getLastPlayedTime()));
+    }
+
+    public void onSongCompletion(){
+        updateSong(player.getLastSong());
+    }
+
     public void loadSongs() {
-        for (Song song : songList) {
+        for (final Song song : songList) {
             final Song songToPlay = song;
 
             final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
@@ -395,8 +407,6 @@ public class MainActivity extends AppCompatActivity {
 
                     // TODO: once the null pointer reference is fixed, uncomment this line too
                     //songToPlay.setLastLocation(loc);
-                    songToPlay.addTimeOfDay(timeOfDay);
-                    songToPlay.setLastPlayedTime(lastPlayedTime);
                     csb.loadFavor(songToPlay, prefsIO, songBlock);
                     csb.setText(songToPlay);
                     csb.togglePlayPause();
