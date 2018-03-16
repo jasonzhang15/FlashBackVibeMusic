@@ -1,8 +1,10 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,9 +19,7 @@ import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Album> albumList;
     private CurrentParameters currentParameters;
     private LocationAdapter locationAdapter;
+    private SimpleDownloader downloader;
 
     private SongMode sm;
     private AlbumMode am;
@@ -64,12 +65,25 @@ public class MainActivity extends AppCompatActivity {
 
         app = this.getApplication();
         songImporter = new SimpleSongImporter(app);
+        downloader = new SimpleDownloader(app, songImporter);
+
+        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        registerReceiver(downloader.downloadReceiver, filter);
+
+        downloader.downloadSong("http://www.purevolume.com/download.php?id=3463253");
+        downloader.downloadSong("http://www.purevolume.com/download.php?id=3061040");
+        downloader.downloadSong("http://www.purevolume.com/download.php?id=3061067");
+
         songImporter.read();
+
         prefs = getSharedPreferences("info", MODE_PRIVATE);
         prefsIO = new SharedPrefsIO(prefs);
 
         songList = songImporter.getSongList();
         albumList = songImporter.getAlbumList();
+        for (int i = 0; i < songList.size(); i++) {
+            Log.v("LOOK", "songs: " + songList.get(i).getTitle());
+        }
         populateSongInfo();
         player = new Player(app);
 
@@ -99,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
                 sm.display(true);
                 //setContentView(R.layout.song_mode);
 
-
                 // if music is playing, show csb
             }
         });
@@ -114,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
                 //csb.display(false);
                 am.display(true);
                 //setContentView(R.layout.album_mode);
-
             }
         });
 
@@ -127,12 +139,11 @@ public class MainActivity extends AppCompatActivity {
                 fm.display(true);
                 //setContentView(R.layout.flashback_mode);
 
-
                 // disable songs and album tabs?
-
                 loadFlashback();
             }
         });
+
     }
 
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
@@ -183,12 +194,11 @@ public class MainActivity extends AppCompatActivity {
             albumBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    albumBlock.setPlayPause(player);
-                    albumtoPlay.play(player);
+                albumBlock.setPlayPause(player);
+                albumtoPlay.play(player);
                 }
             });
             am.addView(albumBlock);
-
         }
     }
 
@@ -204,16 +214,16 @@ public class MainActivity extends AppCompatActivity {
         fm.setPlayPause(player);
         fm.setText(flashbackSongs.get(0));
         fm.setHistory("You're listening from " + "San Diego" + " on a "
-                + "Tuesday" + " " + "Morning");
+            + "Tuesday" + " " + "Morning");
 
         Button disableFlashback = findViewById(R.id.flashback_disable);
         disableFlashback.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
-                player.reset();
-                fm.display(false);
-                sm.display(true);
+            player.reset();
+            fm.display(false);
+            sm.display(true);
             }
         });
     }
@@ -225,38 +235,40 @@ public class MainActivity extends AppCompatActivity {
             final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
             songBlock.setText();
             songBlock.loadFavor(song, prefsIO);
+            songBlock.setTime();
             songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!(songToPlay.isDisliked())) {
+                if (!(songToPlay.isDisliked())) {
 
-                        csb.display(true);
-                        csb.setText(songToPlay);
-                        csb.setPlayPause(player);
+                    csb.display(true);
+                    csb.setText(songToPlay);
+                    csb.setPlayPause(player);
 
-                        // TODO: Figure out why this gets a nullreferenceexception
-                        // why is locationAdapter null?
-                        //LatLng loc = currentParameters.getLocation();
-                        String place = "San Diego";
-                        String timeOfDay = currentParameters.getTimeOfDay();
-                        Date lastPlayedTime = currentParameters.getLastPlayedTime();
-                        String day = currentParameters.getDayOfWeek();
-                        csb.setHistory("You're listening from " + place + " on a "
-                                + day + " " + timeOfDay);
-                        player.play(songToPlay);
+                    // TODO: Figure out why this gets a nullreferenceexception
+                    // why is locationAdapter null?
+                    //LatLng loc = currentParameters.getLocation();
+                    String place = "San Diego";
+                    String timeOfDay = currentParameters.getTimeOfDay();
+                    Time lastPlayedTime = currentParameters.getLastPlayedTime();
+                    String day = currentParameters.getDayOfWeek();
+                    csb.setHistory("You're listening from " + place + " on a "
+                            + day + " " + timeOfDay);
+                    player.play(songToPlay);
 
-                        // TODO: once the null pointer reference is fixed, uncomment this line too
-                        //songToPlay.setLastLocation(loc);
-                        Set<String> timesOfDay = songToPlay.getTimesOfDay();
-                        timesOfDay.add(timeOfDay);
-                        songToPlay.setTimesOfDay(timesOfDay);
+                    // TODO: once the null pointer reference is fixed, uncomment this line too
+                    //songToPlay.setLastLocation(loc);
+                    songToPlay.addTimeOfDay(timeOfDay);
+                    if (!songToPlay.getLastPlayedTime().isMocking()) {
                         songToPlay.setLastPlayedTime(lastPlayedTime);
-                        csb.loadFavor(songToPlay, prefsIO, songBlock);
-                        csb.setText(songToPlay);
-                        csb.togglePlayPause();
                     }
+                    csb.loadFavor(songToPlay, prefsIO, songBlock);
+                    csb.setText(songToPlay);
+                    csb.togglePlayPause();
+                }
                 }
             });
+
             sm.addView(songBlock);
         }
     }

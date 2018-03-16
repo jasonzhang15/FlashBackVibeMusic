@@ -34,7 +34,6 @@ public class CurrentSongBlock extends LinearLayout {
         this.player = player;
 
         playPause = this.findViewById(R.id.song_playPause);
-        Log.v("zhikai", playPause.toString());
 
         playPause.setOnClickListener(new View.OnClickListener() {
             @Override
