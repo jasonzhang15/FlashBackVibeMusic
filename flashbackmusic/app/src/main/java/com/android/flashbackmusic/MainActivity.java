@@ -18,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Song> songList;
     private ArrayList<Album> albumList;
     private CurrentParameters currentParameters;
-    private LocationAdapter locationAdapter;
+    //private LocationAdapter locationAdapter;
+    private LocationMock locationAdapter;
     private SimpleDownloader downloader;
 
     private SongMode sm;
@@ -221,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
         player = new Player(app);
 
         // Create the adapter to handle location tracking
-        locationAdapter = new LocationAdapter();
+        locationAdapter = new LocationMock();
         locationAdapter.establishLocationPermission(this, this);
         //locationAdapter.getCurrentLocation();
 
@@ -372,33 +375,35 @@ public class MainActivity extends AppCompatActivity {
             songBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                if (!(songToPlay.isDisliked())) {
+                    if (!(songToPlay.isDisliked())) {
 
-                    csb.display(true);
-                    csb.setText(songToPlay);
-                    csb.setPlayPause(player);
+                        csb.display(true);
+                        csb.setText(songToPlay);
+                        csb.setPlayPause(player);
 
-                    // TODO: Figure out why this gets a nullreferenceexception
-                    // why is locationAdapter null?
-                    //LatLng loc = currentParameters.getLocation();
-                    String place = "San Diego";
-                    String timeOfDay = currentParameters.getTimeOfDay();
-                    Time lastPlayedTime = currentParameters.getLastPlayedTime();
-                    String day = currentParameters.getDayOfWeek();
-                    csb.setHistory("You're listening from " + place + " on a "
-                            + day + " " + timeOfDay);
-                    player.play(songToPlay);
+                        // TODO: Figure out why this gets a nullreferenceexception
+                        // why is locationAdapter null?
+                        LatLng loc = currentParameters.getLocation();
+                        String place = "San Diego";
+                        String timeOfDay = currentParameters.getTimeOfDay();
+                        Time lastPlayedTime = currentParameters.getLastPlayedTime();
+                        String day = currentParameters.getDayOfWeek();
+                        csb.setHistory("You're listening from " + place + " on a "
+                                + day + " " + timeOfDay);
+                        player.play(songToPlay);
 
-                    // TODO: once the null pointer reference is fixed, uncomment this line too
-                    //songToPlay.setLastLocation(loc);
-                    songToPlay.addTimeOfDay(timeOfDay);
-                    if (!songToPlay.getLastPlayedTime().isMocking()) {
-                        songToPlay.setLastPlayedTime(lastPlayedTime);
+                        // TODO: once the null pointer reference is fixed, uncomment this line too
+                        songToPlay.setLastLocation(loc);
+                        //Log.v("LOCATION!!!", loc.toString());
+                        Log.v("LOCATION!!!", songToPlay.getLastLocation().toString());
+                        songToPlay.addTimeOfDay(timeOfDay);
+                        if (!songToPlay.getLastPlayedTime().isMocking()) {
+                            songToPlay.setLastPlayedTime(lastPlayedTime);
+                        }
+                        csb.loadFavor(songToPlay, prefsIO, songBlock);
+                        csb.setText(songToPlay);
+                        csb.togglePlayPause();
                     }
-                    csb.loadFavor(songToPlay, prefsIO, songBlock);
-                    csb.setText(songToPlay);
-                    csb.togglePlayPause();
-                }
                 }
             });
 

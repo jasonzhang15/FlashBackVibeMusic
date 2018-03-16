@@ -5,7 +5,6 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -27,15 +26,21 @@ public class CurrentParameters {
     public CurrentParameters() {}
 
     public LatLng getLocation() {
-        if (locationHandler == null) return new LatLng(latDefault, lngDefault);
-        else return locationHandler.getCurrentLocation();
+        if (locationHandler == null) {
+            Log.v("LOCATION HANDLER", "is null");
+            return new LatLng(latDefault, lngDefault);
+        }
+        else {
+            Log.v("LOCATION HANDLER", "is not null");
+            return locationHandler.getCurrentLocation();
+        }
     }
 
     public CurrentParameters(LocationInterface loc) {
         // Location
         locationHandler = loc;
         location = getLocation();
-        Log.d("cur location", "" + location);
+        Log.d("cur location", "" + location.toString());
 
         lastPlayedTime = new Time();
 
@@ -70,11 +75,6 @@ public class CurrentParameters {
         else if (hour >= 11 && hour < 17) timeOfDay = "AFTERNOON";
         else timeOfDay = "NIGHT";
         return timeOfDay;
-    }
-
-    public Date getLastPlayed() {
-        calendar = Calendar.getInstance();
-        return calendar.getTime();
     }
 
     public void setLocation(LocationInterface loc) { location = loc.getCurrentLocation(); }

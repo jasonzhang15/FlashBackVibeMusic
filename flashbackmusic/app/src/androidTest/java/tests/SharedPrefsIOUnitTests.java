@@ -96,12 +96,6 @@ public class SharedPrefsIOUnitTests {
         assertEquals(s.getTimesOfDay(), timesOfDay);
         assertEquals(s.getDaysOfWeek(), daysOfWeek);
         assertEquals(s.getLastLocation(), test_loc);
-        Log.v("is disliked", String.valueOf(s.isDisliked()));
-        Log.v("is favorited", String.valueOf(s.isFavorited()));
-        Log.v("locs", String.valueOf(s.getLocations()));
-        Log.v("times of day", String.valueOf(s.getTimesOfDay()));
-        Log.v("days of week", String.valueOf(s.getDaysOfWeek()));
-        Log.v("last location", String.valueOf(s.getLastLocation()));
     }
 
     @Test
