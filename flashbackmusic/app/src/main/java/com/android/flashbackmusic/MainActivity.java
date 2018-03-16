@@ -13,9 +13,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -44,6 +46,11 @@ public class MainActivity extends AppCompatActivity {
     private AlbumMode am;
     private FlashbackMode fm;
     private CurrentSongBlock csb;
+
+    private ExpandableListAdapter listAdapter;
+    private ExpandableListView expListView;
+    private List<String> listDataHeader;
+    private HashMap<String, List<SongBlock>> listDataChild;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.v("album button pressed", "album");
                 //csb.display(false);
                 am.display(true);
-                launchAlbum();
+                loadAlbum();
                 //setContentView(R.layout.album_mode);
 
             }
@@ -169,10 +176,76 @@ public class MainActivity extends AppCompatActivity {
         }
     }*/
 
-    public void launchAlbum() {
-        storeSongInfo();
-        Intent intent = new Intent(this, Album_Activity.class);
-        startActivity(intent);
+    public void loadAlbum() {
+        expListView = (ExpandableListView) findViewById(R.id.lvExp);
+
+        // preparing list data
+        prepareListData();
+
+        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
+    }
+
+    private void prepareListData() {
+        final ArrayList<Album> albumList = songImporter.getAlbumList();
+
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<SongBlock>>();
+        //for (Album album : albumList) {
+        for(int i = 0; i<1;i++){
+            //listDataHeader.add(album.getTitle()+"|"+album.getArtist());
+            listDataHeader.add(albumList.get(i).getTitle());
+        }
+
+        // Adding child data
+        List<SongBlock> top250 = new ArrayList<>();
+        Album first = albumList.get(0);
+        ArrayList<Song> songs = first.getSongs();
+        for (Song song : songs) {
+            final Song songToPlay = song;
+            final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
+            songBlock.setText();
+            songBlock.loadFavor(song, prefsIO);
+            songBlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!(songToPlay.isDisliked())) {
+
+                        csb.display(true);
+                        csb.setText(songToPlay);
+                        csb.setPlayPause(player);
+
+                        // TODO: Figure out why this gets a nullreferenceexception
+                        // why is locationAdapter null?
+                        //LatLng loc = currentParameters.getLocation();
+                        String place = "San Diego";
+                        String timeOfDay = currentParameters.getTimeOfDay();
+                        Date lastPlayedTime = currentParameters.getLastPlayedTime();
+                        String day = currentParameters.getDayOfWeek();
+                        csb.setHistory("You're listening from " + place + " on a "
+                                + day + " " + timeOfDay);
+                        player.play(songToPlay);
+
+                        // TODO: once the null pointer reference is fixed, uncomment this line too
+                        //songToPlay.setLastLocation(loc);
+                        Set<String> timesOfDay = songToPlay.getTimesOfDay();
+                        timesOfDay.add(timeOfDay);
+                        songToPlay.setTimesOfDay(timesOfDay);
+                        songToPlay.setLastPlayedTime(lastPlayedTime);
+                        csb.loadFavor(songToPlay, prefsIO, songBlock);
+                        csb.setText(songToPlay);
+                        csb.togglePlayPause();
+                    }
+                }
+            });
+            top250.add(songBlock);
+        }
+
+        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
+        //listDataChild.put(listDataHeader.get(1), nowShowing);
+        //listDataChild.put(listDataHeader.get(2), comingSoon);
     }
 
     public void loadFlashback() {

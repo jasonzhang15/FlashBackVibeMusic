@@ -40,6 +40,14 @@ public class SongBlock extends LinearLayout {
         initializeViews(context);
     }
 
+    public String getTitle(){
+        return this.titleText;
+    }
+
+    public String getartistAlbum(){
+        return artist+"|"+album;
+    }
+
     public void loadFavor(Song song, SharedPrefsIO sp) {
         final Song song_f = song;
         final SharedPrefsIO sp_f = sp;
