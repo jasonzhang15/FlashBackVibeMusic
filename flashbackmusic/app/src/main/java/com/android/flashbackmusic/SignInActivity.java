@@ -76,6 +76,7 @@ public class SignInActivity extends AppCompatActivity {
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestServerAuthCode(clientId)
+                .requestIdToken(clientId)
                 .requestScopes(new Scope(Scopes.PROFILE),
                         new Scope("https://www.googleapis.com/auth/contacts.readonly"))
                         //new Scope(Scopes.CONTACTS_READONLY))
@@ -155,7 +156,7 @@ public class SignInActivity extends AppCompatActivity {
             // Log.d("in updateUI()", "FINISHING");
             try {
                 Log.i("SETTING UP", "entering");
-                setUp();
+                setUp(account);
             } catch (IOException e) {
                 e.getStackTrace();
                 Log.d("Exception", e.getMessage());
@@ -164,48 +165,50 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
-    private void setUp() throws IOException {
+    private void setUp(GoogleSignInAccount account) throws IOException, NullPointerException {
         Log.i("IN SETUP", "test");
         HttpTransport httpTransport = new NetHttpTransport();
         JacksonFactory jsonFactory = new JacksonFactory();
-        Log.d("CODE", "direct value - " + account.getServerAuthCode());
         code = account.getServerAuthCode();
 
         Log.d("CODE", "val - " + code);
 
-        // TODO wrong clientId/clientSecret....?
+        try {
+            // Step 2: Exchange -->
+            GoogleTokenResponse tokenResponse =
+                    new GoogleAuthorizationCodeTokenRequest(
+                            httpTransport, jsonFactory, clientId, clientSecret, code, redirectUrl)
+                            .execute();
+            // End of Step 2 <--
 
-        // Step 2: Exchange -->
-        GoogleTokenResponse tokenResponse =
-                new GoogleAuthorizationCodeTokenRequest(
-                        httpTransport, jsonFactory, clientId, clientSecret, code, redirectUrl)
-                        .execute();
-        // End of Step 2 <--
+            GoogleCredential credential = new GoogleCredential.Builder()
+                    .setTransport(httpTransport)
+                    .setJsonFactory(jsonFactory)
+                    .setClientSecrets(clientId, clientSecret)
+                    .build()
+                    .setFromTokenResponse(tokenResponse);
 
-        GoogleCredential credential = new GoogleCredential.Builder()
-                .setTransport(httpTransport)
-                .setJsonFactory(jsonFactory)
-                .setClientSecrets(clientId, clientSecret)
-                .build()
-                .setFromTokenResponse(tokenResponse);
+            PeopleService peopleService =
+                    new PeopleService.Builder(httpTransport, jsonFactory, credential).build();
 
-        PeopleService peopleService =
-                new PeopleService.Builder(httpTransport, jsonFactory, credential).build();
+            // Set Profile
+            Person profile = peopleService.people().get("people/me")
+                    .setPersonFields("names,emailAddresses")
+                    .execute();
 
-        // Set Profile
-        Person profile = peopleService.people().get("people/me")
-                .setPersonFields("names,emailAddresses")
-                .execute();
+            Log.i("PROFILE reached", " " + profile.toString());
 
-        Log.i("PROFILE reached", " " + profile.toString());
+            // Get Connections
+            ListConnectionsResponse response = peopleService.people().connections().list("people/me")
+                    .setPersonFields("names,emailAddresses")
+                    .execute();
+            List<Person> connections = response.getConnections();
 
-        // Get Connections
-        ListConnectionsResponse response = peopleService.people().connections().list("people/me")
-                .setPersonFields("names,emailAddresses")
-                .execute();
-        List<Person> connections = response.getConnections();
+            Log.i("CONNECTIONS reached", " " + connections.toString());
 
-        Log.i("CONNECTIONS reached", " " + connections.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*private void buildNewGoogleApiClient() {
