@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
     String timeOfDay = "night";
     private String place = "San Diego";
 
-
     class AddressResultReceiver extends ResultReceiver {
         public AddressResultReceiver(Handler handler) {
             super(handler);
@@ -68,19 +67,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
-            Log.v("Received result","about location");
             if (resultData == null) {
+                Log.w("Result data", "was null");
                 return;
             }
             // Display the address string
             // or an error message sent from the intent service.
             String address = resultData.getString(Constants.RESULT_DATA_KEY);
+            Log.w("RECEIVED RESULT", address);
+            Log.w("NEW PLACE", place);
             if (address == null) {
-                address = "";
+                address = "San Diego";
             }
             place = address;
-            Log.w("RECEIVED RESULT", place);
-            csb.setHistory("You're listening from " + place + " on a "
+            csb.setHistory("at " + place + " on a "
                     + day + " " + timeOfDay);
         }
     }
@@ -315,12 +315,12 @@ public class MainActivity extends AppCompatActivity {
                         csb.setPlayPause(player);
                         LatLng loc = currentParameters.getLocation();
 
-                        place = getCompleteAddressString(loc.latitude, loc.longitude);
                         startIntentService(loc);
 
                         Time lastPlayedTime = songToPlay.getLastPlayedTime();
                         if (lastPlayedTime == null || !(lastPlayedTime.isMocking())) {
                             Log.v("is lastPlayedTime Null?", String.valueOf(lastPlayedTime == null));
+                            currentParameters.setLastPlayedTime(new Time());
                             timeOfDay = currentParameters.getTimeOfDay();
                             lastPlayedTime = currentParameters.getLastPlayedTime();
                             day = currentParameters.getDayOfWeek();
@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
                             day = currentParameters.getDayOfWeek();
                             Log.v("timeofday, day", String.valueOf(timeOfDay) + " " + String.valueOf(day));
                         }
-                        csb.setHistory("You're listening from " + place + " on a "
+                        csb.setHistory("at " + place + " on a "
                                 + day + " " + timeOfDay);
                         player.play(songToPlay);
 
