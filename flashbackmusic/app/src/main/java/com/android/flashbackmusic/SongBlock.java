@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -15,8 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SongBlock extends LinearLayout implements DatePickerDialog.OnDateSetListener {
 
@@ -34,6 +35,7 @@ public class SongBlock extends LinearLayout implements DatePickerDialog.OnDateSe
     private Song song;
     private Context context;
     private Time time;
+    private InputMethodManager mgr;
 
     public SongBlock(Context context) {
         super(context);

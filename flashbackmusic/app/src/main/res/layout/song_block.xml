@@ -49,6 +49,8 @@
         android:hint="@string/time"
         android:inputType="text"
         android:imeOptions="actionDone"
+        android:maxLines="1"
+        android:singleLine="true"
         android:layout_marginLeft="10dp" />
 
 
