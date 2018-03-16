@@ -57,6 +57,9 @@
 
         <activity android:name=".FlashbackActivity" />
         <activity android:name=".SignInActivity" />
+        <service
+            android:name=".FetchAddressIntentService"
+            android:exported="false"/>
     </application>
 
 </manifest>

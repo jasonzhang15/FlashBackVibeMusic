@@ -40,12 +40,11 @@ public class CurrentParameters {
         // Location
         locationHandler = loc;
         location = getLocation();
-        Log.d("cur location", "" + location.toString());
+        //Log.d("cur location", "" + location.toString());
 
-        lastPlayedTime = new Time();
+        Time time = new Time();
+        setLastPlayedTime(time);
 
-        calendar = lastPlayedTime.getCalendar();
-      
         dayOfWeek = getDayOfWeek();
 
         timeOfDay = getTimeOfDay();
@@ -53,33 +52,38 @@ public class CurrentParameters {
     }
 
     public String getDayOfWeek() {
-        calendar = Calendar.getInstance(tz);
-        int day = calendar.get(Calendar.DAY_OF_WEEK);
-        switch (day) {
-            case 1: dayOfWeek = "MONDAY";
-            case 2: dayOfWeek = "TUESDAY";
-            case 3: dayOfWeek = "WEDNESDAY";
-            case 4: dayOfWeek = "THURSDAY";
-            case 5: dayOfWeek = "FRIDAY";
-            case 6: dayOfWeek = "SATURDAY";
-            case 7: dayOfWeek = "SUNDAY";
-        }
         return dayOfWeek;
     }
 
     public String getTimeOfDay() {
-        calendar = Calendar.getInstance(tz);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-
-        if (hour >= 5 && hour < 11) timeOfDay = "MORNING";
-        else if (hour >= 11 && hour < 17) timeOfDay = "AFTERNOON";
-        else timeOfDay = "NIGHT";
         return timeOfDay;
     }
 
     public void setLocation(LocationInterface loc) { location = loc.getCurrentLocation(); }
 
     public Time getLastPlayedTime() { return lastPlayedTime; }
+
+    public void setLastPlayedTime(Time time) {
+        lastPlayedTime = time;
+        calendar = lastPlayedTime.getCalendar();
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        switch (day) {
+            case 2: dayOfWeek = "Monday"; break;
+            case 3: dayOfWeek = "Tuesday"; break;
+            case 4: dayOfWeek = "Wednesday"; break;
+            case 5: dayOfWeek = "Thursday"; break;
+            case 6: dayOfWeek = "Friday"; break;
+            case 7: dayOfWeek = "Saturday"; break;
+            case 1: dayOfWeek = "Sunday"; break;
+            default: dayOfWeek = "BARN";
+        }
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if (hour >= 5 && hour < 11) timeOfDay = "morning";
+        else if (hour >= 11 && hour < 17) timeOfDay = "afternoon";
+        else timeOfDay = "night";
+        Log.v("day of week", dayOfWeek);
+        Log.v("hour of day", timeOfDay);
+    }
 
     //For testing purposes
     protected void setLatLng(LatLng latLng){location = latLng;}

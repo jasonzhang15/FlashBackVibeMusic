@@ -6,8 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Parcelable;
+import android.os.ResultReceiver;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,142 +56,45 @@ public class MainActivity extends AppCompatActivity {
     private AlbumMode am;
     private FlashbackMode fm;
     private CurrentSongBlock csb;
+    String day = "Sunday";
+    String timeOfDay = "night";
+    private String place = "San Diego";
 
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            if (resultData == null) {
+                Log.w("Result data", "was null");
+                return;
+            }
+            // Display the address string
+            // or an error message sent from the intent service.
+            String address = resultData.getString(Constants.RESULT_DATA_KEY);
+            Log.w("RECEIVED RESULT", address);
+            Log.w("NEW PLACE", place);
+            if (address == null) {
+                address = "San Diego";
+            }
+            place = address;
+            csb.setHistory("at " + place + " on a "
+                    + day + " " + timeOfDay);
+        }
+    }
+    private AddressResultReceiver mResultReceiver;
+
+    protected void startIntentService(LatLng location) {
+        Intent intent = new Intent(MainActivity.this, FetchAddressIntentService.class);
+        mResultReceiver = new AddressResultReceiver(new Handler());
+        intent.putExtra(Constants.RECEIVER, (Parcelable) mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, location);
+        startService(intent);
+    }
     private Context maContext;
-    /*
-    private GoogleApiClient google_api_client;
-    private void buildNewGoogleApiClient() {
-        google_api_client = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks((GoogleApiClient.ConnectionCallbacks) this)
-                .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener) this)
-                .addApi(Plus.API, Plus.PlusOptions.builder().build())
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
-                .build();
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Initiate connection for Google+ API
-        google_api_client.connect();
-    }
 
-    @Override
-    protected void onStop(){
-        super.onStop();
-        if (google_api_client.isConnected()) {
-            google_api_client.disconnect();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (google_api_client.isConnected()) {
-            google_api_client.connect();
-        }
-    }
-
-    @Override
-    public void onConnected(Bundle arg0) {
-        is_signInBtn_clicked = false;
-        getProfileInfo();
-        changeUI(true);
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult result){
-        if (!result.hasResolution()) {
-            google_api_availability.getErrorDialog(this, result.getErrorCode(), request_code).show();
-            return;
-        }
-        if (!is_intent_inprogress) {
-            connection_result = result;
-            if (is_signInBtn_clicked) {
-                resolveSignInError();
-            }
-        }
-    }
-
-    private void gPlusSignIn() {
-        if (!google_api_client.isConnecting()) {
-            Log.d("user connected", "connected");
-            is_signInBtn_clicked = true;
-            progress_dialog.show();
-            resolveSignInError();
-        }
-    }
-
-    private void resolveSignInError() {
-        if (connection_result.hasResolution()) {
-            try {
-                is_intent_inprogress = true;
-                connection_result.startResolutionForResult(this, SIGN_IN_CODE);
-                Log.d("resolve error", "sign in error resolved");
-            } catch (IntentSender.SendIntentException e) {
-                is_intent_inprogress = false;
-                google_api_client.connect();
-            }
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int arg0) {
-        google_api_client.connect();
-        changeUI(false);
-    }
-
-    private void gPlusSignOut() {
-        if (google_api_client.isConnected()) {
-            Plus.AccountApi.clearDefaultAccount(google_api_client);
-            google_api_client.disconnect();
-            google_api_client.connect();
-            changeUI(false);
-        }
-    }
-
-    private void gPlusRevokeAcces() {
-        if (google_api_client.isConnected()) {
-            Plus.AccountApi.clearDefaultAccount(google_api_client);
-            Plus.AccountApi.revokeAccessAndDisconnect(google_api_client)
-                    .setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(@NonNull Status status) {
-                            Log.d("MainActivity", "User access revoked!");
-                            buildNewGoogleApiClient();
-                            google_api_client.connect();
-                            changeUI(false);
-                        }
-                    });
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch(v.getId()) {
-            case R.id.sign_in_button:
-                Toast.makeText(this, "start sign process", Toast.LENGTH_SHORT).show();
-                gPlusSignIn();
-                break;
-            case R.id.sign_out_button:
-                Toast.makeText(this, "sign out from G+", Toast.LENGTH_LONG).show();
-                gPlusSignOut();
-                break;
-            case R.id.disconnect_button:
-                Toast.makeText(this, "Revoke access from G+", Toast.LENGTH_LONG).show();
-                gPlusRevokeAcces();
-                break;
-        }
-    }
-    private void changeUI(boolean signedIn) {
-        if (signedIn) {
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
-        } else {
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
-        }
-    }
-    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -202,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         app = this.getApplication();
         songImporter = new SimpleSongImporter(app);
         downloader = new SimpleDownloader(app, songImporter);
-
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         registerReceiver(downloader.downloadReceiver, filter);
 
@@ -350,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         fm.setPlayPause(player);
         fm.setText(flashbackSongs.get(0));
         fm.setHistory("You're listening from " + "San Diego" + " on a "
-            + "Tuesday" + " " + "Morning");
+            + "Sunday" + " " + "night");
 
         Button disableFlashback = findViewById(R.id.flashback_disable);
         disableFlashback.setOnClickListener(new View.OnClickListener(){
@@ -362,6 +270,31 @@ public class MainActivity extends AppCompatActivity {
             sm.display(true);
             }
         });
+    }
+    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null && addresses.size() > 0) {
+                Log.v("addresses", String.valueOf(addresses));
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+                Log.w("My Current location address", strReturnedAddress.toString());
+            } else {
+                strAdd = "San Diego";
+                Log.w("My Current location address", "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.w("My Current location address", "Cannot get Address!");
+        }
+        return strAdd;
     }
 
     public void loadSongs() {
@@ -380,24 +313,32 @@ public class MainActivity extends AppCompatActivity {
                         csb.display(true);
                         csb.setText(songToPlay);
                         csb.setPlayPause(player);
-
-                        // TODO: Figure out why this gets a nullreferenceexception
-                        // why is locationAdapter null?
                         LatLng loc = currentParameters.getLocation();
-                        String place = "San Diego";
-                        String timeOfDay = currentParameters.getTimeOfDay();
-                        Time lastPlayedTime = currentParameters.getLastPlayedTime();
-                        String day = currentParameters.getDayOfWeek();
-                        csb.setHistory("You're listening from " + place + " on a "
+
+                        startIntentService(loc);
+
+                        Time lastPlayedTime = songToPlay.getLastPlayedTime();
+                        if (lastPlayedTime == null || !(lastPlayedTime.isMocking())) {
+                            Log.v("is lastPlayedTime Null?", String.valueOf(lastPlayedTime == null));
+                            currentParameters.setLastPlayedTime(new Time());
+                            timeOfDay = currentParameters.getTimeOfDay();
+                            lastPlayedTime = currentParameters.getLastPlayedTime();
+                            day = currentParameters.getDayOfWeek();
+                        } else {
+                            Log.v("else", String.valueOf(lastPlayedTime.isMocking()));
+                            currentParameters.setLastPlayedTime(lastPlayedTime);
+                            timeOfDay = currentParameters.getTimeOfDay();
+                            day = currentParameters.getDayOfWeek();
+                            Log.v("timeofday, day", String.valueOf(timeOfDay) + " " + String.valueOf(day));
+                        }
+                        csb.setHistory("at " + place + " on a "
                                 + day + " " + timeOfDay);
                         player.play(songToPlay);
 
                         // TODO: once the null pointer reference is fixed, uncomment this line too
                         songToPlay.setLastLocation(loc);
-                        //Log.v("LOCATION!!!", loc.toString());
-                        Log.v("LOCATION!!!", songToPlay.getLastLocation().toString());
                         songToPlay.addTimeOfDay(timeOfDay);
-                        if (!songToPlay.getLastPlayedTime().isMocking()) {
+                        if (!lastPlayedTime.isMocking()) {
                             songToPlay.setLastPlayedTime(lastPlayedTime);
                         }
                         csb.loadFavor(songToPlay, prefsIO, songBlock);

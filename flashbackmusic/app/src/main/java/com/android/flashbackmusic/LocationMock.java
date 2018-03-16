@@ -112,7 +112,7 @@ public class LocationMock implements LocationInterface {
             @Override
             public void onLocationChanged(Location curLocation) {
                 location = curLocation;
-                Log.v("Location Changed!", "to " + curLocation.toString());
+                //Log.v("Location Changed!", "to " + curLocation.toString());
             }
 
             @Override
