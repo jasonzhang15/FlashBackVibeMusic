@@ -4,9 +4,6 @@ import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.time.DayOfWeek;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -81,7 +78,7 @@ public class FlashbackOrderGenerator {
             int score2 = getScore(s2);
 
             if (score1 == score2){
-                return s1.getLastPlayedTime().after(s2.getLastPlayedTime()) ? 1 : -1;
+                return s1.getLastPlayedTime().getDate().after(s2.getLastPlayedTime().getDate()) ? 1 : -1;
             } else {
                 return score2 - score1;
             }
