@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by nataliepopescu on 2/17/18.
@@ -25,6 +28,7 @@ public class LocationMock implements LocationInterface {
 
     private String locationProvider;
     private LocationManager locationManager;
+    private List<LocationChangeListener> locationChangeListenerList = new ArrayList<LocationChangeListener>();
 
     // Compose Location
     private Location location;
@@ -108,10 +112,11 @@ public class LocationMock implements LocationInterface {
             return;
         }
 
-        LocationListener locationListener = new LocationListener() {
+        final LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location curLocation) {
                 location = curLocation;
+                notifyListeners();
                 //Log.v("Location Changed!", "to " + curLocation.toString());
             }
 
@@ -134,6 +139,16 @@ public class LocationMock implements LocationInterface {
         locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+    }
+
+    public void addLocationChangeListener(LocationChangeListener s){
+        this.locationChangeListenerList.add(s);
+    }
+
+    public void notifyListeners(){
+        for (LocationChangeListener l : locationChangeListenerList){
+            l.onLocationChange(new LatLng(this.location.getLatitude(), this.location.getLongitude()));
+        }
     }
 
 }
