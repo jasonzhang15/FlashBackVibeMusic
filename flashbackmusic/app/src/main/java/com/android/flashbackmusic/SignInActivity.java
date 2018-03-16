@@ -74,10 +74,10 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        //TODO may need to request additional scopes
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestServerAuthCode(clientId)
-                .requestScopes(new Scope(Scopes.PROFILE)) //,
+                .requestScopes(new Scope(Scopes.PROFILE),
+                        new Scope("https://www.googleapis.com/auth/contacts.readonly"))
                         //new Scope(Scopes.CONTACTS_READONLY))
                 .requestEmail()
                 .build();
@@ -154,7 +154,7 @@ public class SignInActivity extends AppCompatActivity {
             // setResult?
             // Log.d("in updateUI()", "FINISHING");
             try {
-                Log.i("SETTING UP", "enter");
+                Log.i("SETTING UP", "entering");
                 setUp();
             } catch (IOException e) {
                 e.getStackTrace();
@@ -165,9 +165,15 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void setUp() throws IOException {
+        Log.i("IN SETUP", "test");
         HttpTransport httpTransport = new NetHttpTransport();
         JacksonFactory jsonFactory = new JacksonFactory();
+        Log.d("CODE", "direct value - " + account.getServerAuthCode());
         code = account.getServerAuthCode();
+
+        Log.d("CODE", "val - " + code);
+
+        // TODO wrong clientId/clientSecret....?
 
         // Step 2: Exchange -->
         GoogleTokenResponse tokenResponse =
