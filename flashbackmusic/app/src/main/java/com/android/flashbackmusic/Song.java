@@ -2,9 +2,7 @@ package com.android.flashbackmusic;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.FileDescriptor;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,7 +15,7 @@ public class Song {
     private boolean favorited;
     private boolean disliked;
     private ArrayList<LatLng> locations;
-    private Date lastPlayedTime;
+    private Time lastPlayedTime;
     private Set<String> timesOfDay;
     private Set<String> daysOfWeek;
     private LatLng lastLocation;
@@ -98,10 +96,10 @@ public class Song {
         this.disliked = disliked;
     }
 
-    public Date getLastPlayedTime() {
+    public Time getLastPlayedTime() {
         return lastPlayedTime;
     }
-    public void setLastPlayedTime(Date lastPlayedTime) {
+    public void setLastPlayedTime(Time lastPlayedTime) {
         this.lastPlayedTime = lastPlayedTime;
     }
 
