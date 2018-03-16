@@ -2,11 +2,13 @@ package tests;
 
 import android.content.SharedPreferences;
 import android.support.test.rule.ActivityTestRule;
+import android.util.Log;
 
 import com.android.flashbackmusic.Album;
 import com.android.flashbackmusic.MainActivity;
 import com.android.flashbackmusic.SharedPrefsIO;
 import com.android.flashbackmusic.Song;
+import com.android.flashbackmusic.Time;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Before;
@@ -35,7 +37,8 @@ public class SharedPrefsIOUnitTests {
     private Set<String> set;
     private LatLng test_loc;
     private ArrayList<LatLng> locs;
-    private Date testTime;
+    private Date testDate;
+    private Time testTime;
     private Set<String> timesOfDay;
     private Set<String> daysOfWeek;
     private Album album;
@@ -49,18 +52,19 @@ public class SharedPrefsIOUnitTests {
         prefsIO = new SharedPrefsIO(prefs);
 
         album = new Album("Album_1");
-        song = new Song(0, "Title_1", "Artist_1", album, "Album_art_1", "0", "Genre_1", "2018");
+        song = new Song("Title_1", "Artist_1", album, "url", "path");
 
         song.setDisliked(true);
         song.setFavorited(false);
-        testTime = new Date(1000000);
+        testDate = new Date(1000000);
+        testTime = new Time(true, testDate);
         song.setLastPlayedTime(testTime);
         locs = song.getLocations();
         test_loc = new LatLng(10, 45);
         locs.add(test_loc);
         song.setLocations(locs);
         set = new HashSet<>();
-        set.add("(10.0,45.0)");
+        set.add(test_loc.toString());
         song.setLastLocation(test_loc);
         timesOfDay = song.getTimesOfDay();
         timesOfDay.add("MORNING");
@@ -70,8 +74,8 @@ public class SharedPrefsIOUnitTests {
 
         SharedPreferences.Editor editor = prefs.edit();
         String keyPrefix = song.getTitle() + song.getArtist();
-        editor.putBoolean(keyPrefix + "disliked", true);
-        editor.putBoolean(keyPrefix + "favorited", false);
+        editor.putBoolean(keyPrefix + "disliked", song.isDisliked());
+        editor.putBoolean(keyPrefix + "favorited", song.isFavorited());
         editor.putStringSet(keyPrefix + "locs", set);
         editor.putStringSet(keyPrefix + "daysofweek", daysOfWeek);
         editor.putStringSet(keyPrefix + "timesofday", timesOfDay);
@@ -82,7 +86,7 @@ public class SharedPrefsIOUnitTests {
 
     @Test
     public void testpopulateSongInfo() {
-        Song s = new Song(0, "Title_1", "Artist_1", album, "Album_art_1", "0", "Genre_1", "2018");
+        Song s = new Song("Title_1", "Artist_1", album, "url", "path");
 
         prefsIO.populateSongInfo(s);
 
@@ -100,12 +104,12 @@ public class SharedPrefsIOUnitTests {
 
         String keyPrefix = song.getTitle() + song.getArtist();
 
-        assertTrue(prefs.getBoolean(keyPrefix + "disliked", false));
-        assertFalse(prefs.getBoolean(keyPrefix + "favorited", false));
-        //assertEquals(prefs.getStringSet(keyPrefix + "locs", null), set);
+        assertTrue(prefs.getBoolean(keyPrefix + "disliked", song.isDisliked()));
+        assertFalse(prefs.getBoolean(keyPrefix + "favorited", song.isFavorited()));
+        assertEquals(prefs.getStringSet(keyPrefix + "locs", null), set);
         assertEquals(prefs.getStringSet(keyPrefix + "timesofday", null), timesOfDay);
         assertEquals(prefs.getStringSet(keyPrefix + "daysofweek", null), daysOfWeek);
-        //assertEquals(prefs.getString(keyPrefix + "lastloc", ""), "(10.0,45.0)");
+        assertEquals(prefs.getString(keyPrefix + "lastloc", ""), song.getLastLocation().toString());
     }
     @Before
     public void teardown() {

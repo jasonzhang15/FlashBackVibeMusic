@@ -51,7 +51,8 @@ public class SharedPrefsIO implements SongInfoIO {
         if (prefs.contains(keyPrefix + "lastplayedtime")) {
             long lastPlayedTime = prefs.getLong(keyPrefix + "lastplayedtime", 0);
             Date lastPlayedDate = new Date(lastPlayedTime);
-            s.setLastPlayedTime(lastPlayedDate);
+            Time time = new Time(true, lastPlayedDate);
+            s.setLastPlayedTime(time);
         }
         if (prefs.contains(keyPrefix + "timesofday")) {
             Set<String> timesOfDay = prefs.getStringSet(keyPrefix + "timesofday", null);
@@ -77,7 +78,7 @@ public class SharedPrefsIO implements SongInfoIO {
         Set<String> locs = latLngsToString(locations);
         long lastPlayedTime = 0;
         if (s.getLastPlayedTime() != null) {
-            lastPlayedTime = s.getLastPlayedTime().getTime();
+            lastPlayedTime = s.getLastPlayedTime().getDate().getTime();
         }
         Set<String> timesOfDay = s.getTimesOfDay();
         Set<String> daysOfWeek = s.getDaysOfWeek();
