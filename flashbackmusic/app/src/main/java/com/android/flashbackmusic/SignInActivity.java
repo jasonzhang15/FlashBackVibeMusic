@@ -3,6 +3,7 @@ package com.android.flashbackmusic;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -49,7 +50,8 @@ public class SignInActivity extends AppCompatActivity {
 
     //private static final int SIGN_IN_CODE = ;
     GoogleSignInClient mGoogleSignInClient;
-    GoogleApiClient mGoogleApiClient;
+    private SharedPreferences prefs;
+    private SharedPrefsIO prefsIO;
 
     public static int RC_SIGN_IN = 0;
     public static final String TAG = "SIGNIN EXC";
@@ -57,9 +59,12 @@ public class SignInActivity extends AppCompatActivity {
     String clientId = "747230320321-22kvt6fp6knhd6m8enqh9qb1t1av6eib.apps.googleusercontent.com";
     String clientSecret = "fV409tj8jn6Ew53E859IBg70";
     String redirectUrl = "";
-    //Scope scope = https://www.googleapis.com/auth/contacts.readonly;
-
     String code;
+    String accessToken;
+    String refreshToken;
+    Long expiresInSec;
+    GoogleTokenResponse tokenResponse;
+    GoogleCredential credential;
 
     /*private GoogleApiClient google_api_client;
     private GoogleApiAvailability google_api_availability;
@@ -74,8 +79,14 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+        Log.d("in onCreate()", "test");
+
+        prefs = getSharedPreferences("info", MODE_PRIVATE);
+        prefsIO = new SharedPrefsIO(prefs);
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestServerAuthCode(clientId)
+                .requestIdToken(clientId)
                 .requestScopes(new Scope(Scopes.PROFILE),
                         new Scope("https://www.googleapis.com/auth/contacts.readonly"))
                         //new Scope(Scopes.CONTACTS_READONLY))
@@ -132,9 +143,13 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d("in onStart()", "");
+        Log.d("in onStart()", "test2");
         account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
+            if (!GoogleSignIn.hasPermissions(account, new Scope(Scopes.PROFILE), new Scope("https://www.googleapis.com/auth/contacts.readonly"))) {
+                Log.d("REQ", "permissions");
+                GoogleSignIn.requestPermissions(this, RC_SIGN_IN, account, new Scope(Scopes.PROFILE), new Scope("https://www.googleapis.com/auth/contacts.readonly"));
+            }
             String personName = account.getDisplayName();
             String personGivenName = account.getGivenName();
             String personFamilyName = account.getFamilyName();
@@ -155,7 +170,14 @@ public class SignInActivity extends AppCompatActivity {
             // Log.d("in updateUI()", "FINISHING");
             try {
                 Log.i("SETTING UP", "entering");
-                setUp();
+                String testCode = account.getServerAuthCode();
+                if (testCode != null) {
+                    code = testCode;
+                    setUpNew(account);
+                }
+                else {
+                    setUpReturning(account);
+                }
             } catch (IOException e) {
                 e.getStackTrace();
                 Log.d("Exception", e.getMessage());
@@ -164,30 +186,75 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
-    private void setUp() throws IOException {
-        Log.i("IN SETUP", "test");
+    private void setUpNew(GoogleSignInAccount account) throws IOException, NullPointerException {
+        Log.i("IN SETUP NEW", "test");
         HttpTransport httpTransport = new NetHttpTransport();
         JacksonFactory jsonFactory = new JacksonFactory();
-        Log.d("CODE", "direct value - " + account.getServerAuthCode());
-        code = account.getServerAuthCode();
 
-        Log.d("CODE", "val - " + code);
+        try {
+            //code = account.getServerAuthCode();
+            Log.d("CODE", "val - " + code);
 
-        // TODO wrong clientId/clientSecret....?
+            // Step 2: Exchange --> TODO needs to persist
+            tokenResponse = new GoogleAuthorizationCodeTokenRequest(
+                            httpTransport, jsonFactory, clientId, clientSecret, code, redirectUrl)
+                            .execute();
+            // End of Step 2 <--
 
-        // Step 2: Exchange -->
-        GoogleTokenResponse tokenResponse =
-                new GoogleAuthorizationCodeTokenRequest(
-                        httpTransport, jsonFactory, clientId, clientSecret, code, redirectUrl)
-                        .execute();
-        // End of Step 2 <--
+            Log.d("TOKEN", "val - " + tokenResponse);
+            prefsIO.saveTokenResponse(tokenResponse);
 
-        GoogleCredential credential = new GoogleCredential.Builder()
-                .setTransport(httpTransport)
-                .setJsonFactory(jsonFactory)
-                .setClientSecrets(clientId, clientSecret)
-                .build()
-                .setFromTokenResponse(tokenResponse);
+            Log.d("SAVED TOK", "val - " + prefsIO.getTokenResponse());
+
+            /*accessToken = tokenResponse.getAccessToken();
+            refreshToken = tokenResponse.getRefreshToken();
+            expiresInSec = tokenResponse.getExpiresInSeconds();*/
+
+            credential = new GoogleCredential.Builder()
+                    .setTransport(httpTransport)
+                    .setJsonFactory(jsonFactory)
+                    .setClientSecrets(clientId, clientSecret)
+                    .build()
+                    .setFromTokenResponse(tokenResponse);
+
+            PeopleService peopleService =
+                    new PeopleService.Builder(httpTransport, jsonFactory, credential).build();
+
+            // Set Profile
+            Person profile = peopleService.people().get("people/me")
+                    .setPersonFields("names,emailAddresses")
+                    .execute();
+
+            Log.i("NEW PROFILE", "reached - " + profile.toString());
+
+            // Get Connections
+            ListConnectionsResponse response = peopleService.people().connections().list("people/me")
+                    .setPersonFields("names,emailAddresses")
+                    .execute();
+            List<Person> connections = response.getConnections();
+
+            Log.i("NEW CONNECTIONS", "reached - " + connections);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setUpReturning(GoogleSignInAccount account) throws IOException, NullPointerException {
+        Log.i("IN SETUP RETURNING", "test");
+        HttpTransport httpTransport = new NetHttpTransport();
+        JacksonFactory jsonFactory = new JacksonFactory();
+
+        /*tokenResponse = new GoogleAuthorizationCodeTokenRequest(
+                httpTransport, jsonFactory, clientId, clientSecret, code, redirectUrl)
+                .execute();*/
+
+        tokenResponse = prefsIO.getTokenResponse();
+        Log.d("TOKEN", "val - " + tokenResponse);
+
+        credential.setAccessToken(tokenResponse.getAccessToken())
+                .setRefreshToken(tokenResponse.getRefreshToken())
+                .setExpiresInSeconds(tokenResponse.getExpiresInSeconds());
 
         PeopleService peopleService =
                 new PeopleService.Builder(httpTransport, jsonFactory, credential).build();
@@ -197,7 +264,7 @@ public class SignInActivity extends AppCompatActivity {
                 .setPersonFields("names,emailAddresses")
                 .execute();
 
-        Log.i("PROFILE reached", " " + profile.toString());
+        Log.i("RETURNING PROFILE", "reached - " + profile.toString());
 
         // Get Connections
         ListConnectionsResponse response = peopleService.people().connections().list("people/me")
@@ -205,7 +272,12 @@ public class SignInActivity extends AppCompatActivity {
                 .execute();
         List<Person> connections = response.getConnections();
 
-        Log.i("CONNECTIONS reached", " " + connections.toString());
+        Log.i("RETURNING CONNECTIONS", "reached - " + connections);
+
+        /*tokenResponse.getAccessToken();
+        tokenResponse.getRefreshToken();
+        tokenResponse.getExpiresInSeconds();*/
+
     }
 
     /*private void buildNewGoogleApiClient() {
