@@ -5,7 +5,6 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -70,11 +69,6 @@ public class CurrentParameters {
         else if (hour >= 11 && hour < 17) timeOfDay = "AFTERNOON";
         else timeOfDay = "NIGHT";
         return timeOfDay;
-    }
-
-    public Date getLastPlayed() {
-        calendar = Calendar.getInstance();
-        return calendar.getTime();
     }
 
     public void setLocation(LocationInterface loc) { location = loc.getCurrentLocation(); }
