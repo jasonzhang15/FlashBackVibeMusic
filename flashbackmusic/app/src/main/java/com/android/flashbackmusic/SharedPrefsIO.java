@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,6 +20,7 @@ import static java.lang.Float.parseFloat;
 public class SharedPrefsIO implements SongInfoIO {
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
+    private GoogleTokenResponse tokenResponse;
 
     public SharedPrefsIO(SharedPreferences prefs) {
         this.prefs = prefs;
@@ -128,6 +130,14 @@ public class SharedPrefsIO implements SongInfoIO {
         float longitude = parseFloat(string.substring(left + 1, commaPos));
         float latitude = parseFloat(string.substring(commaPos + 1, right));
         return new LatLng(longitude, latitude);
+    }
+
+    public void saveTokenResponse(GoogleTokenResponse tr) {
+        tokenResponse = tr;
+    }
+
+    public GoogleTokenResponse getTokenResponse() {
+        return tokenResponse;
     }
 
     public void teardown() {
