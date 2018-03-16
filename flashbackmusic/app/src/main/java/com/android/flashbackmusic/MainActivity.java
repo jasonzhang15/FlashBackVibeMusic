@@ -28,8 +28,9 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Observer;
 
-public class MainActivity extends AppCompatActivity implements SongCompletionListener{
+public class MainActivity extends AppCompatActivity implements SongCompletionListener, LocationChangeListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -137,7 +138,8 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         // Create the adapter to handle location tracking
         locationAdapter = new LocationMock();
         locationAdapter.establishLocationPermission(this, this);
-        //locationAdapter.getCurrentLocation();
+        locationAdapter.addLocationChangeListener(this);
+        //locationAdapter.getCurrentLocation();s
 
         currentParameters = new CurrentParameters(locationAdapter);
 
@@ -310,6 +312,10 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
 
     public void onSongCompletion(){
         updateSong(player.getLastSong());
+    }
+
+    public void onLocationChange(LatLng location){
+        startIntentService(location);
     }
 
     public void loadSongs() {
