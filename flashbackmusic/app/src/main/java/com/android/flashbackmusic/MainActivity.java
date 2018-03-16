@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.location.Geocoder;
 import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 address = "";
             }
             place = address;
+            Log.w("RECEIVED RESULT", place);
             csb.setHistory("You're listening from " + place + " on a "
                     + day + " " + timeOfDay);
         }
@@ -86,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
     private AddressResultReceiver mResultReceiver;
 
     protected void startIntentService(LatLng location) {
-        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        Intent intent = new Intent(MainActivity.this, FetchAddressIntentService.class);
+        mResultReceiver = new AddressResultReceiver(new Handler());
         intent.putExtra(Constants.RECEIVER, (Parcelable) mResultReceiver);
         intent.putExtra(Constants.LOCATION_DATA_EXTRA, location);
         startService(intent);
@@ -312,7 +314,9 @@ public class MainActivity extends AppCompatActivity {
                         csb.setText(songToPlay);
                         csb.setPlayPause(player);
                         LatLng loc = currentParameters.getLocation();
+
                         place = getCompleteAddressString(loc.latitude, loc.longitude);
+                        startIntentService(loc);
 
                         Time lastPlayedTime = songToPlay.getLastPlayedTime();
                         if (lastPlayedTime == null || !(lastPlayedTime.isMocking())) {
@@ -334,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
                         // TODO: once the null pointer reference is fixed, uncomment this line too
                         songToPlay.setLastLocation(loc);
                         songToPlay.addTimeOfDay(timeOfDay);
-                        if (!songToPlay.getLastPlayedTime().isMocking()) {
+                        if (!lastPlayedTime.isMocking()) {
                             songToPlay.setLastPlayedTime(lastPlayedTime);
                         }
                         csb.loadFavor(songToPlay, prefsIO, songBlock);
