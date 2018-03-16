@@ -366,10 +366,10 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
 
     public void updateSong(Song s){
         String timeOfDay = currentParameters.getTimeOfDay();
-        Date lastPlayedTime = currentParameters.getLastPlayedTime();
+        Time lastPlayedTime = currentParameters.getLastPlayedTime();
         s.addTimeOfDay(timeOfDay);
         s.setLastPlayedTime(lastPlayedTime);
-        s.addPlay(new SongPlay( "bob", currentParameters.getLocation(), currentParameters.getTimeOfDay(), currentParameters.getLastPlayedTime()));
+        s.addPlay(new SongPlay( "bob", currentParameters.getLocation(), currentParameters.getTimeOfDay(), currentParameters.getLastPlayedTime().getDate()));
     }
 
     public void onSongCompletion(){
