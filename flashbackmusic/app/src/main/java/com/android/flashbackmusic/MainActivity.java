@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.location.Geocoder;
+import android.location.Address;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -266,6 +269,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null && addresses.size() > 0) {
+                Log.v("addresses", String.valueOf(addresses));
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+                Log.w("My Current location address", strReturnedAddress.toString());
+            } else {
+                strAdd = "San Diego";
+                Log.w("My Current location address", "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.w("My Current location address", "Cannot get Address!");
+        }
+        return strAdd;
+    }
 
     public void loadSongs() {
         for (Song song : songList) {
@@ -284,12 +312,11 @@ public class MainActivity extends AppCompatActivity {
                         csb.setText(songToPlay);
                         csb.setPlayPause(player);
                         LatLng loc = currentParameters.getLocation();
-                        startIntentService(loc);
+                        place = getCompleteAddressString(loc.latitude, loc.longitude);
+
                         Time lastPlayedTime = songToPlay.getLastPlayedTime();
-                        Log.v("LASTPLAYEDTIME CSB",String.valueOf(lastPlayedTime.isMocking()));
                         if (lastPlayedTime == null || !(lastPlayedTime.isMocking())) {
                             Log.v("is lastPlayedTime Null?", String.valueOf(lastPlayedTime == null));
-                            Log.v("is lastPlayedTime Mocking?", String.valueOf(lastPlayedTime.isMocking()));
                             timeOfDay = currentParameters.getTimeOfDay();
                             lastPlayedTime = currentParameters.getLastPlayedTime();
                             day = currentParameters.getDayOfWeek();

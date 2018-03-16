@@ -40,7 +40,7 @@ public class CurrentParameters {
         // Location
         locationHandler = loc;
         location = getLocation();
-        Log.d("cur location", "" + location.toString());
+        //Log.d("cur location", "" + location.toString());
 
         Time time = new Time();
         setLastPlayedTime(time);
