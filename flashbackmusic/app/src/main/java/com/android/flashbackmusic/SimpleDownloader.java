@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.RandomAccessFile;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 
@@ -41,34 +42,38 @@ public class SimpleDownloader {
 
         Uri uri = Uri.parse(url);
 
-        // Create request for android download manager
-        DownloadManager.Request request = new DownloadManager.Request(uri);
+        long downloadReference;
+        String downloadId;
+        try {
+            // Create request for android download manager
+            DownloadManager.Request request = new DownloadManager.Request(uri);
 
-        //Setting title of request
-        request.setTitle((url.split("id="))[1]);
+            downloadId = (url.split("id="))[1];
 
-        //Setting description of request
-        request.setDescription("Android Data download using DownloadManager.");
-
-        //Set the local destination for the downloaded file to a path within the application's external files directory
-        Log.v("LOOK", "Download song : " + (url.split("id="))[1]);
-
-        String downloadId = (url.split("id="))[1];
-        if (downloadDir.listFiles() != null) {
-            String downloadPath = downloadDir.toString() + "/" + downloadId + ".mp3";
-            for (File file : downloadDir.listFiles()) {
-                if (file.toString().equals(downloadPath)) {
-                    Log.v("LOOK", "SKIP DOWNLOAD: file already exists: " + downloadId);
+            for (File f : downloadDir.listFiles()) {
+                if (f.getAbsolutePath().equals((downloadDir.toString() + "/" + downloadId + ".mp3"))) {
                     return -1;
                 }
             }
+
+            request.setTitle(downloadId);
+            request.setDescription("Android Data download using DownloadManager.");
+            request.setDestinationInExternalFilesDir(app, Environment.DIRECTORY_DOWNLOADS, downloadId + ".mp3");
+
+            //Enqueue download and save into referenceId
+
+            downloadReference = downloadManager.enqueue(request);
+
+            Toast toast = Toast.makeText(app,
+                    "Starting download: " + downloadReference, Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.TOP, 25, 400);
+            toast.show();
+        } catch (Exception e) {
+          Log.v("LOOK", "COULDN'T DOWNLOAD SONG" + e);
+          return -1;
         }
 
-        request.setDestinationInExternalFilesDir(app, Environment.DIRECTORY_DOWNLOADS, downloadId + ".mp3");
-
-        //Enqueue download and save into referenceId
-
-        long downloadReference = downloadManager.enqueue(request);
+        Log.v("LOOK", "Download song : " + downloadId + " referenceID: " + downloadReference);
 
         return downloadReference;
     }
@@ -82,14 +87,30 @@ public class SimpleDownloader {
             long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
 
             Toast toast = Toast.makeText(app,
-                    "Music Download Complete", Toast.LENGTH_LONG);
+                    "Music Download Complete " + referenceId, Toast.LENGTH_LONG);
             toast.setGravity(Gravity.TOP, 25, 400);
             toast.show();
 
-            if (downloadDir.listFiles() == null) {
-                Log.v("LOOK", "REACHEDDDD");
-                songImporter.read();
+
+            DownloadManager.Query q = new DownloadManager.Query();
+            Cursor c = downloadManager.query(q);
+
+            if(c.moveToFirst()) {
+                do {
+                    String name = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                    if (name != null) {
+                        File mFile = new File(Uri.parse(name).getPath());
+                        songImporter.importSong(mFile);
+                    }
+                    //Log.v("LOOK", "file name: " + name);
+                } while (c.moveToNext());
+            } else {
+                Log.v("LOOK", "empty cursor :(");
             }
+
+            c.close();
+
+            Log.v("LOOK", "REACHEDDDD");
         }
     };
 

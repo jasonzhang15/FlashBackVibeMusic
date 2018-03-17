@@ -38,7 +38,7 @@ public class Song {
     public Song(/*id,*/ String title, String artist, Album album, String url, String path) {
         this();
         this.path = path;
-        remoteSong = new RemoteSong(/*id,*/ title, artist, album, url);
+        remoteSong = new RemoteSong(title, artist, album, url);
     }
     // Song Info
 

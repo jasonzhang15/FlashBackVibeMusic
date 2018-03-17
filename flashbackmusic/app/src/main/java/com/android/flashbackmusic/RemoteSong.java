@@ -4,18 +4,18 @@ import java.util.ArrayList;
 
 public class RemoteSong {
 
-    private String title;
-    private String artist;
-    private Album album;
+    private String title = "";
+    private String artist = "";
+    private Album album = new Album("");
     private String URL;
     private ArrayList<SongPlay> plays;
     //private int id;
 
-    public RemoteSong(/*id,*/ String title, String artist, Album album, String url) {
-        //this.id = id;
-        this.title = title;
-        this.artist = artist;
-        this.album = album;
+    public RemoteSong( String title, String artist, Album album, String url) {
+
+        if (title != null) this.title = title;
+        if (artist != null) this.artist = artist;
+        if (album != null)  this.album = album;
         this.URL = url;
         plays = new ArrayList<>();
     }

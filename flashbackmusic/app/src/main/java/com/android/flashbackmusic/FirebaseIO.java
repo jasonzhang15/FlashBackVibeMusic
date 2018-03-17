@@ -11,10 +11,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
-/**
- * Created by vrkumar on 3/1/18.
- */
-
 public class FirebaseIO {
 
     FirebaseDatabase database;
