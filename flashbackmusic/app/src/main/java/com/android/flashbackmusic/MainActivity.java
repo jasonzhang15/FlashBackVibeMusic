@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
     }
 
     public void loadFlashback() {
-        FlashbackOrderGenerator fog = new FlashbackOrderGenerator(new CurrentParameters(locationAdapter), songList);
+        VibeOrderGenerator fog = new VibeOrderGenerator(new CurrentParameters(locationAdapter), songList);
         List<Song> flashbackSongs= fog.getSongList();
 
         csb.display(false);
@@ -499,7 +499,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 if (!(songToPlay.isDisliked())) {
 
                     csb.display(true);
-                    csb.setText(song);
+                    csb.setText(songToPlay);
                     csb.setPlayPause(player);
                     LatLng loc = currentParameters.getLocation();
 

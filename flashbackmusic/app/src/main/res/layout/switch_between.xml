@@ -28,7 +28,7 @@
         android:id="@+id/Flashback"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:text="Flashback"
+        android:text="Vibe"
         android:textSize="15dp"
         android:layout_height="wrap_content"
         android:clickable="true"/>
