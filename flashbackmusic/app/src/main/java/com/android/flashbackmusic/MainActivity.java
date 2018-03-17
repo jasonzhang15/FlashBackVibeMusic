@@ -1,13 +1,12 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
+
 import android.content.Intent;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,7 +27,8 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements SongCompletionListener, LocationChangeListener, Observer{
 
@@ -359,24 +360,34 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 csb.display(true);
                 csb.setText(songToPlay);
                 csb.setPlayPause(player);
+                LatLng loc = currentParameters.getLocation();
+                startIntentService(loc);
 
                 // TODO: Figure out why this gets a nullreferenceexception
                 // why is locationAdapter null?
                 //LatLng loc = currentParameters.getLocation();
                 String place = "San Diego";
                 String timeOfDay = currentParameters.getTimeOfDay();
-                Time lastPlayedTime = currentParameters.getLastPlayedTime();
+                Time lastPlayedTime = songToPlay.getLastPlayedTime();
+                if (lastPlayedTime != null && lastPlayedTime.isMocking()) {
+                    currentParameters.setLastPlayedTime(lastPlayedTime);
+                } else {
+                    currentParameters.setLastPlayedTime(new Time());
+                    songToPlay.setLastPlayedTime(currentParameters.getLastPlayedTime());
+                }
                 String day = currentParameters.getDayOfWeek();
                 csb.setHistory("You're listening from " + place + " on a "
                         + day + " " + timeOfDay);
                 player.play(songToPlay);
 
-                // TODO: once the null pointer reference is fixed, uncomment this line too
-                //songToPlay.setLastLocation(loc);
+                songToPlay.setLastLocation(loc);
                 Set<String> timesOfDay = songToPlay.getTimesOfDay();
                 timesOfDay.add(timeOfDay);
                 songToPlay.setTimesOfDay(timesOfDay);
                 songToPlay.setLastPlayedTime(lastPlayedTime);
+
+                updateSong(songToPlay);
+
                 csb.loadFavor(songToPlay, prefsIO, selected);
                 csb.setText(songToPlay);
                 csb.togglePlayPause();
@@ -433,35 +444,15 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
             }
         });
     }
-    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
-        String strAdd = "";
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        try {
-            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
-            if (addresses != null && addresses.size() > 0) {
-                Log.v("addresses", String.valueOf(addresses));
-                Address returnedAddress = addresses.get(0);
-                StringBuilder strReturnedAddress = new StringBuilder("");
-
-                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
-                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
-                }
-                strAdd = strReturnedAddress.toString();
-                Log.w("My Current location address", strReturnedAddress.toString());
-            } else {
-                strAdd = "San Diego";
-                Log.w("My Current location address", "No Address returned!");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.w("My Current location address", "Cannot get Address!");
-        }
-        return strAdd;
-    }
 
     public void updateSong(Song s){
+        Time lastPlayedTime = s.getLastPlayedTime();
+        if (lastPlayedTime != null && lastPlayedTime.isMocking()) {
+            currentParameters.setLastPlayedTime(lastPlayedTime);
+        } else {
+            currentParameters.setLastPlayedTime(new Time());
+        }
         String timeOfDay = currentParameters.getTimeOfDay();
-        Time lastPlayedTime = currentParameters.getLastPlayedTime();
         s.addTimeOfDay(timeOfDay);
         s.setLastPlayedTime(lastPlayedTime);
         s.addPlay(new SongPlay( "bob", currentParameters.getLocation(), currentParameters.getTimeOfDay(), currentParameters.getLastPlayedTime().getDate()));
@@ -498,10 +489,9 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
 
     public void addSongBlock(Song song) {
         final Song songToPlay = song;
-
-        final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
+        final SongBlock songBlock = new SongBlock(getApplicationContext(), songToPlay);
         songBlock.setText();
-        songBlock.loadFavor(song, prefsIO);
+        songBlock.loadFavor(songToPlay, prefsIO);
         songBlock.setTime();
         songBlock.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -509,28 +499,39 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 if (!(songToPlay.isDisliked())) {
 
                     csb.display(true);
-                    csb.setText(songToPlay);
+                    csb.setText(song);
                     csb.setPlayPause(player);
-
-                    // TODO: Figure out why this gets a nullreferenceexception
-                    // why is locationAdapter null?
                     LatLng loc = currentParameters.getLocation();
-                    String place = "San Diego";
-                    String timeOfDay = currentParameters.getTimeOfDay();
-                    Time lastPlayedTime = currentParameters.getLastPlayedTime();
-                    String day = currentParameters.getDayOfWeek();
-                    csb.setHistory("You're listening from " + place + " on a "
+
+                    startIntentService(loc);
+
+                    Time lastPlayedTime = songToPlay.getLastPlayedTime();
+                    if (lastPlayedTime == null || !(lastPlayedTime.isMocking())) {
+                        Log.v("is lastPlayedTime Null?", String.valueOf(lastPlayedTime == null));
+                        currentParameters.setLastPlayedTime(new Time());
+                        timeOfDay = currentParameters.getTimeOfDay();
+                        lastPlayedTime = currentParameters.getLastPlayedTime();
+                        day = currentParameters.getDayOfWeek();
+                    } else {
+                        Log.v("else", String.valueOf(lastPlayedTime.isMocking()));
+                        currentParameters.setLastPlayedTime(lastPlayedTime);
+                        timeOfDay = currentParameters.getTimeOfDay();
+                        day = currentParameters.getDayOfWeek();
+                        currentParameters.setLastPlayedTime(new Time());
+                        Log.v("timeofday, day", String.valueOf(timeOfDay) + " " + String.valueOf(day));
+                    }
+                    csb.setHistory("at " + place + " on a "
                             + day + " " + timeOfDay);
                     player.play(songToPlay);
 
-                    // TODO: once the null pointer reference is fixed, uncomment this line too
                     songToPlay.setLastLocation(loc);
-                    //Log.v("LOCATION!!!", loc.toString());
-                    Log.v("LOCATION!!!", songToPlay.getLastLocation().toString());
                     songToPlay.addTimeOfDay(timeOfDay);
-                    if (!songToPlay.getLastPlayedTime().isMocking()) {
+                    if (!lastPlayedTime.isMocking()) {
                         songToPlay.setLastPlayedTime(lastPlayedTime);
                     }
+                    updateSong(songToPlay);
+                    Log.i("Plays:" , Integer.toString(songToPlay.getPlays().size()));
+
                     csb.loadFavor(songToPlay, prefsIO, songBlock);
                     csb.setText(songToPlay);
                     csb.togglePlayPause();
