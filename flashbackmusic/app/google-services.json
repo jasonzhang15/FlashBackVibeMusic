@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1025063499592-0vu54ehlcdlhfr8jhljomoh6hv4vlp0k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.flashbackmusic",
+            "certificate_hash": "89b80d3162dc87fa02e060246b778f07c0748d35"
+          }
+        },
+        {
           "client_id": "1025063499592-1do7dm7tt2u1scfovj8233scav1fm2st.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
