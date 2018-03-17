@@ -48,6 +48,10 @@ public class SongBlock extends LinearLayout {
         return artist+"|"+album;
     }
 
+    public Song getSong() {
+        return song;
+    }
+
     public void loadFavor(Song song, SharedPrefsIO sp) {
         final Song song_f = song;
         final SharedPrefsIO sp_f = sp;
@@ -98,7 +102,6 @@ public class SongBlock extends LinearLayout {
         artistAlbum = this.findViewById(R.id.song_artist_album);
         artistAlbum.setText(artist + " | " + album);
     }
-
     public ImageButton getFavorite() {
         return this.favorite;
     }

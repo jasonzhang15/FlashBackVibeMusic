@@ -10,4 +10,9 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"/>
 
+    <com.android.flashbackmusic.CurrentSongBlock
+    android:id="@+id/current_song_block_mode"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+
 </LinearLayout>
