@@ -14,10 +14,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-/**
- * Created by vrkumar on 3/1/18.
- */
-
 public class FirebaseIO extends Observable{
 
     FirebaseDatabase database;
