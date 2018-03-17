@@ -48,7 +48,7 @@ public class SongBlock extends LinearLayout implements DatePickerDialog.OnDateSe
 
         this.titleText = song.getTitle();
         this.artist = song.getArtist();
-        this.album = song.getAlbum().getTitle();
+        this.album = song.getAlbum();
         this.path = song.getPath();
         this.song = song;
 

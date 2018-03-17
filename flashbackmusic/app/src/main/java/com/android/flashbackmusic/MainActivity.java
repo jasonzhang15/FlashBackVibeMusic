@@ -28,9 +28,10 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Observable;
 import java.util.Observer;
 
-public class MainActivity extends AppCompatActivity implements SongCompletionListener, LocationChangeListener{
+public class MainActivity extends AppCompatActivity implements SongCompletionListener, LocationChangeListener, Observer{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
     //private LocationAdapter locationAdapter;
     private LocationMock locationAdapter;
     private SimpleDownloader downloader;
+    private FirebaseIO firebase;
 
     private SongMode sm;
     private AlbumMode am;
@@ -129,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         albumList = songImporter.getAlbumList();
         remoteSongList = songImporter.getRemoteSongList();
 
+        firebase = new FirebaseIO(remoteSongList, songList);
+
         for (int i = 0; i < songList.size(); i++) {
             Log.v("LOOK", "songs: " + songList.get(i).getTitle());
         }
@@ -163,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 //setContentView(R.layout.song_mode);
 
                 // if music is playing, show csb
+
+
             }
         });
 
@@ -308,6 +314,12 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         s.addTimeOfDay(timeOfDay);
         s.setLastPlayedTime(lastPlayedTime);
         s.addPlay(new SongPlay( "bob", currentParameters.getLocation(), currentParameters.getTimeOfDay(), currentParameters.getLastPlayedTime().getDate()));
+        for (RemoteSong r : remoteSongList){
+            r.album = null;
+            r.setSong(null);
+        }
+        firebase.update();
+        Log.v("firebase:", "updating done");
     }
 
     public void onSongCompletion(){
@@ -316,6 +328,15 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
 
     public void onLocationChange(LatLng location){
         startIntentService(location);
+    }
+
+    //Firebase has been updated
+    public void update(Observable o, Object response){
+        for (RemoteSong r :remoteSongList){
+            if (r.getSong() == null){
+                downloader.downloadSong(r.getURL());
+            }
+        }
     }
 
     public void loadSongs() {
@@ -356,12 +377,17 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                                 + day + " " + timeOfDay);
                         player.play(songToPlay);
 
+
+
                         // TODO: once the null pointer reference is fixed, uncomment this line too
                         songToPlay.setLastLocation(loc);
                         songToPlay.addTimeOfDay(timeOfDay);
                         if (!lastPlayedTime.isMocking()) {
                             songToPlay.setLastPlayedTime(lastPlayedTime);
                         }
+                        updateSong(songToPlay);
+                        Log.i("Plays:" , Integer.toString(songToPlay.getPlays().size()));
+
                         csb.loadFavor(songToPlay, prefsIO, songBlock);
                         csb.setText(songToPlay);
                         csb.togglePlayPause();

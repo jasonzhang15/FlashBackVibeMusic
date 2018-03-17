@@ -28,6 +28,10 @@ public class FirebaseIO extends Observable{
     public FirebaseIO(final List<RemoteSong> remoteSongList, final List<Song> songList){
         this.remoteSongList = remoteSongList;
         this.songList = songList;
+        for (RemoteSong r : remoteSongList){
+            r.setSong(null);
+            r.album = null;
+        }
         setup();
     }
 
@@ -35,16 +39,19 @@ public class FirebaseIO extends Observable{
         database = database.getInstance();
         myRef = database.getReference();
 
-        myRef.setValue(remoteSongList);
-
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 remoteSongList.clear();
                 GenericTypeIndicator<List<RemoteSong>> t = new GenericTypeIndicator<List<RemoteSong>>() {};
-                List<RemoteSong> newSongs = dataSnapshot.getValue(t);
-                remoteSongList.addAll(newSongs);
+                //List<RemoteSong> newSongs = dataSnapshot.getValue(t);
+                remoteSongList = dataSnapshot.getValue(t);
+                //remoteSongList.addAll(newSongs);
                 for (RemoteSong r : remoteSongList){
+                    if (r.getPlays() == null){
+                        Log.v(r.getTitle(), "null");
+                    }
+                    r.setSong(null);
                     for (Song s : songList){
                         if (r.getId().equals(s.getId())){
                             r.setSong(s);
@@ -63,6 +70,11 @@ public class FirebaseIO extends Observable{
     }
 
     public void update(){
+        Log.v("update remote", "beepbeepbeep");
+        for (RemoteSong r : remoteSongList){
+            r.setSong(null);
+            r.album = null;
+        }
         myRef.setValue(remoteSongList);
     }
 }

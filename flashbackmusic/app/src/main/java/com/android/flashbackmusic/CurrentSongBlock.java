@@ -123,7 +123,7 @@ public class CurrentSongBlock extends LinearLayout {
         artist.setText(song.getArtist());
 
         TextView album = this.findViewById(R.id.current_song_album);
-        album.setText(song.getAlbum().getTitle());
+        album.setText(song.getAlbum());
     }
 
     public void setHistory(String s) {

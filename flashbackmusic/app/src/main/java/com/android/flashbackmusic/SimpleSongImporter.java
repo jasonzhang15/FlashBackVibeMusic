@@ -87,7 +87,7 @@ public class SimpleSongImporter implements SongImporter {
     }
 
     private void addSong(/*id,*/ String title, String artist, Album album, String url, String path) {
-        Song newSong = new Song(/*id,*/ title, artist, album, url, path);
+        Song newSong = new Song(/*id,*/ title, artist, album.getTitle(), url, path);
 
         album.addSong(newSong);
         remoteSongs.add(newSong.getRemoteSong());
