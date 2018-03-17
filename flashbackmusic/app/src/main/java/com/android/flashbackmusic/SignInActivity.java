@@ -252,9 +252,16 @@ public class SignInActivity extends AppCompatActivity {
         tokenResponse = prefsIO.getTokenResponse();
         Log.d("TOKEN", "val - " + tokenResponse);
 
-        credential.setAccessToken(tokenResponse.getAccessToken())
+        /*credential.setAccessToken(tokenResponse.getAccessToken())
                 .setRefreshToken(tokenResponse.getRefreshToken())
-                .setExpiresInSeconds(tokenResponse.getExpiresInSeconds());
+                .setExpiresInSeconds(tokenResponse.getExpiresInSeconds());*/
+
+        credential = new GoogleCredential.Builder()
+                .setTransport(httpTransport)
+                .setJsonFactory(jsonFactory)
+                .setClientSecrets(clientId, clientSecret)
+                .build()
+                .setFromTokenResponse(tokenResponse);
 
         PeopleService peopleService =
                 new PeopleService.Builder(httpTransport, jsonFactory, credential).build();
