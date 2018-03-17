@@ -55,6 +55,18 @@ public class SongBlock extends LinearLayout implements DatePickerDialog.OnDateSe
         initializeViews(context);
     }
 
+    public String getTitle(){
+        return this.titleText;
+    }
+
+    public String getartistAlbum(){
+        return artist+"|"+album;
+    }
+
+    public Song getSong() {
+        return song;
+    }
+
     public void loadFavor(Song song, SharedPrefsIO sp) {
         final Song song_f = song;
         final SharedPrefsIO sp_f = sp;
@@ -146,7 +158,6 @@ public class SongBlock extends LinearLayout implements DatePickerDialog.OnDateSe
         artistAlbum = this.findViewById(R.id.song_artist_album);
         artistAlbum.setText(artist + " | " + album);
     }
-
     public ImageButton getFavorite() {
         return this.favorite;
     }

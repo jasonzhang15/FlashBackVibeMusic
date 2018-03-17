@@ -22,14 +22,21 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+
 import java.util.List;
 
 import java.util.Set;
@@ -68,6 +75,12 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
     private AlbumMode am;
     private FlashbackMode fm;
     private CurrentSongBlock csb;
+
+    private ExpandableListAdapter listAdapter;
+    private ExpandableListView expListView;
+    private List<String> listDataHeader;
+    private HashMap<String, List<SongBlock>> listDataChild;
+  
     String day = "Sunday";
     String timeOfDay = "night";
     private String place = "San Diego";
@@ -159,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         sm = findViewById(R.id.song_main);
         fm = findViewById(R.id.flashback_main);
         csb = findViewById(R.id.current_song_block_main);
+        //csb2 = findViewById(R.id.current_song_block_mode);
 
         final Button buttonTitle = findViewById(R.id.buttonTitle);
         final Button buttonArtist = findViewById(R.id.buttonArtist);
@@ -247,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 Log.v("album button pressed", "album");
                 //csb.display(false);
                 am.display(true);
-                launchAlbum();
+                loadAlbum();
                 //setContentView(R.layout.album_mode);
             }
         });
@@ -294,40 +308,81 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
     public void onPause() {
         super.onPause();
         storeSongInfo();
-        /*CurrentSongBlock csb = findViewById(R.id.current_song_block_main);
-        SwitchActivity swc = findViewById(R.id.switch_between_main);
-        swc.display();
-        loadSongs(csb);
-        Button album = swc.getAlbum();
-        album.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launchAlbum();
-            }
-        });*/
     }
 
-    /*private void loadAlbums() {
-        for (Album album : albumList) {
-            final AlbumBlock albumBlock = new AlbumBlock(getApplicationContext(), album);
-            final Album albumtoPlay = album;
-            albumBlock.setText();
-            Log.v("albums", "in loadAlbums " + album.getTitle());
-            albumBlock.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                albumBlock.setPlayPause(player);
-                albumtoPlay.play(player);
-                }
-            });
-            am.addView(albumBlock);
-        }
-    }*/
 
-    public void launchAlbum() {
-        storeSongInfo();
-        Intent intent = new Intent(this, Album_Activity.class);
-        startActivity(intent);
+    public void loadAlbum() {
+        expListView = (ExpandableListView) findViewById(R.id.lvExp);
+
+        expListView.setClickable(true);
+
+        prepareListData();
+
+        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+
+        expListView.setAdapter(listAdapter);
+
+        expListView.setOnChildClickListener(new OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+                // TODO Auto-generated method stub
+                final SongBlock selected = (SongBlock) listAdapter.getChild(
+                        groupPosition, childPosition);
+                final Song songToPlay = selected.getSong();
+                selected.setText();
+                selected.loadFavor(songToPlay, prefsIO);
+                csb.display(true);
+                csb.setText(songToPlay);
+                csb.setPlayPause(player);
+
+                // TODO: Figure out why this gets a nullreferenceexception
+                // why is locationAdapter null?
+                //LatLng loc = currentParameters.getLocation();
+                String place = "San Diego";
+                String timeOfDay = currentParameters.getTimeOfDay();
+                Date lastPlayedTime = currentParameters.getLastPlayedTime();
+                String day = currentParameters.getDayOfWeek();
+                csb.setHistory("You're listening from " + place + " on a "
+                        + day + " " + timeOfDay);
+                player.play(songToPlay);
+
+                // TODO: once the null pointer reference is fixed, uncomment this line too
+                //songToPlay.setLastLocation(loc);
+                Set<String> timesOfDay = songToPlay.getTimesOfDay();
+                timesOfDay.add(timeOfDay);
+                songToPlay.setTimesOfDay(timesOfDay);
+                songToPlay.setLastPlayedTime(lastPlayedTime);
+                csb.loadFavor(songToPlay, prefsIO, selected);
+                csb.setText(songToPlay);
+                csb.togglePlayPause();
+                return true;
+            }
+        });
+    }
+
+    private void prepareListData() {
+        final ArrayList<Album> albumList = songImporter.getAlbumList();
+
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<SongBlock>>();
+        for (Album album : albumList) {
+            listDataHeader.add(album.getTitle()+"|"+album.getArtist());
+        }
+        
+        for(int i = 0; i < albumList.size();i++) {
+            List<SongBlock> songblockList = new ArrayList<>();
+            Album current = albumList.get(i);
+            ArrayList<Song> songlist = current.getSongs();
+            for (Song song : songlist) {
+                final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
+                songblockList.add(songBlock);
+            }
+            listDataChild.put(listDataHeader.get(i), songblockList); // Header, Child data
+
+        }
+
     }
 
     public void loadFlashback() {
