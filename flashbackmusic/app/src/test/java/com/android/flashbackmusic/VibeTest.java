@@ -1,5 +1,7 @@
 package com.android.flashbackmusic;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -46,6 +48,20 @@ public class VibeTest {
 
         //Note currentParameters is initialized to epoch, hence causing the score of 0
         assert(f.getScore(s) == 0);
+    }
+
+    @Test
+    public void testCloseby()
+    {
+        Song s = new Song();
+        Time t = new Time();
+        t.setMockableDate(new Date(0));
+        curr.setLastPlayedTime(t);
+        s.addPlay(new SongPlay("", new LatLng(1,1), "", t.getDate()));
+        curr.setLatLng(new LatLng(1.001, 1));
+
+        //Note currentParameters is initialized to epoch, hence causing the score of 0
+        assert(f.getScore(s) == 1.1);
     }
 
     @Test
