@@ -19,6 +19,7 @@ public class Player implements Serializable {
     private Application app;
     private List<SongCompletionListener> songCompletionListenerList = new ArrayList<SongCompletionListener>();
     private Song song;
+    private Song lastSong;
     private boolean isReset;
 
     public Player(Application app){
@@ -31,11 +32,11 @@ public class Player implements Serializable {
         mediaPlayer.reset();
         loadMedia();
         isReset = false;
-        Log.v("LOOK", s.getTitle() + " should be played right now, id: " + s.getId());
+        Log.v("LOOK", s.getTitle() + " should be played right now " + s.getPath());
 
         try {
-            AssetFileDescriptor afd = app.getResources().openRawResourceFd(s.getId());
-            mediaPlayer.setDataSource(afd);
+            //AssetFileDescriptor afd = app.getResources().openRawResourceFd(s.getPath());
+            mediaPlayer.setDataSource(s.getPath());
             mediaPlayer.prepareAsync();
         } catch(Exception e) {
             Log.v("LOOK", e.toString());
@@ -81,6 +82,7 @@ public class Player implements Serializable {
     }
 
     public void songCompletionEvent(){
+        lastSong = song;
         for (SongCompletionListener s : songCompletionListenerList){
             s.onSongCompletion();
         }
@@ -93,6 +95,8 @@ public class Player implements Serializable {
     public Song getSong() {
         return this.song;
     }
+
+    public Song getLastSong() { return this.lastSong; }
 
     public Boolean isReset() {
         return isReset;

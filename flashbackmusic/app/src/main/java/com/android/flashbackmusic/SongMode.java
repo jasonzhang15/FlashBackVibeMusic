@@ -3,7 +3,6 @@ package com.android.flashbackmusic;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.LinearLayout;
 
 public class SongMode extends LinearLayout {
@@ -24,20 +23,18 @@ public class SongMode extends LinearLayout {
 
     public void display(boolean display) {
         if (display)  {
-            //this.setVisibility(LinearLayout.VISIBLE);
             display();
         } else {
-            //this.setVisibility(LinearLayout.INVISIBLE);
             hide();
         }
     }
 
     public void hide() {
-        this.setVisibility(View.GONE);
+        this.setVisibility(LinearLayout.GONE);
     }
 
     public void display() {
-        this.setVisibility(View.VISIBLE);
+        this.setVisibility(LinearLayout.VISIBLE);
     }
 
 }

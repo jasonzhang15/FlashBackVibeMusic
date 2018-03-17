@@ -56,8 +56,6 @@ public class AlbumBlock extends LinearLayout {
         this.player = player;
 
         playPause = this.findViewById(R.id.album_play);
-        Log.v("LOOK", playPause.toString());
-
         playPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
