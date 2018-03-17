@@ -27,11 +27,11 @@ public class CurrentParameters {
 
     public LatLng getLocation() {
         if (locationHandler == null) {
-            Log.v("LOCATION HANDLER", "is null");
+            //Log.v("LOCATION HANDLER", "is null");
             return new LatLng(latDefault, lngDefault);
         }
         else {
-            Log.v("LOCATION HANDLER", "is not null");
+            //Log.v("LOCATION HANDLER", "is not null");
             return locationHandler.getCurrentLocation();
         }
     }
@@ -81,8 +81,8 @@ public class CurrentParameters {
         if (hour >= 5 && hour < 11) timeOfDay = "morning";
         else if (hour >= 11 && hour < 17) timeOfDay = "afternoon";
         else timeOfDay = "night";
-        Log.v("day of week", dayOfWeek);
-        Log.v("hour of day", timeOfDay);
+        //Log.v("day of week", dayOfWeek);
+        //Log.v("hour of day", timeOfDay);
     }
 
     //For testing purposes

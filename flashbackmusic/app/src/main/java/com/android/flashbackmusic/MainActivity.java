@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 Collections.sort(songList, new AlbumComparator());
                 for (Song s :songList) {
                     Log.v("zhikai", s.getTitle());
-                    Log.v("zhikai", s.getAlbum().getTitle());
+                    Log.v("zhikai", s.getAlbum());
                     Log.v("zhikai", "=======");
 
                 }
@@ -535,10 +535,10 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
     class AlbumComparator implements Comparator<Song> {
         @Override
         public int compare(Song s1, Song s2) {
-            if (s1.getAlbum().title.equals(s2.getAlbum().title)) {
+            if (s1.getAlbum().equals(s2.getAlbum())) {
                 return s1.getTitle().compareTo(s2.getTitle());
             } else {
-                return s1.getAlbum().title.compareTo(s2.getAlbum().title);
+                return s1.getAlbum().compareTo(s2.getAlbum());
             }
         }
     }

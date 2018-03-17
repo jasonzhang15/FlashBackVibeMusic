@@ -31,9 +31,9 @@ public class RemoteSong {
         plays = new ArrayList<>();
 
         if (this.getPlays() == null){
-            Log.v("remote song plays", "is null");
+            //Log.v("remote song plays", "is null");
         } else {
-            Log.v("remote song plays", "is not null");
+            //Log.v("remote song plays", "is not null");
         }
     }
 
