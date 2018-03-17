@@ -104,7 +104,7 @@ public class SignInActivity extends AppCompatActivity {
         } else {
             // launch MainActivity
             // setResult?
-            // Log.d("in updateUI()", "FINISHING");
+            Log.d("in updateUI()", "FINISHING");
             try {
                 setUp();
             } catch (IOException e) {

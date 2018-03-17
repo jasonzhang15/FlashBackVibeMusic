@@ -27,11 +27,11 @@ public class CurrentParameters {
 
     public LatLng getLocation() {
         if (locationHandler == null) {
-            //Log.v("LOCATION HANDLER", "is null");
+            Log.v("LOCATION HANDLER", "is null");
             return new LatLng(latDefault, lngDefault);
         }
         else {
-            //Log.v("LOCATION HANDLER", "is not null");
+            Log.v("LOCATION HANDLER", "is not null");
             return locationHandler.getCurrentLocation();
         }
     }
@@ -40,7 +40,7 @@ public class CurrentParameters {
         // Location
         locationHandler = loc;
         location = getLocation();
-        //Log.d("cur location", "" + location.toString());
+        Log.d("cur location", "" + location.toString());
 
         Time time = new Time();
         setLastPlayedTime(time);
@@ -68,13 +68,13 @@ public class CurrentParameters {
         calendar = lastPlayedTime.getCalendar();
         int day = calendar.get(Calendar.DAY_OF_WEEK);
         switch (day) {
-            case 2: dayOfWeek = "Monday"; break;
-            case 3: dayOfWeek = "Tuesday"; break;
-            case 4: dayOfWeek = "Wednesday"; break;
-            case 5: dayOfWeek = "Thursday"; break;
-            case 6: dayOfWeek = "Friday"; break;
-            case 7: dayOfWeek = "Saturday"; break;
-            case 1: dayOfWeek = "Sunday"; break;
+            case 2: dayOfWeek = "Mon"; break;
+            case 3: dayOfWeek = "Tues"; break;
+            case 4: dayOfWeek = "Wed"; break;
+            case 5: dayOfWeek = "Thu"; break;
+            case 6: dayOfWeek = "Fri"; break;
+            case 7: dayOfWeek = "Sat"; break;
+            case 1: dayOfWeek = "Sun"; break;
             default: dayOfWeek = "BARN";
         }
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
