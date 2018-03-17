@@ -20,7 +20,6 @@ import static java.lang.Float.parseFloat;
 public class SharedPrefsIO implements SongInfoIO {
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
-    private GoogleTokenResponse tokenResponse;
 
     public SharedPrefsIO(SharedPreferences prefs) {
         this.prefs = prefs;
@@ -133,11 +132,34 @@ public class SharedPrefsIO implements SongInfoIO {
     }
 
     public void saveTokenResponse(GoogleTokenResponse tr) {
-        tokenResponse = tr;
+        editor = prefs.edit();
+        String keyPrefix = "TOKENRESPONSE";
+        // Store into shared preferences
+        Log.v("from saveTokenResponse", keyPrefix);
+        editor.putString(keyPrefix + "accessToken", tr.getAccessToken());
+        editor.putString(keyPrefix + "refreshToken", tr.getRefreshToken());
+        editor.putLong(keyPrefix + "expInSecs", tr.getExpiresInSeconds());
+        editor.apply();
     }
 
     public GoogleTokenResponse getTokenResponse() {
-        return tokenResponse;
+        String keyPrefix = "TOKENRESPONSE";
+        String accessToken, refreshToken;
+        long expInSecs;
+        GoogleTokenResponse tr = new GoogleTokenResponse();
+        if (prefs.contains(keyPrefix + "accessToken")) {
+            accessToken = prefs.getString(keyPrefix + "accessToken", "");
+            tr.setAccessToken(accessToken);
+        }
+        if (prefs.contains(keyPrefix + "refreshToken")) {
+            refreshToken = prefs.getString(keyPrefix + "refreshToken", "");
+            tr.setRefreshToken(refreshToken);
+        }
+        if (prefs.contains(keyPrefix + "expInSecs")) {
+            expInSecs = prefs.getLong(keyPrefix + "expInSecs", 0);
+            tr.setExpiresInSeconds(expInSecs);
+        }
+        return tr;
     }
 
     public void teardown() {
