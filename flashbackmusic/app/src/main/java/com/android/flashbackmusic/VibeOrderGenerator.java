@@ -57,8 +57,9 @@ public class VibeOrderGenerator {
             }
             LatLng currLoc = c.getLocation();
             float[] results = new float[1];
-            for (SongPlay p : s.getPlays()){
-                LatLng l = p.location;
+            for (int i = 0; i < s.getPlays().size(); i++){
+                SongPlay p = s.getPlays().get(i);
+                LatLng l = new LatLng(p.latitude, p.longitude);
                 Location.distanceBetween(currLoc.latitude, currLoc.longitude, l.latitude, l.longitude, results);
                 if (results[0] <= MAX_DIST_METERS){
                     score += NEARBY_SCORE;

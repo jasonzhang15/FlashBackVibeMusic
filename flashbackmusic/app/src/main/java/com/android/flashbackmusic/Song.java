@@ -1,9 +1,12 @@
 package com.android.flashbackmusic;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -38,11 +41,16 @@ public class Song {
         local = false;
     }
 
-    public Song(/*id,*/ String title, String artist, Album album, String url, String path) {
+    public Song(/*id,*/ String title, String artist, String album, String url, String path) {
         this();
         this.path = path;
         this.id = title + artist;
         remoteSong = new RemoteSong(title, artist, album, url, id);
+        if (remoteSong.getPlays() == null){
+            Log.v("remote song plays", "is null");
+        } else {
+            Log.v("remote song plays", "is not null");
+        }
         remoteSong.setSong(this);
     }
     // Song Info
@@ -60,7 +68,7 @@ public class Song {
     public String getArtist() {
         return remoteSong.getArtist();
     }
-    public Album getAlbum() {
+    public String getAlbum() {
         return remoteSong.getAlbum();
     }
 

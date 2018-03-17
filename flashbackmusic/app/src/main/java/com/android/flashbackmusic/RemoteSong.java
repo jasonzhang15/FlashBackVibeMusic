@@ -1,20 +1,27 @@
 package com.android.flashbackmusic;
 
+import android.util.Log;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RemoteSong {
 
     private String title;
     private String artist;
-    private Album album;
+    public String album;
     private String URL;
+
     private ArrayList<SongPlay> plays;
     private Song song;
     private String id;
 
+    public RemoteSong(){}
 
     //Every song and remotesong has an ID - it is used to tie them to each other
-    public RemoteSong(/*id,*/ String title, String artist, Album album, String url, String id) {
+    public RemoteSong(/*id,*/ String title, String artist, String album, String url, String id) {
         //this.id = id;
         this.title = title;
         this.artist = artist;
@@ -22,6 +29,12 @@ public class RemoteSong {
         this.URL = url;
         this.id = id;
         plays = new ArrayList<>();
+
+        if (this.getPlays() == null){
+            Log.v("remote song plays", "is null");
+        } else {
+            Log.v("remote song plays", "is not null");
+        }
     }
 
     public String getId() { return id; }
@@ -31,7 +44,7 @@ public class RemoteSong {
     public String getArtist() {
         return artist;
     }
-    public Album getAlbum() {
+    public String getAlbum() {
         return album;
     }
 
@@ -42,8 +55,21 @@ public class RemoteSong {
     public void setSong(Song s){ this.song = s;}
 
     public ArrayList<SongPlay> getPlays() { return plays; }
-    public SongPlay getMostRecentPlay() { return plays.get(plays.size() - 1); }
-    public void addPlay(SongPlay newPlay) { plays.add(newPlay); }
+    public SongPlay getMostRecentPlay() { return plays == null || plays.size() == 0 ? null : plays.get(plays.size() - 1); }
+    public void addPlay(SongPlay newPlay) {
+        if (newPlay == null){
+            Log.v("newplay", "is null");
+        } else {
+            Log.v("newplay", "is not null");
+        }
+        if (plays == null){
+            Log.v("plays", "is null");
+            plays = new ArrayList<>();
+        } else {
+            Log.v("plays", "is not null");
+        }
+        plays.add(newPlay);
+    }
 
 }
 

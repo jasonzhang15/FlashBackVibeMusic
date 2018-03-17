@@ -6,13 +6,17 @@ import java.util.Date;
 public class SongPlay {
 
     String username;
-    LatLng location;
+    Double latitude;
+    Double longitude;
     String time;
     Date date;
 
+    public SongPlay(){}
+
     public SongPlay(String username, LatLng location, String time, Date date) {
         this.username = username;
-        this.location = location;
+        this.latitude = location.latitude;
+        this.longitude = location.longitude;
         this.time = time;
         this.date = date;
     }
