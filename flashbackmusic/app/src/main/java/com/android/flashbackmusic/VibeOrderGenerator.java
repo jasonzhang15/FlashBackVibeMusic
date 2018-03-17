@@ -52,8 +52,10 @@ public class VibeOrderGenerator {
             return -1;
         } else {
             double score = 0;
-            if ((c.getLastPlayedTime().getDate().getTime() - s.getLastPlayedTime().getDate().getTime()) > WEEK_IN_MILLIS){
-                score += RECENTLY_SCORE;
+            if (c.getLastPlayedTime() != null && s.getLastPlayedTime() != null){
+                if ((c.getLastPlayedTime().getDate().getTime() - s.getLastPlayedTime().getDate().getTime()) > WEEK_IN_MILLIS) {
+                    score += RECENTLY_SCORE;
+                }
             }
             LatLng currLoc = c.getLocation();
             float[] results = new float[1];
@@ -81,7 +83,7 @@ public class VibeOrderGenerator {
             double score1 = getScore(s1);
             double score2 = getScore(s2);
 
-            if (score1 == score2){
+            if (score1 == score2 && s1.getLastPlayedTime() != null && s2.getLastPlayedTime() != null){
                 return s1.getLastPlayedTime().getDate().after(s2.getLastPlayedTime().getDate()) ? 1 : -1;
             } else {
                 return score2 > score1 ? 1 : -1;
