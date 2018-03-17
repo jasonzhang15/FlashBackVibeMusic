@@ -484,7 +484,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
     //Firebase has been updated
     public void update(Observable o, Object response){
         for (RemoteSong r :remoteSongList){
-            if (r.getSong() == null){
+            if (r.getSong() == null || r.getSong().getLocal() == false){
                 downloader.downloadSong(r.getURL());
             }
         }
