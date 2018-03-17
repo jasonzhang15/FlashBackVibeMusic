@@ -39,6 +39,7 @@ public class Song {
         lastPlayedTime = null;
         lastLocation = new LatLng(0,0);
         local = false;
+        remoteSong = new RemoteSong("", "", "", "", "");
     }
 
     public Song(/*id,*/ String title, String artist, String album, String url, String path) {
