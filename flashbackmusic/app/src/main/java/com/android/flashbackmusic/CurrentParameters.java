@@ -27,11 +27,11 @@ public class CurrentParameters {
 
     public LatLng getLocation() {
         if (locationHandler == null) {
-            //Log.v("LOCATION HANDLER", "is null");
+            Log.v("LOCATION HANDLER", "is null");
             return new LatLng(latDefault, lngDefault);
         }
         else {
-            //Log.v("LOCATION HANDLER", "is not null");
+            Log.v("LOCATION HANDLER", "is not null");
             return locationHandler.getCurrentLocation();
         }
     }
@@ -40,7 +40,7 @@ public class CurrentParameters {
         // Location
         locationHandler = loc;
         location = getLocation();
-        //Log.d("cur location", "" + location.toString());
+        Log.d("cur location", "" + location.toString());
 
         Time time = new Time();
         setLastPlayedTime(time);
