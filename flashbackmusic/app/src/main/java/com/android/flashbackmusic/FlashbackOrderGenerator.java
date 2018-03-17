@@ -32,6 +32,7 @@ public class FlashbackOrderGenerator {
     }
 
     public List<Song> getSongList() {
+        if (songList.size() <= 1) return songList;
         Collections.sort(songList, songComparator);
         return songList;
     }

@@ -1,9 +1,10 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
+
+import android.content.Intent;
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -20,16 +21,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
-
 import com.google.android.gms.maps.model.LatLng;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.*;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -115,8 +119,8 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         maContext = this;
-        AsyncTaskRunner runner = new AsyncTaskRunner();
-        runner.execute();
+        //AsyncTaskRunner runner = new AsyncTaskRunner();
+        //runner.execute();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -124,18 +128,20 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         app = this.getApplication();
         songImporter = new SimpleSongImporter(app);
         downloader = new SimpleDownloader(app, songImporter);
-        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+
+        final IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         registerReceiver(downloader.downloadReceiver, filter);
 
-        downloader.downloadSong("http://www.purevolume.com/download.php?id=3463253");
+        //downloader.downloadSong("http://www.purevolume.com/download.php?id=3463253");
         downloader.downloadSong("http://www.purevolume.com/download.php?id=3061040");
-        downloader.downloadSong("http://www.purevolume.com/download.php?id=3061067");
-
-        songImporter.read();
+        downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=1z0hBA6_ZMTokfaJ8qJXHxfbQpedbJi9J&export=download");
+        downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=12NniiNS58swhkA6aYLEsz3PsHh4FOSl1&export=download");
+        downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=1k-O4RHfkjYhVif3Af9tr6mP6x45fkFjY&export=download");
 
         prefs = getSharedPreferences("info", MODE_PRIVATE);
         prefsIO = new SharedPrefsIO(prefs);
 
+        songImporter.read();
         songList = songImporter.getSongList();
         albumList = songImporter.getAlbumList();
         remoteSongList = songImporter.getRemoteSongList();
@@ -223,6 +229,33 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         }
         //loadAlbums();
 
+
+        ImageButton refreshButton = findViewById(R.id.refreshButton);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v("LOOK", "REACHED INSIDE OF ONCLICK");
+                songImporter = new SimpleSongImporter(app);
+                songImporter.read();
+                songList = songImporter.getSongList();
+                loadSongs();
+                loadAlbum();
+            }
+        });
+
+        final AddMusic addMusic = findViewById(R.id.add_music_main);
+        addMusic.getAddMusicButton().setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                EditText edit = addMusic.getAddMusicTextEdit();
+                String url = edit.getText().toString();
+                downloader.downloadSong(url);
+                edit.setText("");
+                Log.v("LOOK", "REACHED INSIDE OF ADD ONCLICK");
+            }
+        });
+
         SwitchActivity swc = findViewById(R.id.switch_between_main);
 
         Button songsTab = swc.getSongs();
@@ -232,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 fm.display(false);
                 am.display(false);
                 sm.display(true);
+                addMusic.display(true);
                 //setContentView(R.layout.song_mode);
 
                 // if music is playing, show csb
@@ -249,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 Log.v("album button pressed", "album");
                 //csb.display(false);
                 am.display(true);
+                addMusic.display(false);
                 loadAlbum();
                 //setContentView(R.layout.album_mode);
             }
@@ -261,6 +296,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 sm.display(false);
                 am.display(false);
                 fm.display(true);
+                addMusic.display(false);
                 //setContentView(R.layout.flashback_mode);
 
                 // disable songs and album tabs?
@@ -446,61 +482,64 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
     }
 
     public void loadSongs() {
-        for (final Song song : songList) {
-            final Song songToPlay = song;
-
-            final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
-            songBlock.setText();
-            songBlock.loadFavor(song, prefsIO);
-            songBlock.setTime();
-            songBlock.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (!(songToPlay.isDisliked())) {
-
-                        csb.display(true);
-                        csb.setText(songToPlay);
-                        csb.setPlayPause(player);
-                        LatLng loc = currentParameters.getLocation();
-
-                        startIntentService(loc);
-
-                        Time lastPlayedTime = songToPlay.getLastPlayedTime();
-                        if (lastPlayedTime == null || !(lastPlayedTime.isMocking())) {
-                            Log.v("is lastPlayedTime Null?", String.valueOf(lastPlayedTime == null));
-                            currentParameters.setLastPlayedTime(new Time());
-                            timeOfDay = currentParameters.getTimeOfDay();
-                            lastPlayedTime = currentParameters.getLastPlayedTime();
-                            day = currentParameters.getDayOfWeek();
-                        } else {
-                            Log.v("else", String.valueOf(lastPlayedTime.isMocking()));
-                            currentParameters.setLastPlayedTime(lastPlayedTime);
-                            timeOfDay = currentParameters.getTimeOfDay();
-                            day = currentParameters.getDayOfWeek();
-                            currentParameters.setLastPlayedTime(new Time());
-                            Log.v("timeofday, day", String.valueOf(timeOfDay) + " " + String.valueOf(day));
-                        }
-                        csb.setHistory("at " + place + " on a "
-                                + day + " " + timeOfDay);
-                        player.play(songToPlay);
-
-                        songToPlay.setLastLocation(loc);
-                        songToPlay.addTimeOfDay(timeOfDay);
-                        if (!lastPlayedTime.isMocking()) {
-                            songToPlay.setLastPlayedTime(lastPlayedTime);
-                        }
-                        updateSong(songToPlay);
-                        Log.i("Plays:" , Integer.toString(songToPlay.getPlays().size()));
-
-                        csb.loadFavor(songToPlay, prefsIO, songBlock);
-                        csb.setText(songToPlay);
-                        csb.togglePlayPause();
-                    }
-                }
-            });
-
-            sm.addView(songBlock);
+        for (Song song : songList) {
+            addSongBlock(song);
         }
+    }
+
+    public void addSongBlock(Song song) {
+        final Song songToPlay = song;
+        final SongBlock songBlock = new SongBlock(getApplicationContext(), songToPlay);
+        songBlock.setText();
+        songBlock.loadFavor(songToPlay, prefsIO);
+        songBlock.setTime();
+        songBlock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!(songToPlay.isDisliked())) {
+
+                    csb.display(true);
+                    csb.setText(song);
+                    csb.setPlayPause(player);
+                    LatLng loc = currentParameters.getLocation();
+
+                    startIntentService(loc);
+
+                    Time lastPlayedTime = songToPlay.getLastPlayedTime();
+                    if (lastPlayedTime == null || !(lastPlayedTime.isMocking())) {
+                        Log.v("is lastPlayedTime Null?", String.valueOf(lastPlayedTime == null));
+                        currentParameters.setLastPlayedTime(new Time());
+                        timeOfDay = currentParameters.getTimeOfDay();
+                        lastPlayedTime = currentParameters.getLastPlayedTime();
+                        day = currentParameters.getDayOfWeek();
+                    } else {
+                        Log.v("else", String.valueOf(lastPlayedTime.isMocking()));
+                        currentParameters.setLastPlayedTime(lastPlayedTime);
+                        timeOfDay = currentParameters.getTimeOfDay();
+                        day = currentParameters.getDayOfWeek();
+                        currentParameters.setLastPlayedTime(new Time());
+                        Log.v("timeofday, day", String.valueOf(timeOfDay) + " " + String.valueOf(day));
+                    }
+                    csb.setHistory("at " + place + " on a "
+                            + day + " " + timeOfDay);
+                    player.play(songToPlay);
+
+                    songToPlay.setLastLocation(loc);
+                    songToPlay.addTimeOfDay(timeOfDay);
+                    if (!lastPlayedTime.isMocking()) {
+                        songToPlay.setLastPlayedTime(lastPlayedTime);
+                    }
+                    updateSong(songToPlay);
+                    Log.i("Plays:" , Integer.toString(songToPlay.getPlays().size()));
+
+                    csb.loadFavor(songToPlay, prefsIO, songBlock);
+                    csb.setText(songToPlay);
+                    csb.togglePlayPause();
+                }
+            }
+        });
+
+        sm.addView(songBlock);
     }
 
     @Override
