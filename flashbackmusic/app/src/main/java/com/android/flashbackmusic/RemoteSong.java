@@ -9,9 +9,9 @@ import java.util.Map;
 
 public class RemoteSong {
 
-    private String title;
-    private String artist;
-    public String album;
+    private String title = "";
+    private String artist = "";
+    public String album = "";
     private String URL;
 
     private ArrayList<SongPlay> plays;
@@ -23,9 +23,9 @@ public class RemoteSong {
     //Every song and remotesong has an ID - it is used to tie them to each other
     public RemoteSong(/*id,*/ String title, String artist, String album, String url, String id) {
         //this.id = id;
-        this.title = title;
-        this.artist = artist;
-        this.album = album;
+            if (title != null) this.title = title;
+            if (artist != null) this.artist = artist;
+            if (album != null)  this.album = album;
         this.URL = url;
         this.id = id;
         plays = new ArrayList<>();
