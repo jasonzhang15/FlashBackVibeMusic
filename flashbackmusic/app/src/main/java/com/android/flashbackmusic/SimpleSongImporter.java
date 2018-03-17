@@ -34,6 +34,7 @@ public class SimpleSongImporter implements SongImporter {
 
     private ArrayList<Song> songs;
     private ArrayList<Album> albums;
+    private ArrayList<RemoteSong> remoteSongs;
     private Application app;
     private File downloadDir;
     private MediaMetadataRetriever mmr;
@@ -42,6 +43,7 @@ public class SimpleSongImporter implements SongImporter {
         this.app = app;
         songs = new ArrayList<>();
         albums = new ArrayList<>();
+        remoteSongs = new ArrayList<>();
         downloadDir = app.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
         mmr = new MediaMetadataRetriever();
     }
@@ -146,9 +148,10 @@ public class SimpleSongImporter implements SongImporter {
     }
 
     private void addSong(String title, String artist, Album album, String url, String path) {
-        Song newSong = new Song( title, artist, album, url, path);
+        Song newSong = new Song(title, artist, album.getTitle(), url, path);
 
         album.addSong(newSong);
+        remoteSongs.add(newSong.getRemoteSong());
         songs.add(newSong);
     }
 
@@ -187,5 +190,9 @@ public class SimpleSongImporter implements SongImporter {
         } catch (Exception e) {
             Log.v("LOOK", "FILE ALREADY EXISTS BUT NOT DELETED: " + currentFile );
         }
+    }
+
+    public ArrayList<RemoteSong> getRemoteSongList() {
+        return remoteSongs;
     }
 }

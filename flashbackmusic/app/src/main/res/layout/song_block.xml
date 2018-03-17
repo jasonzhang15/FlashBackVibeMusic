@@ -17,6 +17,8 @@
         android:layout_marginLeft="10dp" />
 
     <TextView
+        android:focusable="false"
+        android:clickable="false"
         android:id="@+id/song_artist_album"
         android:layout_width="match_parent"
         android:layout_height="20dp"
@@ -30,6 +32,8 @@
         android:layout_gravity="right"
         android:layout_marginTop="-40dp"
         android:layout_marginRight="10dp"
+        android:focusable="false"
+        android:clickable="false"
         android:src="@android:drawable/ic_input_add" />
 
     <Button
@@ -49,10 +53,14 @@
         android:hint="@string/time"
         android:inputType="text"
         android:imeOptions="actionDone"
+        android:maxLines="1"
+        android:singleLine="true"
         android:layout_marginLeft="10dp" />
 
 
     <LinearLayout
+        android:focusable="false"
+        android:clickable="false"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorPrimaryDark"

@@ -43,7 +43,7 @@ public class AlbumBlock extends LinearLayout {
         //this.bringToFront();
     }
 
-    public void setText() {
+    /*public void setText() {
         albumView = this.findViewById(R.id.album_title);
         albumView.setText(albumName);
 
@@ -71,7 +71,7 @@ public class AlbumBlock extends LinearLayout {
         } else {
             playPause.setImageResource(android.R.drawable.ic_media_pause);
         }
-    }
+    }*/
 
     public String getAlbumTitle(){
         return this.albumName;

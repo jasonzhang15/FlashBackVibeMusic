@@ -9,26 +9,53 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class FirebaseIO {
+public class FirebaseIO extends Observable{
 
     FirebaseDatabase database;
     DatabaseReference myRef;
+    List<RemoteSong> remoteSongList;
+    List<Song> songList;
 
-    public void setup(final List<Song> songList) {
+    public FirebaseIO(final List<RemoteSong> remoteSongList, final List<Song> songList){
+        this.remoteSongList = remoteSongList;
+        this.songList = songList;
+        for (RemoteSong r : remoteSongList){
+            r.setSong(null);
+            r.album = null;
+        }
+        setup();
+    }
+
+    public void setup() {
         database = database.getInstance();
         myRef = database.getReference();
-
-        myRef.setValue(songList);
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                songList.clear();
-                GenericTypeIndicator<List<Song>> t = new GenericTypeIndicator<List<Song>>() {};
-                List<Song> newSongs = dataSnapshot.getValue(t);
-                songList.addAll(newSongs);
+                remoteSongList.clear();
+                GenericTypeIndicator<List<RemoteSong>> t = new GenericTypeIndicator<List<RemoteSong>>() {};
+                //List<RemoteSong> newSongs = dataSnapshot.getValue(t);
+                remoteSongList = dataSnapshot.getValue(t);
+                //remoteSongList.addAll(newSongs);
+                for (RemoteSong r : remoteSongList){
+                    if (r.getPlays() == null){
+                        Log.v(r.getTitle(), "null");
+                    }
+                    r.setSong(null);
+                    for (Song s : songList){
+                        if (r.getId().equals(s.getId())){
+                            r.setSong(s);
+                            s.setRemoteSong(r);
+                        }
+                    }
+                }
+                notifyObservers();
             }
 
             @Override
@@ -36,6 +63,14 @@ public class FirebaseIO {
                 Log.v("Database:", "Database unexpectedly closed");
             }
         });
+    }
 
+    public void update(){
+        Log.v("update remote", "beepbeepbeep");
+        for (RemoteSong r : remoteSongList){
+            r.setSong(null);
+            r.album = null;
+        }
+        myRef.setValue(remoteSongList);
     }
 }

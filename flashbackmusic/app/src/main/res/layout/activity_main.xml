@@ -39,6 +39,43 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <android.support.design.widget.NavigationView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="66dp">
+        <Button
+            android:id="@+id/buttonTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:text="Title"
+            android:textSize="16dp" />
+
+        <Button
+            android:id="@+id/buttonArtist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="85dp"
+            android:text="Artist"
+            android:textSize="16dp" />
+
+        <Button
+            android:id="@+id/buttonAlbum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="170dp"
+            android:text="Album"
+            android:textSize="16dp" />
+
+        <Button
+            android:id="@+id/buttonFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="255dp"
+            android:text="Favorite"
+            android:textSize="16dp" />
+
+    </android.support.design.widget.NavigationView>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
@@ -64,6 +101,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:id="@+id/song_main" />
+
     </ScrollView>
 
     <com.android.flashbackmusic.AlbumMode
