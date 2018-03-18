@@ -134,9 +134,9 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
 
         //downloader.downloadSong("http://www.purevolume.com/download.php?id=3463253");
         //downloader.downloadSong("http://www.purevolume.com/download.php?id=3061040");
-        downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=1z0hBA6_ZMTokfaJ8qJXHxfbQpedbJi9J&export=download");
-        downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=12NniiNS58swhkA6aYLEsz3PsHh4FOSl1&export=download");
-        downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=1k-O4RHfkjYhVif3Af9tr6mP6x45fkFjY&export=download");
+        //downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=1z0hBA6_ZMTokfaJ8qJXHxfbQpedbJi9J&export=download");
+        //downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=12NniiNS58swhkA6aYLEsz3PsHh4FOSl1&export=download");
+        //downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=1k-O4RHfkjYhVif3Af9tr6mP6x45fkFjY&export=download");
 
         prefs = getSharedPreferences("info", MODE_PRIVATE);
         prefsIO = new SharedPrefsIO(prefs);
@@ -266,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 am.display(false);
                 sm.display(true);
                 addMusic.display(true);
+                loadSongs();
                 //setContentView(R.layout.song_mode);
 
                 // if music is playing, show csb
@@ -283,6 +284,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 Log.v("album button pressed", "album");
                 //csb.display(false);
                 am.display(true);
+                addMusic.display(false);
                 loadAlbum();
                 //setContentView(R.layout.album_mode);
             }
@@ -337,8 +339,8 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
 
 
     public void loadAlbum() {
-        am.reset();
-        expListView = (ExpandableListView) findViewById(R.id.lvExp);
+        //am.reset();
+        expListView = findViewById(R.id.lvExp);
 
         expListView.setClickable(true);
 
