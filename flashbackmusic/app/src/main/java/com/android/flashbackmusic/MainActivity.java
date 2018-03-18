@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         registerReceiver(downloader.downloadReceiver, filter);
 
         //downloader.downloadSong("http://www.purevolume.com/download.php?id=3463253");
-        downloader.downloadSong("http://www.purevolume.com/download.php?id=3061040");
+        //downloader.downloadSong("http://www.purevolume.com/download.php?id=3061040");
         downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=1z0hBA6_ZMTokfaJ8qJXHxfbQpedbJi9J&export=download");
         downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=12NniiNS58swhkA6aYLEsz3PsHh4FOSl1&export=download");
         downloader.downloadSong("https://drive.google.com/a/ucsd.edu/uc?id=1k-O4RHfkjYhVif3Af9tr6mP6x45fkFjY&export=download");
@@ -244,15 +244,15 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         });
 
         final AddMusic addMusic = findViewById(R.id.add_music_main);
-        addMusic.getAddMusicButton().setOnClickListener(new View.OnClickListener() {
-
+        Button addMusicButton = addMusic.getAddMusicButton();
+        addMusicButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EditText edit = addMusic.getAddMusicTextEdit();
                 String url = edit.getText().toString();
                 downloader.downloadSong(url);
                 edit.setText("");
-                Log.v("LOOK", "REACHED INSIDE OF ADD ONCLICK");
+                Log.v("LOOK", "REACHED INSIDE OF ADD ONCLICK: " + url);
             }
         });
 
