@@ -38,8 +38,6 @@ public class SimpleDownloader {
 
     public long downloadSong(String url) {
 
-        //SKIP if song is already downloaded
-
         Uri uri = Uri.parse(url);
 
         long downloadReference;
@@ -52,6 +50,7 @@ public class SimpleDownloader {
 
             for (File f : downloadDir.listFiles()) {
                 if (f.getAbsolutePath().equals((downloadDir.toString() + "/" + downloadId + ".mp3"))) {
+                    Log.v("LOOK", "SONG ALREADY EXISTS: " + downloadId);
                     return -1;
                 }
             }

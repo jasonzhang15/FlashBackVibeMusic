@@ -93,6 +93,7 @@ public class SimpleSongImporter implements SongImporter {
                     deleteFile(file);
                 } else {
                     filePath = downloadDir + File.separator + file.toString();
+                    Log.v("LOOK", "NOT A ZIP FILE: " + filePath);
                     extractFile(zipIn, filePath);
                     deleteFile(file);
                 }

@@ -51,6 +51,11 @@ public class AlbumMode extends LinearLayout {
         }
     }
 
+    public void reset() {
+        this.removeAllViews();
+        initializeViews(context);
+    }
+
     public void hide() {
         this.setVisibility(LinearLayout.GONE);
     }
