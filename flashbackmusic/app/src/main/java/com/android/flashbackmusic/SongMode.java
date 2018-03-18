@@ -38,7 +38,7 @@ public class SongMode extends LinearLayout {
     }
 
     public void reset() {
-        this.detachViewsFromParent(0, this.getChildCount());
+        this.removeAllViews();
         initializeViews(context);
     }
 
