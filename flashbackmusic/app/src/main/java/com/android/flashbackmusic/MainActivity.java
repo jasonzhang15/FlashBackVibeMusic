@@ -283,7 +283,6 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 Log.v("album button pressed", "album");
                 //csb.display(false);
                 am.display(true);
-                addMusic.display(false);
                 loadAlbum();
                 //setContentView(R.layout.album_mode);
             }
@@ -303,6 +302,8 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
                 loadFlashback();
             }
         });
+
+
 
     }
 
@@ -336,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
 
 
     public void loadAlbum() {
+        am.reset();
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
         expListView.setClickable(true);
@@ -482,6 +484,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
     }
 
     public void loadSongs() {
+        sm.reset();
         for (Song song : songList) {
             addSongBlock(song);
         }
