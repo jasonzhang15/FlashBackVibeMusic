@@ -5,11 +5,11 @@ import java.util.Date;
 
 public class SongPlay {
 
-    String username;
-    Double latitude;
-    Double longitude;
-    String time;
-    Date date;
+    public String username;
+    public Double latitude;
+    public Double longitude;
+    public String time;
+    public Date date;
 
     public SongPlay(){}
 
