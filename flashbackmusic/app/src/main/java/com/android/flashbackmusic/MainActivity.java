@@ -1,10 +1,9 @@
 package com.android.flashbackmusic;
 
 import android.app.Application;
-
-import android.content.Intent;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -22,18 +21,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ImageButton;
+
 import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.*;
-import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -435,8 +433,13 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
 
         fm.setPlayPause(player);
         fm.setText(flashbackSongs.get(0));
-        fm.setHistory("You're listening from " + "San Diego" + " on a "
-            + "Sunday" + " " + "night");
+        LatLng loc = currentParameters.getLocation();
+        startIntentService(loc);
+        currentParameters.setLastPlayedTime(new Time());
+        timeOfDay = currentParameters.getTimeOfDay();
+        day = currentParameters.getDayOfWeek();
+        fm.setHistory("You're listening from " + place + " on a "
+            + day + " " + timeOfDay);
 
         expListView = findViewById(R.id.lvExp2);
 
