@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.os.ResultReceiver;
 import android.os.StrictMode;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -171,6 +172,8 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         final Button buttonArtist = findViewById(R.id.buttonArtist);
         final Button buttonAlbum = findViewById(R.id.buttonAlbum);
         final Button buttonFavorite = findViewById(R.id.buttonFavorite);
+
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.sortNav);
         buttonTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -261,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         songsTab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                navigationView.setVisibility(View.VISIBLE);
                 fm.display(false);
                 am.display(false);
                 sm.display(true);
@@ -278,6 +282,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         album.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                navigationView.setVisibility(View.VISIBLE);
                 sm.display(false);
                 fm.display(false);
                 Log.v("album button pressed", "album");
@@ -293,6 +298,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         flashback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                navigationView.setVisibility(View.INVISIBLE);
                 sm.display(false);
                 am.display(false);
                 fm.display(true);
