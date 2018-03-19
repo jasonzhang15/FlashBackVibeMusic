@@ -71,37 +71,43 @@ public class SimpleSongImporter implements SongImporter {
 
         for (File file : listAllFiles) {
             long n = 0;
-            try {
-                RandomAccessFile raf = new RandomAccessFile(file, "r");
-                n = raf.readInt();
-                raf.close();
-
-                ZipInputStream zipIn = new ZipInputStream(new FileInputStream(file.toString()));
-                String filePath = "";
-                if (n == 0x504B0304){
+            if (isAlbum(file)) {
+                try {
+                    ZipInputStream zipIn = new ZipInputStream(new FileInputStream(file.toString()));
+                    String filePath = "";
                     ZipEntry entry = zipIn.getNextEntry();
                     while (entry != null) {
                         filePath = downloadDir + File.separator + entry.getName();
                         if (!entry.isDirectory()) {
                             extractFile(zipIn, filePath);
-                            Log.v("LOOK",  "EXTRACTED: " + entry.getName() + " from " + file.toString());
+                            Log.v("LOOK", "EXTRACTED: " + entry.getName() + " from " + file.toString());
                         }
                         zipIn.closeEntry();
                         entry = zipIn.getNextEntry();
                     }
                     zipIn.close();
                     deleteFile(file);
-                } else {
-                    filePath = downloadDir + File.separator + file.toString();
-                    Log.v("LOOK", "NOT A ZIP FILE: " + filePath);
-                    extractFile(zipIn, filePath);
-                    deleteFile(file);
+                } catch (Exception e) {
+                    Log.v("LOOK", "ERROR IN CHECKING IF FILE IS A ZIP: " + e);
                 }
-            } catch (Exception e) {
-                Log.v("LOOK", "ERROR IN CHECKING IF FILE IS A ZIP: " + e);
             }
         }
         return listAllFiles;
+    }
+
+    public boolean isAlbum(File file) {
+        try {
+            RandomAccessFile raf = new RandomAccessFile(file, "r");
+            long n = raf.readInt();
+            raf.close();
+
+            if (n == 0x504B0304) return true;
+            else return false;
+
+        } catch (Exception e) {
+            Log.v("LOOK", "ERROR IN CHECKING IF FILE IS A ZIP: " + e);
+        }
+        return false;
     }
 
     private void extractFile(ZipInputStream zipIn, String filePath) throws IOException {

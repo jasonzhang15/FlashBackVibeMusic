@@ -48,12 +48,7 @@ public class SimpleDownloader {
 
             downloadId = (url.split("id="))[1];
 
-            for (File f : downloadDir.listFiles()) {
-                if (f.getAbsolutePath().equals((downloadDir.toString() + "/" + downloadId + ".mp3"))) {
-                    Log.v("LOOK", "SONG ALREADY EXISTS: " + downloadId);
-                    return -1;
-                }
-            }
+            if (downloadExists(downloadId)) return -1;
 
             request.setTitle(downloadId);
             request.setDescription("Android Data download using DownloadManager.");
@@ -77,39 +72,31 @@ public class SimpleDownloader {
         return downloadReference;
     }
 
+    private boolean downloadExists(String downloadId) {
+        for (File f : downloadDir.listFiles()) {
+            if (f.getAbsolutePath().equals((downloadDir.toString() + "/" + downloadId + ".mp3"))) {
+                Log.v("LOOK", "SONG ALREADY EXISTS: " + downloadId);
+                Toast toast = Toast.makeText(app,
+                        "SONG ALREADY EXISTS: " + downloadId, Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.TOP, 25, 400);
+                toast.show();
+                return true;
+            }
+        }
+        return false;
+    }
+
     public BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            //check if the broadcast message is for our Enqueued download
             long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
 
-            Toast toast = Toast.makeText(app,
-                    "Music Download Complete " + referenceId, Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(app, "Music Download Complete " + referenceId, Toast.LENGTH_LONG);
             toast.setGravity(Gravity.TOP, 25, 400);
             toast.show();
-
-
-            DownloadManager.Query q = new DownloadManager.Query();
-            Cursor c = downloadManager.query(q);
-
-            if(c.moveToFirst()) {
-                do {
-                    String name = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                    if (name != null) {
-                        File mFile = new File(Uri.parse(name).getPath());
-                        songImporter.importSong(mFile);
-                    }
-                    //Log.v("LOOK", "file name: " + name);
-                } while (c.moveToNext());
-            } else {
-                Log.v("LOOK", "empty cursor :(");
-            }
-
-            c.close();
-
-            Log.v("LOOK", "REACHEDDDD");
+            songImporter.read();
         }
     };
 

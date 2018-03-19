@@ -1,14 +1,7 @@
 package com.android.flashbackmusic;
 
-/**
- * Created by mac on 12/03/2018.
- */
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-
-import android.app.Application;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -16,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private CurrentParameters currentParameters;
