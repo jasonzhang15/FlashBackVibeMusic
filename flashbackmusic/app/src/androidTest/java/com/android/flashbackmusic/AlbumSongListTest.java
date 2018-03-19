@@ -94,7 +94,7 @@ public class AlbumSongListTest {
         textView2.check(matches(isDisplayed()));
 
         ViewInteraction textView3 = onView(
-                allOf(withId(R.id.song_title),
+                allOf(withId(R.id.song_title), withText("Transmission 002: The Blackhole"),
                         isDisplayed()));
         textView3.check(matches(isDisplayed()));
 
