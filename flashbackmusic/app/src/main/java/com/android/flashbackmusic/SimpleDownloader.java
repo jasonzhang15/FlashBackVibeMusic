@@ -97,25 +97,6 @@ public class SimpleDownloader {
             toast.setGravity(Gravity.TOP, 25, 400);
             toast.show();
             songImporter.read();
-            /*
-            DownloadManager.Query q = new DownloadManager.Query();
-            Cursor c = downloadManager.query(q);
-
-            if(c.moveToFirst()) {
-                do {
-                    String name = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                    if (name != null) {
-                        File mFile = new File(Uri.parse(name).getPath());
-                        songImporter.read();
-                    }
-                    Log.v("LOOK", "IMPORT INDIVIDUAL DOWNLOAD " + name);
-                } while (c.moveToNext());
-            } else {
-                Log.v("LOOK", "empty cursor :(");
-            }
-
-
-            c.close(); */
         }
     };
 
