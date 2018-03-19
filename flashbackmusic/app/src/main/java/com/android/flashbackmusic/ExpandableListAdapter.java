@@ -2,6 +2,8 @@ package com.android.flashbackmusic;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -17,6 +19,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<SongBlock>> _listDataChild;
+    private String[] friends = {"Jason","Tina","Anonymous Corgi","Zhikai Cui","Jocelyn","Anonymous Dragon",
+            "Anonymous Tuna", "Venkatesh","Natalie"};
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
                                  HashMap<String, List<SongBlock>> listChildData) {
@@ -52,21 +56,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 .findViewById(R.id.song_title);
         title.setText(child.getTitle());
 
+        Random random = new Random();
+        String friend = friends[random.nextInt(friends.length)];
         final TextView artistAlbum = (TextView) convertView
                 .findViewById(R.id.song_artist_album);
-        artistAlbum.setText(child.getartistAlbum());
+        artistAlbum.setText(child.getartistAlbum()+" | Played by "+friend);
 
-        /*convertView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                Song songToPlay = child.getSong();
-
-
-
-
-            }
-        });*/
         return convertView;
     }
 
