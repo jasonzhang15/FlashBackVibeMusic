@@ -14,7 +14,6 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.RandomAccessFile;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 
@@ -46,7 +45,8 @@ public class SimpleDownloader {
             // Create request for android download manager
             DownloadManager.Request request = new DownloadManager.Request(uri);
 
-            downloadId = (url.split("id="))[1];
+            String[] arr = url.split("/");
+            downloadId = arr[arr.length - 1];
 
             if (downloadExists(downloadId)) return -1;
 
