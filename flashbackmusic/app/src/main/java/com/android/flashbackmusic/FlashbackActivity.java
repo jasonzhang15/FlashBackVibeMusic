@@ -40,14 +40,6 @@ public class FlashbackActivity extends AppCompatActivity {
 
         loadFlashback();
 
-        Button getBackSongs = (Button) findViewById(R.id.flashback_disable);
-
-        getBackSongs.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick (View view){
-                finish();
-            }
-        });
     }
 
     private void loadFlashback() {

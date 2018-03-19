@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
     private LocationMock locationAdapter;
     private SimpleDownloader downloader;
     private FirebaseIO firebase;
+    private VibeOrderGenerator fog;
 
     private SongMode sm;
     private AlbumMode am;
@@ -424,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
     }
 
     public void loadFlashback() {
-        VibeOrderGenerator fog = new VibeOrderGenerator(new CurrentParameters(locationAdapter), songList);
+        fog = new VibeOrderGenerator(new CurrentParameters(locationAdapter), songList);
         List<Song> flashbackSongs= fog.getSongList();
 
         csb.display(false);
@@ -437,16 +438,81 @@ public class MainActivity extends AppCompatActivity implements SongCompletionLis
         fm.setHistory("You're listening from " + "San Diego" + " on a "
             + "Sunday" + " " + "night");
 
-        Button disableFlashback = findViewById(R.id.flashback_disable);
-        disableFlashback.setOnClickListener(new View.OnClickListener(){
+        expListView = findViewById(R.id.lvExp2);
+
+        expListView.setClickable(true);
+
+        prepareVibeData();
+
+        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+
+        expListView.setAdapter(listAdapter);
+
+        expListView.setOnChildClickListener(new OnChildClickListener() {
 
             @Override
-            public void onClick(View view) {
-            player.reset();
-            fm.display(false);
-            sm.display(true);
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+                // TODO Auto-generated method stub
+                final SongBlock selected = (SongBlock) listAdapter.getChild(
+                        groupPosition, childPosition);
+                final Song songToPlay = selected.getSong();
+                selected.setText();
+                selected.loadFavor(songToPlay, prefsIO);
+                csb.display(true);
+                csb.setText(songToPlay);
+                csb.setPlayPause(player);
+                LatLng loc = currentParameters.getLocation();
+                startIntentService(loc);
+
+                // TODO: Figure out why this gets a nullreferenceexception
+                // why is locationAdapter null?
+                //LatLng loc = currentParameters.getLocation();
+                String place = "San Diego";
+                String timeOfDay = currentParameters.getTimeOfDay();
+                Time lastPlayedTime = songToPlay.getLastPlayedTime();
+                if (lastPlayedTime != null && lastPlayedTime.isMocking()) {
+                    currentParameters.setLastPlayedTime(lastPlayedTime);
+                } else {
+                    currentParameters.setLastPlayedTime(new Time());
+                    songToPlay.setLastPlayedTime(currentParameters.getLastPlayedTime());
+                }
+                String day = currentParameters.getDayOfWeek();
+                csb.setHistory("You're listening from " + place + " on a "
+                        + day + " " + timeOfDay);
+                player.play(songToPlay);
+
+                songToPlay.setLastLocation(loc);
+                Set<String> timesOfDay = songToPlay.getTimesOfDay();
+                timesOfDay.add(timeOfDay);
+                songToPlay.setTimesOfDay(timesOfDay);
+                songToPlay.setLastPlayedTime(lastPlayedTime);
+
+                updateSong(songToPlay);
+
+                csb.loadFavor(songToPlay, prefsIO, selected);
+                csb.setText(songToPlay);
+                csb.togglePlayPause();
+                return true;
             }
         });
+    }
+
+    private void prepareVibeData() {
+        List<Song> vibeSongs= fog.getSongList();
+
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<SongBlock>>();
+
+            listDataHeader.add("Upcoming Song List");
+
+
+            List<SongBlock> songblockList = new ArrayList<>();
+            for (Song song : vibeSongs) {
+                final SongBlock songBlock = new SongBlock(getApplicationContext(), song);
+                songblockList.add(songBlock);
+            }
+            listDataChild.put(listDataHeader.get(0), songblockList);
     }
 
     public void updateSong(Song s){
