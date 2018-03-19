@@ -54,7 +54,7 @@ public class SharedPrefsIOUnitTests {
         album = new Album("Album_1");
         song = new Song("Title_1", "Artist_1", album.getTitle(), "url", "path");
 
-        song.setDisliked(true);
+        song.setDisliked(false);
         song.setFavorited(false);
         testDate = new Date(1000000);
         testTime = new Time(true, testDate);
